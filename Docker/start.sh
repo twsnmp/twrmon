@@ -1,0 +1,4 @@
+#!/bin/sh
+
+snmpd
+twrmon

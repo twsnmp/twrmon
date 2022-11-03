@@ -1,0 +1,7 @@
+{
+  "name": "TWRMON",
+  // Dockerfileでイメージ・コンテナを作成
+  "dockerFile": "Dockerfile",
+  // リモート先のVS Codeにインストールする拡張機能
+  "extensions": ["ms-vscode.cpptools-extension-pack"]
+}
