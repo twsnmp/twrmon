@@ -1,4 +1,0 @@
-#!/bin/sh
-
-snmpd
-twrmon
