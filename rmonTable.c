@@ -12,38 +12,35 @@
 #define MAX_HOST 2000
 #define MAX_EVENT_LOG 2000
 
-u_long nProtocoDirLastChange=0;
-u_long nAddrMapIns =0;
-u_long nAddrMapDel=0;
-u_long nAddrMapMaxDE=8000;
-extern long   nProbeReset;
-extern int    nTimeMarkMode;
+u_long nProtocoDirLastChange = 0;
+u_long nAddrMapIns = 0;
+u_long nAddrMapDel = 0;
+u_long nAddrMapMaxDE = 8000;
+extern long nProbeReset;
+extern int nTimeMarkMode;
 
 /* Internal Data */
 struct etherStatsTable_entry *pEthStatEnt = NULL;
 struct etherStats2Table_entry *pEthStat2Ent = NULL;
-struct etherStatsHighCapacityTable_entry *pEthStatHCEnt= NULL;
-struct historyControlTable_entry *pEthHistCntEnt=NULL;
+struct etherStatsHighCapacityTable_entry *pEthStatHCEnt = NULL;
+struct historyControlTable_entry *pEthHistCntEnt = NULL;
 struct historyControl2Table_entry *pEthHistCnt2Ent = NULL;
-struct hostControlTable_entry *pHostCntEnt=NULL;
-struct hostControl2Table_entry *pHostCnt2Ent=NULL;
+struct hostControlTable_entry *pHostCntEnt = NULL;
+struct hostControl2Table_entry *pHostCnt2Ent = NULL;
 struct matrixControlTable_entry *pMtxCntEnt = NULL;
 struct matrixControl2Table_entry *pMtxCnt2Ent = NULL;
 struct protocolDistControlTable_entry *pProtDistCntEnt = NULL;
-struct addressMapControlTable_entry *pAddrMapCntEnt =NULL;
+struct addressMapControlTable_entry *pAddrMapCntEnt = NULL;
 struct hlMatrixControlTable_entry *pHlMtxCntEnt = NULL;
-struct hlHostControlTable_entry *pHlHostCntEnt =NULL;
+struct hlHostControlTable_entry *pHlHostCntEnt = NULL;
 
 struct etherHistoryTable_entry CurrentEthHistEnt;
 struct etherHistoryHighCapacityTable_entry CurrentEthHistHCEnt;
 
 time_t nLastEthHist = 0;
 
-
-
-
-static oid IfDataSource_oid[] = {1,3,6,1,2,1,2,2,1,1,1 }; //ifIndex.n
-size_t IfDataSource_oid_len   = OID_LENGTH(IfDataSource_oid);
+static oid IfDataSource_oid[] = {1, 3, 6, 1, 2, 1, 2, 2, 1, 1, 1}; // ifIndex.n
+size_t IfDataSource_oid_len = OID_LENGTH(IfDataSource_oid);
 
 // Init Entry Func
 void InitEthStatEnt(netsnmp_container *pC);
@@ -62,18 +59,17 @@ void InitProtDistContEnt(netsnmp_container *pC);
 void InitHlHostContEnt(netsnmp_container *pC);
 void InitHlMtxContEnt(netsnmp_container *pC);
 
+netsnmp_container *pEthHistContainer = NULL;
+netsnmp_container *pEthHistHCContainer = NULL;
+netsnmp_container *pAlarmContainer = NULL;
+netsnmp_container *pHostContainer = NULL;
+netsnmp_container *pHostTimeContainer = NULL;
+netsnmp_container *pMtxSDContainer = NULL;
+netsnmp_container *pMtxDSContainer = NULL;
+netsnmp_container *pEventContainer = NULL;
+netsnmp_container *pLogContainer = NULL;
 
-netsnmp_container               *pEthHistContainer = NULL;
-netsnmp_container               *pEthHistHCContainer = NULL;
-netsnmp_container    			*pAlarmContainer = NULL;
-netsnmp_container               *pHostContainer=NULL;
-netsnmp_container               *pHostTimeContainer =NULL;
-netsnmp_container               *pMtxSDContainer =NULL;
-netsnmp_container               *pMtxDSContainer =NULL;
-netsnmp_container               *pEventContainer=NULL;
-netsnmp_container               *pLogContainer =NULL;
-
-netsnmp_container               *pProtDirContainer=NULL;
+netsnmp_container *pProtDirContainer = NULL;
 long nProtDirLI = 1;
 long nProtDirLIIP = 0;
 long nProtDirLIICMP = 0;
@@ -81,25 +77,24 @@ long nProtDirLIARP = 0;
 long nProtDirLITCP[0x10000];
 long nProtDirLIUDP[0x10000];
 
-netsnmp_container               *pProtDistContainer=NULL;
-netsnmp_container               *pAddrMapContainer =NULL;
-netsnmp_container               *pNlHostContainer = NULL;
-netsnmp_container               *pNlMtxSDContainer=NULL;
-netsnmp_container               *pNlMtxDSContainer =NULL;
-netsnmp_container               *pAlHostContainer=NULL;
-netsnmp_container               *pAlMtxSDContainer =NULL;
-netsnmp_container               *pAlMtxDSContainer = NULL;
+netsnmp_container *pProtDistContainer = NULL;
+netsnmp_container *pAddrMapContainer = NULL;
+netsnmp_container *pNlHostContainer = NULL;
+netsnmp_container *pNlMtxSDContainer = NULL;
+netsnmp_container *pNlMtxDSContainer = NULL;
+netsnmp_container *pAlHostContainer = NULL;
+netsnmp_container *pAlMtxSDContainer = NULL;
+netsnmp_container *pAlMtxDSContainer = NULL;
 
-netsnmp_container               *pAddrMapMib =NULL;
-netsnmp_container               *pNlHostMib = NULL;
-netsnmp_container               *pNlMtxSDMib =NULL;
-netsnmp_container               *pNlMtxDSMib =NULL;
-netsnmp_container               *pAlHostMib=NULL;
-netsnmp_container               *pAlMtxSDMib =NULL;
-netsnmp_container               *pAlMtxDSMib = NULL;
+netsnmp_container *pAddrMapMib = NULL;
+netsnmp_container *pNlHostMib = NULL;
+netsnmp_container *pNlMtxSDMib = NULL;
+netsnmp_container *pNlMtxDSMib = NULL;
+netsnmp_container *pAlHostMib = NULL;
+netsnmp_container *pAlMtxSDMib = NULL;
+netsnmp_container *pAlMtxDSMib = NULL;
 
-
-long  nLastHostCreateTime = 1;
+long nLastHostCreateTime = 1;
 
 void CheckEthHistTable(void);
 void LoadProtDir(void);
@@ -111,32 +106,31 @@ void CheckAlMtxTime(void);
 void CheckMaxTableSize(void);
 void CheckAlarm(void);
 
-long GetProtDirLI(long nEType,long nIPPort,long nPort);
-
+long GetProtDirLI(long nEType, long nIPPort, long nPort);
 
 void CtlTableSort(int bSort)
 {
-	int rc;
-	int opt = bSort ? 0 :CONTAINER_KEY_UNSORTED;
-	opt |= CONTAINER_KEY_ALLOW_DUPLICATES;
-	CONTAINER_SET_OPTIONS(pHostContainer,opt,rc);
-	CONTAINER_SET_OPTIONS(pHostTimeContainer,opt,rc);
-	CONTAINER_SET_OPTIONS(pMtxSDContainer,opt,rc);
-	CONTAINER_SET_OPTIONS(pMtxDSContainer,opt,rc);
-	CONTAINER_SET_OPTIONS(pProtDistContainer,opt,rc);
-	CONTAINER_SET_OPTIONS(pAddrMapContainer,opt,rc);
-	CONTAINER_SET_OPTIONS(pNlHostContainer,opt,rc);
-	CONTAINER_SET_OPTIONS(pNlMtxSDContainer,opt,rc);
-	CONTAINER_SET_OPTIONS(pNlMtxDSContainer,opt,rc);
-	CONTAINER_SET_OPTIONS(pAlHostContainer,opt,rc);
-	CONTAINER_SET_OPTIONS(pAddrMapMib,opt,rc);
-	CONTAINER_SET_OPTIONS(pNlHostMib,opt,rc);
-	CONTAINER_SET_OPTIONS(pNlMtxSDMib,opt,rc);
-	CONTAINER_SET_OPTIONS(pNlMtxDSMib,opt,rc);
-	CONTAINER_SET_OPTIONS(pAlHostMib,opt,rc);
-	CONTAINER_SET_OPTIONS(pAlMtxSDMib,opt,rc);
-	CONTAINER_SET_OPTIONS(pAlMtxDSMib,opt,rc);
-	return;
+  int rc;
+  int opt = bSort ? 0 : CONTAINER_KEY_UNSORTED;
+  opt |= CONTAINER_KEY_ALLOW_DUPLICATES;
+  CONTAINER_SET_OPTIONS(pHostContainer, opt, rc);
+  CONTAINER_SET_OPTIONS(pHostTimeContainer, opt, rc);
+  CONTAINER_SET_OPTIONS(pMtxSDContainer, opt, rc);
+  CONTAINER_SET_OPTIONS(pMtxDSContainer, opt, rc);
+  CONTAINER_SET_OPTIONS(pProtDistContainer, opt, rc);
+  CONTAINER_SET_OPTIONS(pAddrMapContainer, opt, rc);
+  CONTAINER_SET_OPTIONS(pNlHostContainer, opt, rc);
+  CONTAINER_SET_OPTIONS(pNlMtxSDContainer, opt, rc);
+  CONTAINER_SET_OPTIONS(pNlMtxDSContainer, opt, rc);
+  CONTAINER_SET_OPTIONS(pAlHostContainer, opt, rc);
+  CONTAINER_SET_OPTIONS(pAddrMapMib, opt, rc);
+  CONTAINER_SET_OPTIONS(pNlHostMib, opt, rc);
+  CONTAINER_SET_OPTIONS(pNlMtxSDMib, opt, rc);
+  CONTAINER_SET_OPTIONS(pNlMtxDSMib, opt, rc);
+  CONTAINER_SET_OPTIONS(pAlHostMib, opt, rc);
+  CONTAINER_SET_OPTIONS(pAlMtxSDMib, opt, rc);
+  CONTAINER_SET_OPTIONS(pAlMtxDSMib, opt, rc);
+  return;
 }
 
 /* Timer Callback  Every 1 Second*/
@@ -144,359 +138,365 @@ int nTimerCount = 0;
 
 void TimerCallBack(unsigned int clientreg, void *clientarg)
 {
-	CheckEthHistTable();  //óöóÇÕÅAñàïbÉ`ÉFÉbÉNÇ∑ÇÈÅB
-	CheckAlarm();
-	switch( nTimerCount ){
-	case 1:
-		CheckAddrMapTime();
-		break;
-	case 2:
-		CheckNlHostTime();
-		break;
-	case 3:
-		CheckNlMtxTime();
-		break;
-	case 4:
-		CheckAlHostTime();
-		break;
-	case 5:
-		CheckAlMtxTime();
-		break;
-	case 6:
-		CheckMaxTableSize();
-		break;
-	default:
-		nTimerCount = 0;
-		break;
-	}
-	nTimerCount++;
-	return;
+  CheckEthHistTable(); //ÔøΩÔøΩÔøΩÔøΩÔøΩÕÅAÔøΩÔøΩÔøΩbÔøΩ`ÔøΩFÔøΩbÔøΩNÔøΩÔøΩÔøΩÔøΩB
+  CheckAlarm();
+  switch (nTimerCount)
+  {
+  case 1:
+    CheckAddrMapTime();
+    break;
+  case 2:
+    CheckNlHostTime();
+    break;
+  case 3:
+    CheckNlMtxTime();
+    break;
+  case 4:
+    CheckAlHostTime();
+    break;
+  case 5:
+    CheckAlMtxTime();
+    break;
+  case 6:
+    CheckMaxTableSize();
+    break;
+  default:
+    nTimerCount = 0;
+    break;
+  }
+  nTimerCount++;
+  return;
 }
 
-
-int GetAlarmObjID(oid *pOid,int nLen)
+int GetAlarmObjID(oid *pOid, int nLen)
 {
-    static oid etherStatsTable_oid[] = {1,3,6,1,2,1,16,1,1,1};
-    size_t etherStatsTable_oid_len   = OID_LENGTH(etherStatsTable_oid);
-	int i;
-	int nRet;
-	if( nLen < (int)(etherStatsTable_oid_len+2)) return(-1);
-	for( i = 0;i < (int)etherStatsTable_oid_len;i++ ) {
-		if( pOid[i] != etherStatsTable_oid[i] )return(-1);
-	}
-	
-	nRet = (int)pOid[i++];
-	if( pOid[i] != 1 ) return(-1);
-    switch (nRet) {
-        case COLUMN_ETHERSTATSDROPEVENTS:
-        case COLUMN_ETHERSTATSOCTETS:
-        case COLUMN_ETHERSTATSPKTS:
-        case COLUMN_ETHERSTATSBROADCASTPKTS:
-        case COLUMN_ETHERSTATSMULTICASTPKTS:
-        case COLUMN_ETHERSTATSCRCALIGNERRORS:
-        case COLUMN_ETHERSTATSUNDERSIZEPKTS:
-        case COLUMN_ETHERSTATSOVERSIZEPKTS:
-        case COLUMN_ETHERSTATSFRAGMENTS:
-        case COLUMN_ETHERSTATSJABBERS:
-        case COLUMN_ETHERSTATSCOLLISIONS:
-        case COLUMN_ETHERSTATSPKTS64OCTETS:
-        case COLUMN_ETHERSTATSPKTS65TO127OCTETS:
-        case COLUMN_ETHERSTATSPKTS128TO255OCTETS:
-        case COLUMN_ETHERSTATSPKTS256TO511OCTETS:
-        case COLUMN_ETHERSTATSPKTS512TO1023OCTETS:
-        case COLUMN_ETHERSTATSPKTS1024TO1518OCTETS:
-        	break;
-        default:
-        	return(-1);
-    }
-	return( nRet);
+  static oid etherStatsTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 1, 1, 1};
+  size_t etherStatsTable_oid_len = OID_LENGTH(etherStatsTable_oid);
+  int i;
+  int nRet;
+  if (nLen < (int)(etherStatsTable_oid_len + 2))
+    return (-1);
+  for (i = 0; i < (int)etherStatsTable_oid_len; i++)
+  {
+    if (pOid[i] != etherStatsTable_oid[i])
+      return (-1);
+  }
+
+  nRet = (int)pOid[i++];
+  if (pOid[i] != 1)
+    return (-1);
+  switch (nRet)
+  {
+  case COLUMN_ETHERSTATSDROPEVENTS:
+  case COLUMN_ETHERSTATSOCTETS:
+  case COLUMN_ETHERSTATSPKTS:
+  case COLUMN_ETHERSTATSBROADCASTPKTS:
+  case COLUMN_ETHERSTATSMULTICASTPKTS:
+  case COLUMN_ETHERSTATSCRCALIGNERRORS:
+  case COLUMN_ETHERSTATSUNDERSIZEPKTS:
+  case COLUMN_ETHERSTATSOVERSIZEPKTS:
+  case COLUMN_ETHERSTATSFRAGMENTS:
+  case COLUMN_ETHERSTATSJABBERS:
+  case COLUMN_ETHERSTATSCOLLISIONS:
+  case COLUMN_ETHERSTATSPKTS64OCTETS:
+  case COLUMN_ETHERSTATSPKTS65TO127OCTETS:
+  case COLUMN_ETHERSTATSPKTS128TO255OCTETS:
+  case COLUMN_ETHERSTATSPKTS256TO511OCTETS:
+  case COLUMN_ETHERSTATSPKTS512TO1023OCTETS:
+  case COLUMN_ETHERSTATSPKTS1024TO1518OCTETS:
+    break;
+  default:
+    return (-1);
+  }
+  return (nRet);
 }
 
 /** Initializes the rmonTable module */
-void
-init_rmonTable(void)
+void init_rmonTable(void)
 {
   /* here we initialize all the tables we're planning on supporting */
-    initialize_table_etherStatsTable();
-    initialize_table_etherStats2Table();
-    initialize_table_etherStatsHighCapacityTable();
-    initialize_table_historyControlTable();
-    initialize_table_etherHistoryTable();
-    initialize_table_historyControl2Table();
-    initialize_table_etherHistoryHighCapacityTable();
-    initialize_table_alarmTable();
-    initialize_table_hostControlTable();
-    initialize_table_hostTable();
-    initialize_table_hostTimeTable();
-    initialize_table_hostControl2Table();
-    initialize_table_matrixControlTable();
-    initialize_table_matrixSDTable();
-    initialize_table_matrixDSTable();
-    initialize_table_matrixControl2Table();
-    initialize_table_eventTable();
-    initialize_table_logTable();
-    initialize_table_protocolDirTable();
-    initialize_table_protocolDistControlTable();
-    initialize_table_protocolDistStatsTable();
-    initialize_table_addressMapControlTable();
-    initialize_table_addressMapTable();
-    initialize_table_hlHostControlTable();
-    initialize_table_nlHostTable();
-    initialize_table_hlMatrixControlTable();
-    initialize_table_nlMatrixSDTable();
-    initialize_table_nlMatrixDSTable();
-    initialize_table_alHostTable();
-    initialize_table_alMatrixSDTable();
-    initialize_table_alMatrixDSTable();
-    LoadProtDir();
+  initialize_table_etherStatsTable();
+  initialize_table_etherStats2Table();
+  initialize_table_etherStatsHighCapacityTable();
+  initialize_table_historyControlTable();
+  initialize_table_etherHistoryTable();
+  initialize_table_historyControl2Table();
+  initialize_table_etherHistoryHighCapacityTable();
+  initialize_table_alarmTable();
+  initialize_table_hostControlTable();
+  initialize_table_hostTable();
+  initialize_table_hostTimeTable();
+  initialize_table_hostControl2Table();
+  initialize_table_matrixControlTable();
+  initialize_table_matrixSDTable();
+  initialize_table_matrixDSTable();
+  initialize_table_matrixControl2Table();
+  initialize_table_eventTable();
+  initialize_table_logTable();
+  initialize_table_protocolDirTable();
+  initialize_table_protocolDistControlTable();
+  initialize_table_protocolDistStatsTable();
+  initialize_table_addressMapControlTable();
+  initialize_table_addressMapTable();
+  initialize_table_hlHostControlTable();
+  initialize_table_nlHostTable();
+  initialize_table_hlMatrixControlTable();
+  initialize_table_nlMatrixSDTable();
+  initialize_table_nlMatrixDSTable();
+  initialize_table_alHostTable();
+  initialize_table_alMatrixSDTable();
+  initialize_table_alMatrixDSTable();
+  LoadProtDir();
   /* Register Timer Callback */
-  snmp_alarm_register(1,                /* seconds */
-                        SA_REPEAT,      /* repeat (every 1 seconds). */
-                        TimerCallBack,  /* our callback */
-                        NULL    /* no callback data needed */
-   );
-  
+  snmp_alarm_register(1,             /* seconds */
+                      SA_REPEAT,     /* repeat (every 1 seconds). */
+                      TimerCallBack, /* our callback */
+                      NULL           /* no callback data needed */
+  );
 }
-
-
-
 
 /** Initialize the etherStatsTable table by defining its contents and how it's structured */
-void
-initialize_table_etherStatsTable(void)
+void initialize_table_etherStatsTable(void)
 {
-    static oid etherStatsTable_oid[] = {1,3,6,1,2,1,16,1,1};
-    size_t etherStatsTable_oid_len   = OID_LENGTH(etherStatsTable_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_container               *container;
-    netsnmp_table_registration_info *table_info;
+  static oid etherStatsTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 1, 1};
+  size_t etherStatsTable_oid_len = OID_LENGTH(etherStatsTable_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_container *container;
+  netsnmp_table_registration_info *table_info;
 
-    reg = netsnmp_create_handler_registration(
-              "etherStatsTable",     etherStatsTable_handler,
-              etherStatsTable_oid, etherStatsTable_oid_len,
-              HANDLER_CAN_RWRITE
-              );
+  reg = netsnmp_create_handler_registration(
+      "etherStatsTable", etherStatsTable_handler,
+      etherStatsTable_oid, etherStatsTable_oid_len,
+      HANDLER_CAN_RWRITE);
 
-    container  = netsnmp_container_find( "table_container" );
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: etherStatsIndex */
-                           0);
-    table_info->min_column = COLUMN_ETHERSTATSINDEX;
-    table_info->max_column = COLUMN_ETHERSTATSSTATUS;
-    
-    netsnmp_container_table_register( reg, table_info, container, 0 );
+  container = netsnmp_container_find("table_container");
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER, /* index: etherStatsIndex */
+                                   0);
+  table_info->min_column = COLUMN_ETHERSTATSINDEX;
+  table_info->max_column = COLUMN_ETHERSTATSSTATUS;
 
-    /* Initialise the contents of the table here */
-    InitEthStatEnt(container);
+  netsnmp_container_table_register(reg, table_info, container, 0);
+
+  /* Initialise the contents of the table here */
+  InitEthStatEnt(container);
 }
 
-    /* Typical data structure for a row entry */
-struct etherStatsTable_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct etherStatsTable_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long etherStatsIndex;
+  /* Index values */
+  long etherStatsIndex;
 
-    /* Column values */
-    oid etherStatsDataSource[16];
-    size_t etherStatsDataSource_len;
-    oid old_etherStatsDataSource[16];
-    size_t old_etherStatsDataSource_len;
-    u_long etherStatsDropEvents;
-    u_long etherStatsOctets;
-    u_long etherStatsPkts;
-    u_long etherStatsBroadcastPkts;
-    u_long etherStatsMulticastPkts;
-    u_long etherStatsCRCAlignErrors;
-    u_long etherStatsUndersizePkts;
-    u_long etherStatsOversizePkts;
-    u_long etherStatsFragments;
-    u_long etherStatsJabbers;
-    u_long etherStatsCollisions;
-    u_long etherStatsPkts64Octets;
-    u_long etherStatsPkts65to127Octets;
-    u_long etherStatsPkts128to255Octets;
-    u_long etherStatsPkts256to511Octets;
-    u_long etherStatsPkts512to1023Octets;
-    u_long etherStatsPkts1024to1518Octets;
-    char etherStatsOwner[256];
-    size_t etherStatsOwner_len;
-    char old_etherStatsOwner[256];
-    size_t old_etherStatsOwner_len;
-    long etherStatsStatus;
-    long old_etherStatsStatus;
+  /* Column values */
+  oid etherStatsDataSource[16];
+  size_t etherStatsDataSource_len;
+  oid old_etherStatsDataSource[16];
+  size_t old_etherStatsDataSource_len;
+  u_long etherStatsDropEvents;
+  u_long etherStatsOctets;
+  u_long etherStatsPkts;
+  u_long etherStatsBroadcastPkts;
+  u_long etherStatsMulticastPkts;
+  u_long etherStatsCRCAlignErrors;
+  u_long etherStatsUndersizePkts;
+  u_long etherStatsOversizePkts;
+  u_long etherStatsFragments;
+  u_long etherStatsJabbers;
+  u_long etherStatsCollisions;
+  u_long etherStatsPkts64Octets;
+  u_long etherStatsPkts65to127Octets;
+  u_long etherStatsPkts128to255Octets;
+  u_long etherStatsPkts256to511Octets;
+  u_long etherStatsPkts512to1023Octets;
+  u_long etherStatsPkts1024to1518Octets;
+  char etherStatsOwner[256];
+  size_t etherStatsOwner_len;
+  char old_etherStatsOwner[256];
+  size_t old_etherStatsOwner_len;
+  long etherStatsStatus;
+  long old_etherStatsStatus;
 
-    int   valid;
+  int valid;
 };
 
 /* create a new row in the table */
 struct etherStatsTable_entry *
-etherStatsTable_createEntry(netsnmp_container *container,  long  etherStatsIndex )
+etherStatsTable_createEntry(netsnmp_container *container, long etherStatsIndex)
 {
-    struct etherStatsTable_entry *entry;
+  struct etherStatsTable_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct etherStatsTable_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct etherStatsTable_entry);
+  if (!entry)
+    return NULL;
 
-    entry->etherStatsIndex = etherStatsIndex;
-    entry->oid_index.len  = 1;
-    entry->oid_index.oids = (oid*)&entry->etherStatsIndex;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->etherStatsIndex = etherStatsIndex;
+  entry->oid_index.len = 1;
+  entry->oid_index.oids = (oid *)&entry->etherStatsIndex;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-etherStatsTable_removeEntry(netsnmp_container *container, struct etherStatsTable_entry *entry) 
+void etherStatsTable_removeEntry(netsnmp_container *container, struct etherStatsTable_entry *entry)
 {
-    if (!entry) return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the etherStatsTable table */
-int
-etherStatsTable_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
+int etherStatsTable_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
+{
 
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct etherStatsTable_entry          *table_entry;
-    int                         ret;
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct etherStatsTable_entry *table_entry;
+  int ret;
 
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct etherStatsTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_ETHERSTATSINDEX:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->etherStatsIndex);
-                break;
-            case COLUMN_ETHERSTATSDATASOURCE:
-                snmp_set_var_typed_value( request->requestvb, ASN_OBJECT_ID,
-                                 (u_char*)table_entry->etherStatsDataSource,
-                                          table_entry->etherStatsDataSource_len);
-                break;
-            case COLUMN_ETHERSTATSDROPEVENTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherStatsDropEvents);
-                break;
-            case COLUMN_ETHERSTATSOCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherStatsOctets);
-                break;
-            case COLUMN_ETHERSTATSPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherStatsPkts);
-                break;
-            case COLUMN_ETHERSTATSBROADCASTPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherStatsBroadcastPkts);
-                break;
-            case COLUMN_ETHERSTATSMULTICASTPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherStatsMulticastPkts);
-                break;
-            case COLUMN_ETHERSTATSCRCALIGNERRORS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherStatsCRCAlignErrors);
-                break;
-            case COLUMN_ETHERSTATSUNDERSIZEPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherStatsUndersizePkts);
-                break;
-            case COLUMN_ETHERSTATSOVERSIZEPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherStatsOversizePkts);
-                break;
-            case COLUMN_ETHERSTATSFRAGMENTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherStatsFragments);
-                break;
-            case COLUMN_ETHERSTATSJABBERS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherStatsJabbers);
-                break;
-            case COLUMN_ETHERSTATSCOLLISIONS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherStatsCollisions);
-                break;
-            case COLUMN_ETHERSTATSPKTS64OCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherStatsPkts64Octets);
-                break;
-            case COLUMN_ETHERSTATSPKTS65TO127OCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherStatsPkts65to127Octets);
-                break;
-            case COLUMN_ETHERSTATSPKTS128TO255OCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherStatsPkts128to255Octets);
-                break;
-            case COLUMN_ETHERSTATSPKTS256TO511OCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherStatsPkts256to511Octets);
-                break;
-            case COLUMN_ETHERSTATSPKTS512TO1023OCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherStatsPkts512to1023Octets);
-                break;
-            case COLUMN_ETHERSTATSPKTS1024TO1518OCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherStatsPkts1024to1518Octets);
-                break;
-            case COLUMN_ETHERSTATSOWNER:
-                snmp_set_var_typed_value( request->requestvb, ASN_OCTET_STR,
-                                 (u_char*)table_entry->etherStatsOwner,
-                                          table_entry->etherStatsOwner_len);
-                break;
-            case COLUMN_ETHERSTATSSTATUS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->etherStatsStatus);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct etherStatsTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_ETHERSTATSINDEX:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->etherStatsIndex);
         break;
+      case COLUMN_ETHERSTATSDATASOURCE:
+        snmp_set_var_typed_value(request->requestvb, ASN_OBJECT_ID,
+                                 (u_char *)table_entry->etherStatsDataSource,
+                                 table_entry->etherStatsDataSource_len);
+        break;
+      case COLUMN_ETHERSTATSDROPEVENTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherStatsDropEvents);
+        break;
+      case COLUMN_ETHERSTATSOCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherStatsOctets);
+        break;
+      case COLUMN_ETHERSTATSPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherStatsPkts);
+        break;
+      case COLUMN_ETHERSTATSBROADCASTPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherStatsBroadcastPkts);
+        break;
+      case COLUMN_ETHERSTATSMULTICASTPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherStatsMulticastPkts);
+        break;
+      case COLUMN_ETHERSTATSCRCALIGNERRORS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherStatsCRCAlignErrors);
+        break;
+      case COLUMN_ETHERSTATSUNDERSIZEPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherStatsUndersizePkts);
+        break;
+      case COLUMN_ETHERSTATSOVERSIZEPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherStatsOversizePkts);
+        break;
+      case COLUMN_ETHERSTATSFRAGMENTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherStatsFragments);
+        break;
+      case COLUMN_ETHERSTATSJABBERS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherStatsJabbers);
+        break;
+      case COLUMN_ETHERSTATSCOLLISIONS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherStatsCollisions);
+        break;
+      case COLUMN_ETHERSTATSPKTS64OCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherStatsPkts64Octets);
+        break;
+      case COLUMN_ETHERSTATSPKTS65TO127OCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherStatsPkts65to127Octets);
+        break;
+      case COLUMN_ETHERSTATSPKTS128TO255OCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherStatsPkts128to255Octets);
+        break;
+      case COLUMN_ETHERSTATSPKTS256TO511OCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherStatsPkts256to511Octets);
+        break;
+      case COLUMN_ETHERSTATSPKTS512TO1023OCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherStatsPkts512to1023Octets);
+        break;
+      case COLUMN_ETHERSTATSPKTS1024TO1518OCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherStatsPkts1024to1518Octets);
+        break;
+      case COLUMN_ETHERSTATSOWNER:
+        snmp_set_var_typed_value(request->requestvb, ASN_OCTET_STR,
+                                 (u_char *)table_entry->etherStatsOwner,
+                                 table_entry->etherStatsOwner_len);
+        break;
+      case COLUMN_ETHERSTATSSTATUS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->etherStatsStatus);
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
+    }
+    break;
 
-        /*
-         * Write-support
-         */
-    case MODE_SET_RESERVE1:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct etherStatsTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if(  table_info == NULL ) {
-                netsnmp_set_request_error( reqinfo, request,
-                                           SNMP_ERR_NOTWRITABLE );
-                continue;
-			}
- 
-            switch (table_info->colnum) {
-            case COLUMN_ETHERSTATSDATASOURCE:
+    /*
+     * Write-support
+     */
+  case MODE_SET_RESERVE1:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct etherStatsTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_info == NULL)
+      {
+        netsnmp_set_request_error(reqinfo, request,
+                                  SNMP_ERR_NOTWRITABLE);
+        continue;
+      }
+
+      switch (table_info->colnum)
+      {
+      case COLUMN_ETHERSTATSDATASOURCE:
 #if 0            
                 /* or possibly 'netsnmp_check_vb_type_and_max_size' */
                 ret = netsnmp_check_vb_type_and_size(
@@ -524,662 +524,691 @@ etherStatsTable_handler(
                 }
                 break;
 #endif
-            default:
-                netsnmp_set_request_error( reqinfo, request,
-                                           SNMP_ERR_NOTWRITABLE );
-                return SNMP_ERR_NOERROR;
-            }
-        }
-        break;
-
-    case MODE_SET_RESERVE2:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct etherStatsTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if(  container== NULL || table_info == NULL ) {
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_ETHERSTATSDATASOURCE:
-            case COLUMN_ETHERSTATSOWNER:
-            case COLUMN_ETHERSTATSSTATUS:
-                if ( !table_entry ) {
-                    table_entry = etherStatsTable_createEntry(container
-                        , *table_info->indexes->val.integer
-                        );
-                    if (table_entry) {
-                        netsnmp_container_table_row_insert( request, (netsnmp_index*)table_entry );
-                    } else {
-                        netsnmp_set_request_error( reqinfo, request,
-                                                   SNMP_ERR_RESOURCEUNAVAILABLE );
-                        return SNMP_ERR_NOERROR;
-                    }
-                }
-                break;
-            }
-        }
-        break;
-
-    case MODE_SET_FREE:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct etherStatsTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( container == NULL || table_entry == NULL || table_info == NULL ) {
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_ETHERSTATSDATASOURCE:
-            case COLUMN_ETHERSTATSOWNER:
-            case COLUMN_ETHERSTATSSTATUS:
-                if ( table_entry && !table_entry->valid ) {
-                    etherStatsTable_removeEntry(container, table_entry );
-                }
-                break;
-            }
-        }
-        break;
-
-    case MODE_SET_ACTION:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct etherStatsTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_ETHERSTATSDATASOURCE:
-                memcpy( table_entry->old_etherStatsDataSource,
-                        table_entry->etherStatsDataSource,
-                        sizeof(table_entry->etherStatsDataSource));
-                table_entry->old_etherStatsDataSource_len =
-                        table_entry->etherStatsDataSource_len;
-                memset( table_entry->etherStatsDataSource, 0,
-                        sizeof(table_entry->etherStatsDataSource));
-                memcpy( table_entry->etherStatsDataSource,
-                        request->requestvb->val.string,
-                        request->requestvb->val_len);
-                table_entry->etherStatsDataSource_len =
-                        request->requestvb->val_len;
-                break;
-            case COLUMN_ETHERSTATSOWNER:
-                memcpy( table_entry->old_etherStatsOwner,
-                        table_entry->etherStatsOwner,
-                        sizeof(table_entry->etherStatsOwner));
-                table_entry->old_etherStatsOwner_len =
-                        table_entry->etherStatsOwner_len;
-                memset( table_entry->etherStatsOwner, 0,
-                        sizeof(table_entry->etherStatsOwner));
-                memcpy( table_entry->etherStatsOwner,
-                        request->requestvb->val.string,
-                        request->requestvb->val_len);
-                table_entry->etherStatsOwner_len =
-                        request->requestvb->val_len;
-                break;
-            case COLUMN_ETHERSTATSSTATUS:
-                table_entry->old_etherStatsStatus = table_entry->etherStatsStatus;
-                table_entry->etherStatsStatus     = *request->requestvb->val.integer;
-                break;
-            }
-        }
-        break;
-
-    case MODE_SET_UNDO:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct etherStatsTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_ETHERSTATSDATASOURCE:
-                if ( table_entry && !table_entry->valid ) {
-                    etherStatsTable_removeEntry(container, table_entry );
-                } else {
-                    memcpy( table_entry->etherStatsDataSource,
-                            table_entry->old_etherStatsDataSource,
-                            sizeof(table_entry->etherStatsDataSource));
-                    memset( table_entry->old_etherStatsDataSource, 0,
-                            sizeof(table_entry->etherStatsDataSource));
-                    table_entry->etherStatsDataSource_len =
-                            table_entry->old_etherStatsDataSource_len;
-                }
-                break;
-            case COLUMN_ETHERSTATSOWNER:
-                if ( table_entry && !table_entry->valid ) {
-                    etherStatsTable_removeEntry(container, table_entry );
-                } else {
-                    memcpy( table_entry->etherStatsOwner,
-                            table_entry->old_etherStatsOwner,
-                            sizeof(table_entry->etherStatsOwner));
-                    memset( table_entry->old_etherStatsOwner, 0,
-                            sizeof(table_entry->etherStatsOwner));
-                    table_entry->etherStatsOwner_len =
-                            table_entry->old_etherStatsOwner_len;
-                }
-                break;
-            case COLUMN_ETHERSTATSSTATUS:
-                if ( table_entry && !table_entry->valid ) {
-                    etherStatsTable_removeEntry(container, table_entry );
-                } else {
-                    table_entry->etherStatsStatus     = table_entry->old_etherStatsStatus;
-                    table_entry->old_etherStatsStatus = 0;
-                }
-                break;
-            }
-        }
-        break;
-
-    case MODE_SET_COMMIT:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct etherStatsTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_ETHERSTATSDATASOURCE:
-            case COLUMN_ETHERSTATSOWNER:
-            case COLUMN_ETHERSTATSSTATUS:
-                if ( table_entry && !table_entry->valid ) {
-                    table_entry->valid = 1;
-                }
-            }
-        }
-        break;
+      default:
+        netsnmp_set_request_error(reqinfo, request,
+                                  SNMP_ERR_NOTWRITABLE);
+        return SNMP_ERR_NOERROR;
+      }
     }
-    return SNMP_ERR_NOERROR;
+    break;
+
+  case MODE_SET_RESERVE2:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct etherStatsTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (container == NULL || table_info == NULL)
+      {
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_ETHERSTATSDATASOURCE:
+      case COLUMN_ETHERSTATSOWNER:
+      case COLUMN_ETHERSTATSSTATUS:
+        if (!table_entry)
+        {
+          table_entry = etherStatsTable_createEntry(container, *table_info->indexes->val.integer);
+          if (table_entry)
+          {
+            netsnmp_container_table_row_insert(request, (netsnmp_index *)table_entry);
+          }
+          else
+          {
+            netsnmp_set_request_error(reqinfo, request,
+                                      SNMP_ERR_RESOURCEUNAVAILABLE);
+            return SNMP_ERR_NOERROR;
+          }
+        }
+        break;
+      }
+    }
+    break;
+
+  case MODE_SET_FREE:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct etherStatsTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (container == NULL || table_entry == NULL || table_info == NULL)
+      {
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_ETHERSTATSDATASOURCE:
+      case COLUMN_ETHERSTATSOWNER:
+      case COLUMN_ETHERSTATSSTATUS:
+        if (table_entry && !table_entry->valid)
+        {
+          etherStatsTable_removeEntry(container, table_entry);
+        }
+        break;
+      }
+    }
+    break;
+
+  case MODE_SET_ACTION:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct etherStatsTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_ETHERSTATSDATASOURCE:
+        memcpy(table_entry->old_etherStatsDataSource,
+               table_entry->etherStatsDataSource,
+               sizeof(table_entry->etherStatsDataSource));
+        table_entry->old_etherStatsDataSource_len =
+            table_entry->etherStatsDataSource_len;
+        memset(table_entry->etherStatsDataSource, 0,
+               sizeof(table_entry->etherStatsDataSource));
+        memcpy(table_entry->etherStatsDataSource,
+               request->requestvb->val.string,
+               request->requestvb->val_len);
+        table_entry->etherStatsDataSource_len =
+            request->requestvb->val_len;
+        break;
+      case COLUMN_ETHERSTATSOWNER:
+        memcpy(table_entry->old_etherStatsOwner,
+               table_entry->etherStatsOwner,
+               sizeof(table_entry->etherStatsOwner));
+        table_entry->old_etherStatsOwner_len =
+            table_entry->etherStatsOwner_len;
+        memset(table_entry->etherStatsOwner, 0,
+               sizeof(table_entry->etherStatsOwner));
+        memcpy(table_entry->etherStatsOwner,
+               request->requestvb->val.string,
+               request->requestvb->val_len);
+        table_entry->etherStatsOwner_len =
+            request->requestvb->val_len;
+        break;
+      case COLUMN_ETHERSTATSSTATUS:
+        table_entry->old_etherStatsStatus = table_entry->etherStatsStatus;
+        table_entry->etherStatsStatus = *request->requestvb->val.integer;
+        break;
+      }
+    }
+    break;
+
+  case MODE_SET_UNDO:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct etherStatsTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_ETHERSTATSDATASOURCE:
+        if (table_entry && !table_entry->valid)
+        {
+          etherStatsTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          memcpy(table_entry->etherStatsDataSource,
+                 table_entry->old_etherStatsDataSource,
+                 sizeof(table_entry->etherStatsDataSource));
+          memset(table_entry->old_etherStatsDataSource, 0,
+                 sizeof(table_entry->etherStatsDataSource));
+          table_entry->etherStatsDataSource_len =
+              table_entry->old_etherStatsDataSource_len;
+        }
+        break;
+      case COLUMN_ETHERSTATSOWNER:
+        if (table_entry && !table_entry->valid)
+        {
+          etherStatsTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          memcpy(table_entry->etherStatsOwner,
+                 table_entry->old_etherStatsOwner,
+                 sizeof(table_entry->etherStatsOwner));
+          memset(table_entry->old_etherStatsOwner, 0,
+                 sizeof(table_entry->etherStatsOwner));
+          table_entry->etherStatsOwner_len =
+              table_entry->old_etherStatsOwner_len;
+        }
+        break;
+      case COLUMN_ETHERSTATSSTATUS:
+        if (table_entry && !table_entry->valid)
+        {
+          etherStatsTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          table_entry->etherStatsStatus = table_entry->old_etherStatsStatus;
+          table_entry->old_etherStatsStatus = 0;
+        }
+        break;
+      }
+    }
+    break;
+
+  case MODE_SET_COMMIT:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct etherStatsTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_ETHERSTATSDATASOURCE:
+      case COLUMN_ETHERSTATSOWNER:
+      case COLUMN_ETHERSTATSSTATUS:
+        if (table_entry && !table_entry->valid)
+        {
+          table_entry->valid = 1;
+        }
+      }
+    }
+    break;
+  }
+  return SNMP_ERR_NOERROR;
 }
-
-
 
 /** Initialize the etherStats2Table table by defining its contents and how it's structured */
-void
-initialize_table_etherStats2Table(void)
+void initialize_table_etherStats2Table(void)
 {
-    static oid etherStats2Table_oid[] = {1,3,6,1,2,1,16,1,4};
-    size_t etherStats2Table_oid_len   = OID_LENGTH(etherStats2Table_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_container               *container;
-    netsnmp_table_registration_info *table_info;
+  static oid etherStats2Table_oid[] = {1, 3, 6, 1, 2, 1, 16, 1, 4};
+  size_t etherStats2Table_oid_len = OID_LENGTH(etherStats2Table_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_container *container;
+  netsnmp_table_registration_info *table_info;
 
-    reg = netsnmp_create_handler_registration(
-              "etherStats2Table",     etherStats2Table_handler,
-              etherStats2Table_oid, etherStats2Table_oid_len,
-              HANDLER_CAN_RONLY
-              );
+  reg = netsnmp_create_handler_registration(
+      "etherStats2Table", etherStats2Table_handler,
+      etherStats2Table_oid, etherStats2Table_oid_len,
+      HANDLER_CAN_RONLY);
 
-    container  = netsnmp_container_find( "table_container" );
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: etherStatsIndex */
-                           0);
-    table_info->min_column = COLUMN_ETHERSTATSDROPPEDFRAMES;
-    table_info->max_column = COLUMN_ETHERSTATSCREATETIME;
-    
-    netsnmp_container_table_register( reg, table_info, container, 0 );
+  container = netsnmp_container_find("table_container");
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER, /* index: etherStatsIndex */
+                                   0);
+  table_info->min_column = COLUMN_ETHERSTATSDROPPEDFRAMES;
+  table_info->max_column = COLUMN_ETHERSTATSCREATETIME;
 
-    /* Initialise the contents of the table here */
-    InitEthStat2Ent(container);
-    
+  netsnmp_container_table_register(reg, table_info, container, 0);
+
+  /* Initialise the contents of the table here */
+  InitEthStat2Ent(container);
 }
 
-    /* Typical data structure for a row entry */
-struct etherStats2Table_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct etherStats2Table_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long etherStatsIndex;
+  /* Index values */
+  long etherStatsIndex;
 
-    /* Column values */
-    u_long etherStatsDroppedFrames;
-    u_long etherStatsCreateTime;
+  /* Column values */
+  u_long etherStatsDroppedFrames;
+  u_long etherStatsCreateTime;
 
-    int   valid;
+  int valid;
 };
 
 /* create a new row in the table */
 struct etherStats2Table_entry *
-etherStats2Table_createEntry(netsnmp_container *container
-                 , long  etherStatsIndex
-                ) {
-    struct etherStats2Table_entry *entry;
+etherStats2Table_createEntry(netsnmp_container *container, long etherStatsIndex)
+{
+  struct etherStats2Table_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct etherStats2Table_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct etherStats2Table_entry);
+  if (!entry)
+    return NULL;
 
-    entry->etherStatsIndex = etherStatsIndex;
-    entry->oid_index.len  = 1;
-    entry->oid_index.oids = (oid*) &entry->etherStatsIndex;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->etherStatsIndex = etherStatsIndex;
+  entry->oid_index.len = 1;
+  entry->oid_index.oids = (oid *)&entry->etherStatsIndex;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-etherStats2Table_removeEntry(netsnmp_container *container, 
-                 struct etherStats2Table_entry *entry) {
+void etherStats2Table_removeEntry(netsnmp_container *container,
+                                  struct etherStats2Table_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the etherStats2Table table */
-int
-etherStats2Table_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
+int etherStats2Table_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
+{
 
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct etherStats2Table_entry          *table_entry;
-    int                         ret;
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct etherStats2Table_entry *table_entry;
+  int ret;
 
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct etherStats2Table_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_ETHERSTATSDROPPEDFRAMES:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherStatsDroppedFrames);
-                break;
-            case COLUMN_ETHERSTATSCREATETIME:
-                snmp_set_var_typed_integer( request->requestvb, ASN_TIMETICKS,
-                                            table_entry->etherStatsCreateTime);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct etherStats2Table_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_ETHERSTATSDROPPEDFRAMES:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherStatsDroppedFrames);
         break;
-
+      case COLUMN_ETHERSTATSCREATETIME:
+        snmp_set_var_typed_integer(request->requestvb, ASN_TIMETICKS,
+                                   table_entry->etherStatsCreateTime);
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
     }
-    return SNMP_ERR_NOERROR;
+    break;
+  }
+  return SNMP_ERR_NOERROR;
 }
-
 
 /** Initialize the etherStatsHighCapacityTable table by defining its contents and how it's structured */
-void
-initialize_table_etherStatsHighCapacityTable(void)
+void initialize_table_etherStatsHighCapacityTable(void)
 {
-    static oid etherStatsHighCapacityTable_oid[] = {1,3,6,1,2,1,16,1,7};
-    size_t etherStatsHighCapacityTable_oid_len   = OID_LENGTH(etherStatsHighCapacityTable_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_container               *container;
-    netsnmp_table_registration_info *table_info;
+  static oid etherStatsHighCapacityTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 1, 7};
+  size_t etherStatsHighCapacityTable_oid_len = OID_LENGTH(etherStatsHighCapacityTable_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_container *container;
+  netsnmp_table_registration_info *table_info;
 
-    reg = netsnmp_create_handler_registration(
-              "etherStatsHighCapacityTable",     etherStatsHighCapacityTable_handler,
-              etherStatsHighCapacityTable_oid, etherStatsHighCapacityTable_oid_len,
-              HANDLER_CAN_RONLY
-              );
+  reg = netsnmp_create_handler_registration(
+      "etherStatsHighCapacityTable", etherStatsHighCapacityTable_handler,
+      etherStatsHighCapacityTable_oid, etherStatsHighCapacityTable_oid_len,
+      HANDLER_CAN_RONLY);
 
-    container  = netsnmp_container_find( "table_container" );
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: etherStatsIndex */
-                           0);
-    table_info->min_column = COLUMN_ETHERSTATSHIGHCAPACITYOVERFLOWPKTS;
-    table_info->max_column = COLUMN_ETHERSTATSHIGHCAPACITYPKTS1024TO1518OCTETS;
-    
-    netsnmp_container_table_register( reg, table_info, container, 0 );
+  container = netsnmp_container_find("table_container");
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER, /* index: etherStatsIndex */
+                                   0);
+  table_info->min_column = COLUMN_ETHERSTATSHIGHCAPACITYOVERFLOWPKTS;
+  table_info->max_column = COLUMN_ETHERSTATSHIGHCAPACITYPKTS1024TO1518OCTETS;
 
-    /* Initialise the contents of the table here */
-    InitEthStatHCEnt(container);
-    
+  netsnmp_container_table_register(reg, table_info, container, 0);
+
+  /* Initialise the contents of the table here */
+  InitEthStatHCEnt(container);
 }
 
-    /* Typical data structure for a row entry */
-struct etherStatsHighCapacityTable_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct etherStatsHighCapacityTable_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long etherStatsIndex;
+  /* Index values */
+  long etherStatsIndex;
 
-    /* Column values */
-//    u_long etherStatsHighCapacityOverflowPkts;
-    U64 etherStatsHighCapacityPkts;
-//    u_long etherStatsHighCapacityOverflowOctets;
-    U64 etherStatsHighCapacityOctets;
-//    u_long etherStatsHighCapacityOverflowPkts64Octets;
-    U64 etherStatsHighCapacityPkts64Octets;
-//    u_long etherStatsHighCapacityOverflowPkts65to127Octets;
-    U64 etherStatsHighCapacityPkts65to127Octets;
-//    u_long etherStatsHighCapacityOverflowPkts128to255Octets;
-    U64 etherStatsHighCapacityPkts128to255Octets;
-//    u_long etherStatsHighCapacityOverflowPkts256to511Octets;
-    U64 etherStatsHighCapacityPkts256to511Octets;
-//    u_long etherStatsHighCapacityOverflowPkts512to1023Octets;
-    U64 etherStatsHighCapacityPkts512to1023Octets;
-//    u_long etherStatsHighCapacityOverflowPkts1024to1518Octets;
-    U64 etherStatsHighCapacityPkts1024to1518Octets;
+  /* Column values */
+  //    u_long etherStatsHighCapacityOverflowPkts;
+  U64 etherStatsHighCapacityPkts;
+  //    u_long etherStatsHighCapacityOverflowOctets;
+  U64 etherStatsHighCapacityOctets;
+  //    u_long etherStatsHighCapacityOverflowPkts64Octets;
+  U64 etherStatsHighCapacityPkts64Octets;
+  //    u_long etherStatsHighCapacityOverflowPkts65to127Octets;
+  U64 etherStatsHighCapacityPkts65to127Octets;
+  //    u_long etherStatsHighCapacityOverflowPkts128to255Octets;
+  U64 etherStatsHighCapacityPkts128to255Octets;
+  //    u_long etherStatsHighCapacityOverflowPkts256to511Octets;
+  U64 etherStatsHighCapacityPkts256to511Octets;
+  //    u_long etherStatsHighCapacityOverflowPkts512to1023Octets;
+  U64 etherStatsHighCapacityPkts512to1023Octets;
+  //    u_long etherStatsHighCapacityOverflowPkts1024to1518Octets;
+  U64 etherStatsHighCapacityPkts1024to1518Octets;
 
-    int   valid;
+  int valid;
 };
 
 /* create a new row in the table */
 struct etherStatsHighCapacityTable_entry *
-etherStatsHighCapacityTable_createEntry(netsnmp_container *container
-                 , long  etherStatsIndex
-                ) {
-    struct etherStatsHighCapacityTable_entry *entry;
+etherStatsHighCapacityTable_createEntry(netsnmp_container *container, long etherStatsIndex)
+{
+  struct etherStatsHighCapacityTable_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct etherStatsHighCapacityTable_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct etherStatsHighCapacityTable_entry);
+  if (!entry)
+    return NULL;
 
-    entry->etherStatsIndex = etherStatsIndex;
-    entry->oid_index.len  = 1;
-    entry->oid_index.oids = (oid*)&entry->etherStatsIndex;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->etherStatsIndex = etherStatsIndex;
+  entry->oid_index.len = 1;
+  entry->oid_index.oids = (oid *)&entry->etherStatsIndex;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-etherStatsHighCapacityTable_removeEntry(netsnmp_container *container, 
-                 struct etherStatsHighCapacityTable_entry *entry) {
+void etherStatsHighCapacityTable_removeEntry(netsnmp_container *container,
+                                             struct etherStatsHighCapacityTable_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the etherStatsHighCapacityTable table */
-int
-etherStatsHighCapacityTable_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
+int etherStatsHighCapacityTable_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
+{
 
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct etherStatsHighCapacityTable_entry          *table_entry;
-    int                         ret;
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct etherStatsHighCapacityTable_entry *table_entry;
+  int ret;
 
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct etherStatsHighCapacityTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_ETHERSTATSHIGHCAPACITYOVERFLOWPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherStatsHighCapacityPkts.high);
-                break;
-            case COLUMN_ETHERSTATSHIGHCAPACITYPKTS:
-                snmp_set_var_typed_value( request->requestvb, ASN_COUNTER64,(char*)&table_entry->etherStatsHighCapacityPkts,sizeof(U64));
-                break;
-            case COLUMN_ETHERSTATSHIGHCAPACITYOVERFLOWOCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER, table_entry->etherStatsHighCapacityOctets.high);
-                break;
-            case COLUMN_ETHERSTATSHIGHCAPACITYOCTETS:
-                snmp_set_var_typed_value( request->requestvb, ASN_COUNTER64,(char*)&table_entry->etherStatsHighCapacityOctets,sizeof(U64));
-                break;
-            case COLUMN_ETHERSTATSHIGHCAPACITYOVERFLOWPKTS64OCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,table_entry->etherStatsHighCapacityPkts64Octets.high);
-                break;
-            case COLUMN_ETHERSTATSHIGHCAPACITYPKTS64OCTETS:
-                snmp_set_var_typed_value( request->requestvb, ASN_COUNTER64,(char*)&table_entry->etherStatsHighCapacityPkts64Octets,sizeof(U64));
-                break;
-            case COLUMN_ETHERSTATSHIGHCAPACITYOVERFLOWPKTS65TO127OCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherStatsHighCapacityPkts65to127Octets.high);
-                break;
-            case COLUMN_ETHERSTATSHIGHCAPACITYPKTS65TO127OCTETS:
-                snmp_set_var_typed_value( request->requestvb, ASN_COUNTER64,(char*)&table_entry->etherStatsHighCapacityPkts65to127Octets,sizeof(U64));
-                break;
-            case COLUMN_ETHERSTATSHIGHCAPACITYOVERFLOWPKTS128TO255OCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherStatsHighCapacityPkts128to255Octets.high);
-                break;
-            case COLUMN_ETHERSTATSHIGHCAPACITYPKTS128TO255OCTETS:
-                snmp_set_var_typed_value( request->requestvb, ASN_COUNTER64,(char*)&table_entry->etherStatsHighCapacityPkts128to255Octets,sizeof(U64));
-                break;
-            case COLUMN_ETHERSTATSHIGHCAPACITYOVERFLOWPKTS256TO511OCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherStatsHighCapacityPkts256to511Octets.high);
-                break;
-            case COLUMN_ETHERSTATSHIGHCAPACITYPKTS256TO511OCTETS:
-                snmp_set_var_typed_value( request->requestvb, ASN_COUNTER64,(char*)&table_entry->etherStatsHighCapacityPkts256to511Octets,sizeof(U64));
-                break;
-            case COLUMN_ETHERSTATSHIGHCAPACITYOVERFLOWPKTS512TO1023OCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherStatsHighCapacityPkts512to1023Octets.high);
-                break;
-            case COLUMN_ETHERSTATSHIGHCAPACITYPKTS512TO1023OCTETS:
-                snmp_set_var_typed_value( request->requestvb, ASN_COUNTER64,(char*)&table_entry->etherStatsHighCapacityPkts512to1023Octets,sizeof(U64));
-                break;
-            case COLUMN_ETHERSTATSHIGHCAPACITYOVERFLOWPKTS1024TO1518OCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherStatsHighCapacityPkts1024to1518Octets.high);
-                break;
-            case COLUMN_ETHERSTATSHIGHCAPACITYPKTS1024TO1518OCTETS:
-                snmp_set_var_typed_value( request->requestvb, ASN_COUNTER64,(char*)&table_entry->etherStatsHighCapacityPkts1024to1518Octets,sizeof(U64));
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct etherStatsHighCapacityTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_ETHERSTATSHIGHCAPACITYOVERFLOWPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherStatsHighCapacityPkts.high);
         break;
-
+      case COLUMN_ETHERSTATSHIGHCAPACITYPKTS:
+        snmp_set_var_typed_value(request->requestvb, ASN_COUNTER64, (char *)&table_entry->etherStatsHighCapacityPkts, sizeof(U64));
+        break;
+      case COLUMN_ETHERSTATSHIGHCAPACITYOVERFLOWOCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER, table_entry->etherStatsHighCapacityOctets.high);
+        break;
+      case COLUMN_ETHERSTATSHIGHCAPACITYOCTETS:
+        snmp_set_var_typed_value(request->requestvb, ASN_COUNTER64, (char *)&table_entry->etherStatsHighCapacityOctets, sizeof(U64));
+        break;
+      case COLUMN_ETHERSTATSHIGHCAPACITYOVERFLOWPKTS64OCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER, table_entry->etherStatsHighCapacityPkts64Octets.high);
+        break;
+      case COLUMN_ETHERSTATSHIGHCAPACITYPKTS64OCTETS:
+        snmp_set_var_typed_value(request->requestvb, ASN_COUNTER64, (char *)&table_entry->etherStatsHighCapacityPkts64Octets, sizeof(U64));
+        break;
+      case COLUMN_ETHERSTATSHIGHCAPACITYOVERFLOWPKTS65TO127OCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherStatsHighCapacityPkts65to127Octets.high);
+        break;
+      case COLUMN_ETHERSTATSHIGHCAPACITYPKTS65TO127OCTETS:
+        snmp_set_var_typed_value(request->requestvb, ASN_COUNTER64, (char *)&table_entry->etherStatsHighCapacityPkts65to127Octets, sizeof(U64));
+        break;
+      case COLUMN_ETHERSTATSHIGHCAPACITYOVERFLOWPKTS128TO255OCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherStatsHighCapacityPkts128to255Octets.high);
+        break;
+      case COLUMN_ETHERSTATSHIGHCAPACITYPKTS128TO255OCTETS:
+        snmp_set_var_typed_value(request->requestvb, ASN_COUNTER64, (char *)&table_entry->etherStatsHighCapacityPkts128to255Octets, sizeof(U64));
+        break;
+      case COLUMN_ETHERSTATSHIGHCAPACITYOVERFLOWPKTS256TO511OCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherStatsHighCapacityPkts256to511Octets.high);
+        break;
+      case COLUMN_ETHERSTATSHIGHCAPACITYPKTS256TO511OCTETS:
+        snmp_set_var_typed_value(request->requestvb, ASN_COUNTER64, (char *)&table_entry->etherStatsHighCapacityPkts256to511Octets, sizeof(U64));
+        break;
+      case COLUMN_ETHERSTATSHIGHCAPACITYOVERFLOWPKTS512TO1023OCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherStatsHighCapacityPkts512to1023Octets.high);
+        break;
+      case COLUMN_ETHERSTATSHIGHCAPACITYPKTS512TO1023OCTETS:
+        snmp_set_var_typed_value(request->requestvb, ASN_COUNTER64, (char *)&table_entry->etherStatsHighCapacityPkts512to1023Octets, sizeof(U64));
+        break;
+      case COLUMN_ETHERSTATSHIGHCAPACITYOVERFLOWPKTS1024TO1518OCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherStatsHighCapacityPkts1024to1518Octets.high);
+        break;
+      case COLUMN_ETHERSTATSHIGHCAPACITYPKTS1024TO1518OCTETS:
+        snmp_set_var_typed_value(request->requestvb, ASN_COUNTER64, (char *)&table_entry->etherStatsHighCapacityPkts1024to1518Octets, sizeof(U64));
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
     }
-    return SNMP_ERR_NOERROR;
+    break;
+  }
+  return SNMP_ERR_NOERROR;
 }
-
-
-
 
 /** Initialize the historyControlTable table by defining its contents and how it's structured */
-void
-initialize_table_historyControlTable(void)
+void initialize_table_historyControlTable(void)
 {
-    static oid historyControlTable_oid[] = {1,3,6,1,2,1,16,2,1};
-    size_t historyControlTable_oid_len   = OID_LENGTH(historyControlTable_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_container               *container;
-    netsnmp_table_registration_info *table_info;
+  static oid historyControlTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 2, 1};
+  size_t historyControlTable_oid_len = OID_LENGTH(historyControlTable_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_container *container;
+  netsnmp_table_registration_info *table_info;
 
-    reg = netsnmp_create_handler_registration(
-              "historyControlTable",     historyControlTable_handler,
-              historyControlTable_oid, historyControlTable_oid_len,
-              HANDLER_CAN_RWRITE
-              );
+  reg = netsnmp_create_handler_registration(
+      "historyControlTable", historyControlTable_handler,
+      historyControlTable_oid, historyControlTable_oid_len,
+      HANDLER_CAN_RWRITE);
 
-    container  = netsnmp_container_find( "table_container" );
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: historyControlIndex */
-                           0);
-    table_info->min_column = COLUMN_HISTORYCONTROLINDEX;
-    table_info->max_column = COLUMN_HISTORYCONTROLSTATUS;
-    
-    netsnmp_container_table_register( reg, table_info, container, 0 );
+  container = netsnmp_container_find("table_container");
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER, /* index: historyControlIndex */
+                                   0);
+  table_info->min_column = COLUMN_HISTORYCONTROLINDEX;
+  table_info->max_column = COLUMN_HISTORYCONTROLSTATUS;
 
-    /* Initialise the contents of the table here */
-    InitEthHistContEnt(container);
+  netsnmp_container_table_register(reg, table_info, container, 0);
 
+  /* Initialise the contents of the table here */
+  InitEthHistContEnt(container);
 }
 
-    /* Typical data structure for a row entry */
-struct historyControlTable_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct historyControlTable_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long historyControlIndex;
+  /* Index values */
+  long historyControlIndex;
 
-    /* Column values */
-    oid historyControlDataSource[16];
-    size_t historyControlDataSource_len;
-    oid old_historyControlDataSource[16];
-    size_t old_historyControlDataSource_len;
-    long historyControlBucketsRequested;
-    long old_historyControlBucketsRequested;
-    long historyControlBucketsGranted;
-    long historyControlInterval;
-    long old_historyControlInterval;
-    char historyControlOwner[256];
-    size_t historyControlOwner_len;
-    char old_historyControlOwner[256];
-    size_t old_historyControlOwner_len;
-    long historyControlStatus;
-    long old_historyControlStatus;
+  /* Column values */
+  oid historyControlDataSource[16];
+  size_t historyControlDataSource_len;
+  oid old_historyControlDataSource[16];
+  size_t old_historyControlDataSource_len;
+  long historyControlBucketsRequested;
+  long old_historyControlBucketsRequested;
+  long historyControlBucketsGranted;
+  long historyControlInterval;
+  long old_historyControlInterval;
+  char historyControlOwner[256];
+  size_t historyControlOwner_len;
+  char old_historyControlOwner[256];
+  size_t old_historyControlOwner_len;
+  long historyControlStatus;
+  long old_historyControlStatus;
 
-    int   valid;
+  int valid;
 };
 
 /* create a new row in the table */
 struct historyControlTable_entry *
-historyControlTable_createEntry(netsnmp_container *container, long  historyControlIndex)
+historyControlTable_createEntry(netsnmp_container *container, long historyControlIndex)
 {
-    struct historyControlTable_entry *entry;
+  struct historyControlTable_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct historyControlTable_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct historyControlTable_entry);
+  if (!entry)
+    return NULL;
 
-    entry->historyControlIndex = historyControlIndex;
-    entry->oid_index.len  = 1;
-    entry->oid_index.oids = (oid*)&entry->historyControlIndex;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->historyControlIndex = historyControlIndex;
+  entry->oid_index.len = 1;
+  entry->oid_index.oids = (oid *)&entry->historyControlIndex;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void historyControlTable_removeEntry(netsnmp_container *container,struct historyControlTable_entry *entry) {
+void historyControlTable_removeEntry(netsnmp_container *container, struct historyControlTable_entry *entry)
+{
 
-    if (!entry)     return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the historyControlTable table */
-int
-historyControlTable_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
+int historyControlTable_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
+{
 
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct historyControlTable_entry          *table_entry;
-    int                         ret;
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct historyControlTable_entry *table_entry;
+  int ret;
 
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct historyControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_HISTORYCONTROLINDEX:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->historyControlIndex);
-                break;
-            case COLUMN_HISTORYCONTROLDATASOURCE:
-                snmp_set_var_typed_value( request->requestvb, ASN_OBJECT_ID,
-                                 (u_char*)table_entry->historyControlDataSource,
-                                          table_entry->historyControlDataSource_len);
-                break;
-            case COLUMN_HISTORYCONTROLBUCKETSREQUESTED:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->historyControlBucketsRequested);
-                break;
-            case COLUMN_HISTORYCONTROLBUCKETSGRANTED:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->historyControlBucketsGranted);
-                break;
-            case COLUMN_HISTORYCONTROLINTERVAL:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->historyControlInterval);
-                break;
-            case COLUMN_HISTORYCONTROLOWNER:
-                snmp_set_var_typed_value( request->requestvb, ASN_OCTET_STR,
-                                 (u_char*)table_entry->historyControlOwner,
-                                          table_entry->historyControlOwner_len);
-                break;
-            case COLUMN_HISTORYCONTROLSTATUS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->historyControlStatus);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct historyControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_HISTORYCONTROLINDEX:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->historyControlIndex);
         break;
+      case COLUMN_HISTORYCONTROLDATASOURCE:
+        snmp_set_var_typed_value(request->requestvb, ASN_OBJECT_ID,
+                                 (u_char *)table_entry->historyControlDataSource,
+                                 table_entry->historyControlDataSource_len);
+        break;
+      case COLUMN_HISTORYCONTROLBUCKETSREQUESTED:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->historyControlBucketsRequested);
+        break;
+      case COLUMN_HISTORYCONTROLBUCKETSGRANTED:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->historyControlBucketsGranted);
+        break;
+      case COLUMN_HISTORYCONTROLINTERVAL:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->historyControlInterval);
+        break;
+      case COLUMN_HISTORYCONTROLOWNER:
+        snmp_set_var_typed_value(request->requestvb, ASN_OCTET_STR,
+                                 (u_char *)table_entry->historyControlOwner,
+                                 table_entry->historyControlOwner_len);
+        break;
+      case COLUMN_HISTORYCONTROLSTATUS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->historyControlStatus);
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
+    }
+    break;
 
-        /*
-         * Write-support
-         */
-    case MODE_SET_RESERVE1:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct historyControlTable_entry *)   netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if(  table_entry == NULL || table_info == NULL ) {
-                netsnmp_set_request_error( reqinfo, request,
-                                           SNMP_ERR_NOTWRITABLE );
-                continue;
-			}
-            switch (table_info->colnum) {
+    /*
+     * Write-support
+     */
+  case MODE_SET_RESERVE1:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct historyControlTable_entry *)netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        netsnmp_set_request_error(reqinfo, request,
+                                  SNMP_ERR_NOTWRITABLE);
+        continue;
+      }
+      switch (table_info->colnum)
+      {
 #if 0
             case COLUMN_HISTORYCONTROLDATASOURCE:
                 /* or possibly 'netsnmp_check_vb_type_and_max_size' */
@@ -1190,23 +1219,25 @@ historyControlTable_handler(
                     return SNMP_ERR_NOERROR;
                 }
                 break;
-#endif    
-            case COLUMN_HISTORYCONTROLBUCKETSREQUESTED:
-                /* or possibly 'netsnmp_check_vb_int_range' */
-                ret = netsnmp_check_vb_int_range( request->requestvb,10,1440);
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_HISTORYCONTROLINTERVAL:
-                /* or possibly 'netsnmp_check_vb_int_range' */
-                ret = netsnmp_check_vb_int_range( request->requestvb,60,3600*24);
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
+#endif
+      case COLUMN_HISTORYCONTROLBUCKETSREQUESTED:
+        /* or possibly 'netsnmp_check_vb_int_range' */
+        ret = netsnmp_check_vb_int_range(request->requestvb, 10, 1440);
+        if (ret != SNMP_ERR_NOERROR)
+        {
+          netsnmp_set_request_error(reqinfo, request, ret);
+          return SNMP_ERR_NOERROR;
+        }
+        break;
+      case COLUMN_HISTORYCONTROLINTERVAL:
+        /* or possibly 'netsnmp_check_vb_int_range' */
+        ret = netsnmp_check_vb_int_range(request->requestvb, 60, 3600 * 24);
+        if (ret != SNMP_ERR_NOERROR)
+        {
+          netsnmp_set_request_error(reqinfo, request, ret);
+          return SNMP_ERR_NOERROR;
+        }
+        break;
 #if 0
             case COLUMN_HISTORYCONTROLOWNER:
                 /* or possibly 'netsnmp_check_vb_type_and_max_size' */
@@ -1226,81 +1257,93 @@ historyControlTable_handler(
                 }
                 break;
 #endif
-            default:
-                netsnmp_set_request_error( reqinfo, request,
-                                           SNMP_ERR_NOTWRITABLE );
-                return SNMP_ERR_NOERROR;
-            }
+      default:
+        netsnmp_set_request_error(reqinfo, request,
+                                  SNMP_ERR_NOTWRITABLE);
+        return SNMP_ERR_NOERROR;
+      }
+    }
+    break;
+
+  case MODE_SET_RESERVE2:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct historyControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_info == NULL || table_entry == NULL)
+      {
+        netsnmp_set_request_error(reqinfo, request,
+                                  SNMP_ERR_NOTWRITABLE);
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_HISTORYCONTROLDATASOURCE:
+      case COLUMN_HISTORYCONTROLBUCKETSREQUESTED:
+      case COLUMN_HISTORYCONTROLINTERVAL:
+      case COLUMN_HISTORYCONTROLOWNER:
+      case COLUMN_HISTORYCONTROLSTATUS:
+        if (!table_entry)
+        {
+          table_entry = historyControlTable_createEntry(container, *table_info->indexes->val.integer);
+          if (table_entry)
+          {
+            netsnmp_container_table_row_insert(request, (netsnmp_index *)table_entry);
+          }
+          else
+          {
+            netsnmp_set_request_error(reqinfo, request,
+                                      SNMP_ERR_RESOURCEUNAVAILABLE);
+            return SNMP_ERR_NOERROR;
+          }
         }
         break;
+      }
+    }
+    break;
 
-    case MODE_SET_RESERVE2:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct historyControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if(  table_info == NULL || table_entry==NULL ) {
-                netsnmp_set_request_error( reqinfo, request,
-                                           SNMP_ERR_NOTWRITABLE );
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_HISTORYCONTROLDATASOURCE:
-            case COLUMN_HISTORYCONTROLBUCKETSREQUESTED:
-            case COLUMN_HISTORYCONTROLINTERVAL:
-            case COLUMN_HISTORYCONTROLOWNER:
-            case COLUMN_HISTORYCONTROLSTATUS:
-                if ( !table_entry ) {
-                    table_entry = historyControlTable_createEntry(container
-                        , *table_info->indexes->val.integer
-                        );
-                    if (table_entry) {
-                        netsnmp_container_table_row_insert( request, (netsnmp_index*)table_entry );
-                    } else {
-                        netsnmp_set_request_error( reqinfo, request,
-                                                   SNMP_ERR_RESOURCEUNAVAILABLE );
-                        return SNMP_ERR_NOERROR;
-                    }
-                }
-                break;
-            }
+  case MODE_SET_FREE:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct historyControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_info == NULL)
+      {
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_HISTORYCONTROLDATASOURCE:
+      case COLUMN_HISTORYCONTROLBUCKETSREQUESTED:
+      case COLUMN_HISTORYCONTROLINTERVAL:
+      case COLUMN_HISTORYCONTROLOWNER:
+      case COLUMN_HISTORYCONTROLSTATUS:
+        if (table_entry && !table_entry->valid)
+        {
+          historyControlTable_removeEntry(container, table_entry);
         }
         break;
+      }
+    }
+    break;
 
-    case MODE_SET_FREE:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct historyControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if(  table_info == NULL ) {
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_HISTORYCONTROLDATASOURCE:
-            case COLUMN_HISTORYCONTROLBUCKETSREQUESTED:
-            case COLUMN_HISTORYCONTROLINTERVAL:
-            case COLUMN_HISTORYCONTROLOWNER:
-            case COLUMN_HISTORYCONTROLSTATUS:
-                if ( table_entry && !table_entry->valid ) {
-                    historyControlTable_removeEntry(container, table_entry );
-                }
-                break;
-            }
-        }
-        break;
+  case MODE_SET_ACTION:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct historyControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        continue;
+      }
 
-    case MODE_SET_ACTION:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct historyControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                continue;
-			}
-
-            switch (table_info->colnum) {
+      switch (table_info->colnum)
+      {
 #if 0
             case COLUMN_HISTORYCONTROLDATASOURCE:
                 memcpy( table_entry->old_historyControlDataSource,
@@ -1317,14 +1360,14 @@ historyControlTable_handler(
                         request->requestvb->val_len;
                 break;
 #endif
-            case COLUMN_HISTORYCONTROLBUCKETSREQUESTED:
-                table_entry->old_historyControlBucketsRequested = table_entry->historyControlBucketsRequested;
-                table_entry->historyControlBucketsRequested     = *request->requestvb->val.integer;
-                break;
-            case COLUMN_HISTORYCONTROLINTERVAL:
-                table_entry->old_historyControlInterval = table_entry->historyControlInterval;
-                table_entry->historyControlInterval     = *request->requestvb->val.integer;
-                break;
+      case COLUMN_HISTORYCONTROLBUCKETSREQUESTED:
+        table_entry->old_historyControlBucketsRequested = table_entry->historyControlBucketsRequested;
+        table_entry->historyControlBucketsRequested = *request->requestvb->val.integer;
+        break;
+      case COLUMN_HISTORYCONTROLINTERVAL:
+        table_entry->old_historyControlInterval = table_entry->historyControlInterval;
+        table_entry->historyControlInterval = *request->requestvb->val.integer;
+        break;
 #if 0
             case COLUMN_HISTORYCONTROLOWNER:
                 memcpy( table_entry->old_historyControlOwner,
@@ -1345,1285 +1388,1376 @@ historyControlTable_handler(
                 table_entry->historyControlStatus     = *request->requestvb->val.integer;
                 break;
 #endif
-            }
-        }
-        break;
-
-    case MODE_SET_UNDO:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct historyControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_HISTORYCONTROLDATASOURCE:
-                if ( table_entry && !table_entry->valid ) {
-                    historyControlTable_removeEntry(container, table_entry );
-                } else {
-                    memcpy( table_entry->historyControlDataSource,
-                            table_entry->old_historyControlDataSource,
-                            sizeof(table_entry->historyControlDataSource));
-                    memset( table_entry->old_historyControlDataSource, 0,
-                            sizeof(table_entry->historyControlDataSource));
-                    table_entry->historyControlDataSource_len =
-                            table_entry->old_historyControlDataSource_len;
-                }
-                break;
-            case COLUMN_HISTORYCONTROLBUCKETSREQUESTED:
-                if ( table_entry && !table_entry->valid ) {
-                    historyControlTable_removeEntry(container, table_entry );
-                } else {
-                    table_entry->historyControlBucketsRequested     = table_entry->old_historyControlBucketsRequested;
-                    table_entry->old_historyControlBucketsRequested = 0;
-                }
-                break;
-            case COLUMN_HISTORYCONTROLINTERVAL:
-                if ( table_entry && !table_entry->valid ) {
-                    historyControlTable_removeEntry(container, table_entry );
-                } else {
-                    table_entry->historyControlInterval     = table_entry->old_historyControlInterval;
-                    table_entry->old_historyControlInterval = 0;
-                }
-                break;
-            case COLUMN_HISTORYCONTROLOWNER:
-                if ( table_entry && !table_entry->valid ) {
-                    historyControlTable_removeEntry(container, table_entry );
-                } else {
-                    memcpy( table_entry->historyControlOwner,
-                            table_entry->old_historyControlOwner,
-                            sizeof(table_entry->historyControlOwner));
-                    memset( table_entry->old_historyControlOwner, 0,
-                            sizeof(table_entry->historyControlOwner));
-                    table_entry->historyControlOwner_len =
-                            table_entry->old_historyControlOwner_len;
-                }
-                break;
-            case COLUMN_HISTORYCONTROLSTATUS:
-                if ( table_entry && !table_entry->valid ) {
-                    historyControlTable_removeEntry(container, table_entry );
-                } else {
-                    table_entry->historyControlStatus     = table_entry->old_historyControlStatus;
-                    table_entry->old_historyControlStatus = 0;
-                }
-                break;
-            }
-        }
-        break;
-
-    case MODE_SET_COMMIT:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct historyControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if(  table_info == NULL ) {
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_HISTORYCONTROLBUCKETSREQUESTED:
-                    table_entry->historyControlBucketsGranted     = table_entry->historyControlBucketsRequested;
-            case COLUMN_HISTORYCONTROLDATASOURCE:
-            
-            case COLUMN_HISTORYCONTROLINTERVAL:
-            case COLUMN_HISTORYCONTROLOWNER:
-            case COLUMN_HISTORYCONTROLSTATUS:
-                if ( table_entry && !table_entry->valid ) {
-                    table_entry->valid = 1;
-                }
-            }
-        }
-        break;
+      }
     }
-    return SNMP_ERR_NOERROR;
+    break;
+
+  case MODE_SET_UNDO:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct historyControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_HISTORYCONTROLDATASOURCE:
+        if (table_entry && !table_entry->valid)
+        {
+          historyControlTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          memcpy(table_entry->historyControlDataSource,
+                 table_entry->old_historyControlDataSource,
+                 sizeof(table_entry->historyControlDataSource));
+          memset(table_entry->old_historyControlDataSource, 0,
+                 sizeof(table_entry->historyControlDataSource));
+          table_entry->historyControlDataSource_len =
+              table_entry->old_historyControlDataSource_len;
+        }
+        break;
+      case COLUMN_HISTORYCONTROLBUCKETSREQUESTED:
+        if (table_entry && !table_entry->valid)
+        {
+          historyControlTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          table_entry->historyControlBucketsRequested = table_entry->old_historyControlBucketsRequested;
+          table_entry->old_historyControlBucketsRequested = 0;
+        }
+        break;
+      case COLUMN_HISTORYCONTROLINTERVAL:
+        if (table_entry && !table_entry->valid)
+        {
+          historyControlTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          table_entry->historyControlInterval = table_entry->old_historyControlInterval;
+          table_entry->old_historyControlInterval = 0;
+        }
+        break;
+      case COLUMN_HISTORYCONTROLOWNER:
+        if (table_entry && !table_entry->valid)
+        {
+          historyControlTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          memcpy(table_entry->historyControlOwner,
+                 table_entry->old_historyControlOwner,
+                 sizeof(table_entry->historyControlOwner));
+          memset(table_entry->old_historyControlOwner, 0,
+                 sizeof(table_entry->historyControlOwner));
+          table_entry->historyControlOwner_len =
+              table_entry->old_historyControlOwner_len;
+        }
+        break;
+      case COLUMN_HISTORYCONTROLSTATUS:
+        if (table_entry && !table_entry->valid)
+        {
+          historyControlTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          table_entry->historyControlStatus = table_entry->old_historyControlStatus;
+          table_entry->old_historyControlStatus = 0;
+        }
+        break;
+      }
+    }
+    break;
+
+  case MODE_SET_COMMIT:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct historyControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_info == NULL)
+      {
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_HISTORYCONTROLBUCKETSREQUESTED:
+        table_entry->historyControlBucketsGranted = table_entry->historyControlBucketsRequested;
+        if (table_entry && !table_entry->valid)
+        {
+          table_entry->valid = 1;
+        }
+        break;
+      case COLUMN_HISTORYCONTROLDATASOURCE:
+      case COLUMN_HISTORYCONTROLINTERVAL:
+      case COLUMN_HISTORYCONTROLOWNER:
+      case COLUMN_HISTORYCONTROLSTATUS:
+        if (table_entry && !table_entry->valid)
+        {
+          table_entry->valid = 1;
+        }
+        break;
+      }
+    }
+    break;
+  }
+  return SNMP_ERR_NOERROR;
 }
-
-
 
 /** Initialize the etherHistoryTable table by defining its contents and how it's structured */
-void
-initialize_table_etherHistoryTable(void)
+void initialize_table_etherHistoryTable(void)
 {
-    static oid etherHistoryTable_oid[] = {1,3,6,1,2,1,16,2,2};
-    size_t etherHistoryTable_oid_len   = OID_LENGTH(etherHistoryTable_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_table_registration_info *table_info;
+  static oid etherHistoryTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 2, 2};
+  size_t etherHistoryTable_oid_len = OID_LENGTH(etherHistoryTable_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_table_registration_info *table_info;
 
-    reg = netsnmp_create_handler_registration(
-              "etherHistoryTable",     etherHistoryTable_handler,
-              etherHistoryTable_oid, etherHistoryTable_oid_len,
-              HANDLER_CAN_RONLY
-              );
+  reg = netsnmp_create_handler_registration(
+      "etherHistoryTable", etherHistoryTable_handler,
+      etherHistoryTable_oid, etherHistoryTable_oid_len,
+      HANDLER_CAN_RONLY);
 
-    pEthHistContainer  = netsnmp_container_find( "table_container" );
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: etherHistoryIndex */
-                           ASN_INTEGER,  /* index: etherHistorySampleIndex */
-                           0);
-    table_info->min_column = COLUMN_ETHERHISTORYINDEX;
-    table_info->max_column = COLUMN_ETHERHISTORYUTILIZATION;
-    
-    netsnmp_container_table_register( reg, table_info, pEthHistContainer, 0 );
+  pEthHistContainer = netsnmp_container_find("table_container");
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER, /* index: etherHistoryIndex */
+                                   ASN_INTEGER, /* index: etherHistorySampleIndex */
+                                   0);
+  table_info->min_column = COLUMN_ETHERHISTORYINDEX;
+  table_info->max_column = COLUMN_ETHERHISTORYUTILIZATION;
 
-    /* Initialise the contents of the table here */
+  netsnmp_container_table_register(reg, table_info, pEthHistContainer, 0);
 
+  /* Initialise the contents of the table here */
 }
 
-    /* Typical data structure for a row entry */
-struct etherHistoryTable_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct etherHistoryTable_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long etherHistoryIndex;
-    long etherHistorySampleIndex;
+  /* Index values */
+  long etherHistoryIndex;
+  long etherHistorySampleIndex;
 
-    /* Column values */
-    u_long etherHistoryIntervalStart;
-    u_long etherHistoryDropEvents;
-    u_long etherHistoryOctets;
-    u_long etherHistoryPkts;
-    u_long etherHistoryBroadcastPkts;
-    u_long etherHistoryMulticastPkts;
-    u_long etherHistoryCRCAlignErrors;
-    u_long etherHistoryUndersizePkts;
-    u_long etherHistoryOversizePkts;
-    u_long etherHistoryFragments;
-    u_long etherHistoryJabbers;
-    u_long etherHistoryCollisions;
-    long etherHistoryUtilization;
+  /* Column values */
+  u_long etherHistoryIntervalStart;
+  u_long etherHistoryDropEvents;
+  u_long etherHistoryOctets;
+  u_long etherHistoryPkts;
+  u_long etherHistoryBroadcastPkts;
+  u_long etherHistoryMulticastPkts;
+  u_long etherHistoryCRCAlignErrors;
+  u_long etherHistoryUndersizePkts;
+  u_long etherHistoryOversizePkts;
+  u_long etherHistoryFragments;
+  u_long etherHistoryJabbers;
+  u_long etherHistoryCollisions;
+  long etherHistoryUtilization;
 
-    int   valid;
+  int valid;
 };
 
 /* create a new row in the table */
 struct etherHistoryTable_entry *
-etherHistoryTable_createEntry(netsnmp_container *container
-                 , long  etherHistoryIndex
-                 , long  etherHistorySampleIndex
-                ) {
-    struct etherHistoryTable_entry *entry;
+etherHistoryTable_createEntry(netsnmp_container *container, long etherHistoryIndex, long etherHistorySampleIndex)
+{
+  struct etherHistoryTable_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct etherHistoryTable_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct etherHistoryTable_entry);
+  if (!entry)
+    return NULL;
 
-    entry->etherHistoryIndex = etherHistoryIndex;
-    entry->etherHistorySampleIndex = etherHistorySampleIndex;
-    entry->oid_index.len  = 2;
-    entry->oid_index.oids = (oid*)&entry->etherHistoryIndex;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->etherHistoryIndex = etherHistoryIndex;
+  entry->etherHistorySampleIndex = etherHistorySampleIndex;
+  entry->oid_index.len = 2;
+  entry->oid_index.oids = (oid *)&entry->etherHistoryIndex;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-etherHistoryTable_removeEntry(netsnmp_container *container, 
-                 struct etherHistoryTable_entry *entry) {
+void etherHistoryTable_removeEntry(netsnmp_container *container,
+                                   struct etherHistoryTable_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the etherHistoryTable table */
-int
-etherHistoryTable_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
+int etherHistoryTable_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
+{
 
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct etherHistoryTable_entry          *table_entry;
-    int                         ret;
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct etherHistoryTable_entry *table_entry;
+  int ret;
 
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct etherHistoryTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_ETHERHISTORYINDEX:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->etherHistoryIndex);
-                break;
-            case COLUMN_ETHERHISTORYSAMPLEINDEX:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->etherHistorySampleIndex);
-                break;
-            case COLUMN_ETHERHISTORYINTERVALSTART:
-                snmp_set_var_typed_integer( request->requestvb, ASN_TIMETICKS,
-                                            table_entry->etherHistoryIntervalStart);
-                break;
-            case COLUMN_ETHERHISTORYDROPEVENTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherHistoryDropEvents);
-                break;
-            case COLUMN_ETHERHISTORYOCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherHistoryOctets);
-                break;
-            case COLUMN_ETHERHISTORYPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherHistoryPkts);
-                break;
-            case COLUMN_ETHERHISTORYBROADCASTPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherHistoryBroadcastPkts);
-                break;
-            case COLUMN_ETHERHISTORYMULTICASTPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherHistoryMulticastPkts);
-                break;
-            case COLUMN_ETHERHISTORYCRCALIGNERRORS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherHistoryCRCAlignErrors);
-                break;
-            case COLUMN_ETHERHISTORYUNDERSIZEPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherHistoryUndersizePkts);
-                break;
-            case COLUMN_ETHERHISTORYOVERSIZEPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherHistoryOversizePkts);
-                break;
-            case COLUMN_ETHERHISTORYFRAGMENTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherHistoryFragments);
-                break;
-            case COLUMN_ETHERHISTORYJABBERS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherHistoryJabbers);
-                break;
-            case COLUMN_ETHERHISTORYCOLLISIONS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->etherHistoryCollisions);
-                break;
-            case COLUMN_ETHERHISTORYUTILIZATION:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->etherHistoryUtilization);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct etherHistoryTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_ETHERHISTORYINDEX:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->etherHistoryIndex);
         break;
-
+      case COLUMN_ETHERHISTORYSAMPLEINDEX:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->etherHistorySampleIndex);
+        break;
+      case COLUMN_ETHERHISTORYINTERVALSTART:
+        snmp_set_var_typed_integer(request->requestvb, ASN_TIMETICKS,
+                                   table_entry->etherHistoryIntervalStart);
+        break;
+      case COLUMN_ETHERHISTORYDROPEVENTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherHistoryDropEvents);
+        break;
+      case COLUMN_ETHERHISTORYOCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherHistoryOctets);
+        break;
+      case COLUMN_ETHERHISTORYPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherHistoryPkts);
+        break;
+      case COLUMN_ETHERHISTORYBROADCASTPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherHistoryBroadcastPkts);
+        break;
+      case COLUMN_ETHERHISTORYMULTICASTPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherHistoryMulticastPkts);
+        break;
+      case COLUMN_ETHERHISTORYCRCALIGNERRORS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherHistoryCRCAlignErrors);
+        break;
+      case COLUMN_ETHERHISTORYUNDERSIZEPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherHistoryUndersizePkts);
+        break;
+      case COLUMN_ETHERHISTORYOVERSIZEPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherHistoryOversizePkts);
+        break;
+      case COLUMN_ETHERHISTORYFRAGMENTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherHistoryFragments);
+        break;
+      case COLUMN_ETHERHISTORYJABBERS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherHistoryJabbers);
+        break;
+      case COLUMN_ETHERHISTORYCOLLISIONS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->etherHistoryCollisions);
+        break;
+      case COLUMN_ETHERHISTORYUTILIZATION:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->etherHistoryUtilization);
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
     }
-    return SNMP_ERR_NOERROR;
+    break;
+  }
+  return SNMP_ERR_NOERROR;
 }
-
 
 /** Initialize the historyControl2Table table by defining its contents and how it's structured */
-void
-initialize_table_historyControl2Table(void)
+void initialize_table_historyControl2Table(void)
 {
-    static oid historyControl2Table_oid[] = {1,3,6,1,2,1,16,2,5};
-    size_t historyControl2Table_oid_len   = OID_LENGTH(historyControl2Table_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_container               *container;
-    netsnmp_table_registration_info *table_info;
+  static oid historyControl2Table_oid[] = {1, 3, 6, 1, 2, 1, 16, 2, 5};
+  size_t historyControl2Table_oid_len = OID_LENGTH(historyControl2Table_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_container *container;
+  netsnmp_table_registration_info *table_info;
 
-    reg = netsnmp_create_handler_registration(
-              "historyControl2Table",     historyControl2Table_handler,
-              historyControl2Table_oid, historyControl2Table_oid_len,
-              HANDLER_CAN_RONLY
-              );
+  reg = netsnmp_create_handler_registration(
+      "historyControl2Table", historyControl2Table_handler,
+      historyControl2Table_oid, historyControl2Table_oid_len,
+      HANDLER_CAN_RONLY);
 
-    container  = netsnmp_container_find( "table_container" );
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: historyControlIndex */
-                           0);
-    table_info->min_column = COLUMN_HISTORYCONTROLDROPPEDFRAMES;
-    table_info->max_column = COLUMN_HISTORYCONTROLDROPPEDFRAMES;
-    
-    netsnmp_container_table_register( reg, table_info, container, 0 );
+  container = netsnmp_container_find("table_container");
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER, /* index: historyControlIndex */
+                                   0);
+  table_info->min_column = COLUMN_HISTORYCONTROLDROPPEDFRAMES;
+  table_info->max_column = COLUMN_HISTORYCONTROLDROPPEDFRAMES;
 
-    /* Initialise the contents of the table here */
-    InitEthHistCont2Ent(container);
+  netsnmp_container_table_register(reg, table_info, container, 0);
+
+  /* Initialise the contents of the table here */
+  InitEthHistCont2Ent(container);
 }
 
-    /* Typical data structure for a row entry */
-struct historyControl2Table_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct historyControl2Table_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long historyControlIndex;
+  /* Index values */
+  long historyControlIndex;
 
-    /* Column values */
-    u_long historyControlDroppedFrames;
+  /* Column values */
+  u_long historyControlDroppedFrames;
 
-    int   valid;
+  int valid;
 };
 
 /* create a new row in the table */
 struct historyControl2Table_entry *
-historyControl2Table_createEntry(netsnmp_container *container
-                 , long  historyControlIndex
-                ) {
-    struct historyControl2Table_entry *entry;
+historyControl2Table_createEntry(netsnmp_container *container, long historyControlIndex)
+{
+  struct historyControl2Table_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct historyControl2Table_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct historyControl2Table_entry);
+  if (!entry)
+    return NULL;
 
-    entry->historyControlIndex = historyControlIndex;
-    entry->oid_index.len  = 1;
-    entry->oid_index.oids = (oid*) &entry->historyControlIndex;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->historyControlIndex = historyControlIndex;
+  entry->oid_index.len = 1;
+  entry->oid_index.oids = (oid *)&entry->historyControlIndex;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-historyControl2Table_removeEntry(netsnmp_container *container, 
-                 struct historyControl2Table_entry *entry) {
+void historyControl2Table_removeEntry(netsnmp_container *container,
+                                      struct historyControl2Table_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the historyControl2Table table */
-int
-historyControl2Table_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
+int historyControl2Table_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
+{
 
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct historyControl2Table_entry          *table_entry;
-    int                         ret;
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct historyControl2Table_entry *table_entry;
+  int ret;
 
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct historyControl2Table_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_HISTORYCONTROLDROPPEDFRAMES:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->historyControlDroppedFrames);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct historyControl2Table_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_HISTORYCONTROLDROPPEDFRAMES:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->historyControlDroppedFrames);
         break;
-
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
     }
-    return SNMP_ERR_NOERROR;
+    break;
+  }
+  return SNMP_ERR_NOERROR;
 }
-
 
 /** Initialize the etherHistoryHighCapacityTable table by defining its contents and how it's structured */
-void
-initialize_table_etherHistoryHighCapacityTable(void)
+void initialize_table_etherHistoryHighCapacityTable(void)
 {
-    static oid etherHistoryHighCapacityTable_oid[] = {1,3,6,1,2,1,16,2,6};
-    size_t etherHistoryHighCapacityTable_oid_len   = OID_LENGTH(etherHistoryHighCapacityTable_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_table_registration_info *table_info;
+  static oid etherHistoryHighCapacityTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 2, 6};
+  size_t etherHistoryHighCapacityTable_oid_len = OID_LENGTH(etherHistoryHighCapacityTable_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_table_registration_info *table_info;
 
-    reg = netsnmp_create_handler_registration(
-              "etherHistoryHighCapacityTable",     etherHistoryHighCapacityTable_handler,
-              etherHistoryHighCapacityTable_oid, etherHistoryHighCapacityTable_oid_len,
-              HANDLER_CAN_RONLY
-              );
+  reg = netsnmp_create_handler_registration(
+      "etherHistoryHighCapacityTable", etherHistoryHighCapacityTable_handler,
+      etherHistoryHighCapacityTable_oid, etherHistoryHighCapacityTable_oid_len,
+      HANDLER_CAN_RONLY);
 
-    pEthHistHCContainer  = netsnmp_container_find( "table_container" );
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: etherHistoryIndex */
-                           ASN_INTEGER,  /* index: etherHistorySampleIndex */
-                           0);
-    table_info->min_column = COLUMN_ETHERHISTORYHIGHCAPACITYOVERFLOWPKTS;
-    table_info->max_column = COLUMN_ETHERHISTORYHIGHCAPACITYOCTETS;
-    
-    netsnmp_container_table_register( reg, table_info, pEthHistHCContainer, 0 );
+  pEthHistHCContainer = netsnmp_container_find("table_container");
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER, /* index: etherHistoryIndex */
+                                   ASN_INTEGER, /* index: etherHistorySampleIndex */
+                                   0);
+  table_info->min_column = COLUMN_ETHERHISTORYHIGHCAPACITYOVERFLOWPKTS;
+  table_info->max_column = COLUMN_ETHERHISTORYHIGHCAPACITYOCTETS;
 
-    /* Initialise the contents of the table here */
+  netsnmp_container_table_register(reg, table_info, pEthHistHCContainer, 0);
+
+  /* Initialise the contents of the table here */
 }
 
-    /* Typical data structure for a row entry */
-struct etherHistoryHighCapacityTable_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct etherHistoryHighCapacityTable_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long etherHistoryIndex;
-    long etherHistorySampleIndex;
+  /* Index values */
+  long etherHistoryIndex;
+  long etherHistorySampleIndex;
 
-    /* Column values */
-//    u_long etherHistoryHighCapacityOverflowPkts;
-    U64 etherHistoryHighCapacityPkts;
-//    u_long etherHistoryHighCapacityOverflowOctets;
-    U64 etherHistoryHighCapacityOctets;
+  /* Column values */
+  //    u_long etherHistoryHighCapacityOverflowPkts;
+  U64 etherHistoryHighCapacityPkts;
+  //    u_long etherHistoryHighCapacityOverflowOctets;
+  U64 etherHistoryHighCapacityOctets;
 
-    int   valid;
+  int valid;
 };
 
 /* create a new row in the table */
-struct etherHistoryHighCapacityTable_entry *etherHistoryHighCapacityTable_createEntry(netsnmp_container *container
-                 , long  etherHistoryIndex
-                 , long  etherHistorySampleIndex
-                ) {
-    struct etherHistoryHighCapacityTable_entry *entry;
+struct etherHistoryHighCapacityTable_entry *etherHistoryHighCapacityTable_createEntry(netsnmp_container *container, long etherHistoryIndex, long etherHistorySampleIndex)
+{
+  struct etherHistoryHighCapacityTable_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct etherHistoryHighCapacityTable_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct etherHistoryHighCapacityTable_entry);
+  if (!entry)
+    return NULL;
 
-    entry->etherHistoryIndex = etherHistoryIndex;
-    entry->etherHistorySampleIndex = etherHistorySampleIndex;
-    entry->oid_index.len  = 2;
-    entry->oid_index.oids = (oid*)&entry->etherHistoryIndex;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->etherHistoryIndex = etherHistoryIndex;
+  entry->etherHistorySampleIndex = etherHistorySampleIndex;
+  entry->oid_index.len = 2;
+  entry->oid_index.oids = (oid *)&entry->etherHistoryIndex;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
 void etherHistoryHighCapacityTable_removeEntry(netsnmp_container *container, struct etherHistoryHighCapacityTable_entry *entry)
 {
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the etherHistoryHighCapacityTable table */
-int
-etherHistoryHighCapacityTable_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
+int etherHistoryHighCapacityTable_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
+{
 
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct etherHistoryHighCapacityTable_entry          *table_entry;
-    int                         ret;
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct etherHistoryHighCapacityTable_entry *table_entry;
+  int ret;
 
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct etherHistoryHighCapacityTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_ETHERHISTORYHIGHCAPACITYOVERFLOWPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_GAUGE,
-                                            table_entry->etherHistoryHighCapacityPkts.high);
-                break;
-            case COLUMN_ETHERHISTORYHIGHCAPACITYPKTS:
-                snmp_set_var_typed_value( request->requestvb, ASN_COUNTER64,
-                                            (char*)&table_entry->etherHistoryHighCapacityPkts,sizeof(U64));
-                break;
-            case COLUMN_ETHERHISTORYHIGHCAPACITYOVERFLOWOCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_GAUGE,
-                                            table_entry->etherHistoryHighCapacityOctets.high);
-                break;
-            case COLUMN_ETHERHISTORYHIGHCAPACITYOCTETS:
-                snmp_set_var_typed_value( request->requestvb, ASN_COUNTER64,
-                                            (char*)&table_entry->etherHistoryHighCapacityOctets,sizeof(U64));
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct etherHistoryHighCapacityTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_ETHERHISTORYHIGHCAPACITYOVERFLOWPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_GAUGE,
+                                   table_entry->etherHistoryHighCapacityPkts.high);
         break;
-
+      case COLUMN_ETHERHISTORYHIGHCAPACITYPKTS:
+        snmp_set_var_typed_value(request->requestvb, ASN_COUNTER64,
+                                 (char *)&table_entry->etherHistoryHighCapacityPkts, sizeof(U64));
+        break;
+      case COLUMN_ETHERHISTORYHIGHCAPACITYOVERFLOWOCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_GAUGE,
+                                   table_entry->etherHistoryHighCapacityOctets.high);
+        break;
+      case COLUMN_ETHERHISTORYHIGHCAPACITYOCTETS:
+        snmp_set_var_typed_value(request->requestvb, ASN_COUNTER64,
+                                 (char *)&table_entry->etherHistoryHighCapacityOctets, sizeof(U64));
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
     }
-    return SNMP_ERR_NOERROR;
+    break;
+  }
+  return SNMP_ERR_NOERROR;
 }
-
 
 /** Initialize the alarmTable table by defining its contents and how it's structured */
-void
-initialize_table_alarmTable(void)
+void initialize_table_alarmTable(void)
 {
-    static oid alarmTable_oid[] = {1,3,6,1,2,1,16,3,1};
-    size_t alarmTable_oid_len   = OID_LENGTH(alarmTable_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_table_registration_info *table_info;
+  static oid alarmTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 3, 1};
+  size_t alarmTable_oid_len = OID_LENGTH(alarmTable_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_table_registration_info *table_info;
 
-    reg = netsnmp_create_handler_registration(
-              "alarmTable",     alarmTable_handler,
-              alarmTable_oid, alarmTable_oid_len,
-              HANDLER_CAN_RWRITE
-              );
+  reg = netsnmp_create_handler_registration(
+      "alarmTable", alarmTable_handler,
+      alarmTable_oid, alarmTable_oid_len,
+      HANDLER_CAN_RWRITE);
 
-    pAlarmContainer  = netsnmp_container_find( "table_container" );
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: alarmIndex */
-                           0);
-    table_info->min_column = COLUMN_ALARMINDEX;
-    table_info->max_column = COLUMN_ALARMSTATUS;
-    
-    netsnmp_container_table_register( reg, table_info, pAlarmContainer, 0 );
+  pAlarmContainer = netsnmp_container_find("table_container");
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER, /* index: alarmIndex */
+                                   0);
+  table_info->min_column = COLUMN_ALARMINDEX;
+  table_info->max_column = COLUMN_ALARMSTATUS;
 
-    /* Initialise the contents of the table here */
+  netsnmp_container_table_register(reg, table_info, pAlarmContainer, 0);
+
+  /* Initialise the contents of the table here */
 }
 
-    /* Typical data structure for a row entry */
-struct alarmTable_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct alarmTable_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long alarmIndex;
+  /* Index values */
+  long alarmIndex;
 
-    /* Column values */
-    long alarmInterval;
-    long old_alarmInterval;
-    oid alarmVariable[64];
-    size_t alarmVariable_len;
-    oid old_alarmVariable[64];
-    size_t old_alarmVariable_len;
-    long alarmSampleType;
-    long old_alarmSampleType;
-    long alarmValue;
-    long alarmStartupAlarm;
-    long old_alarmStartupAlarm;
-    long alarmRisingThreshold;
-    long old_alarmRisingThreshold;
-    long alarmFallingThreshold;
-    long old_alarmFallingThreshold;
-    long alarmRisingEventIndex;
-    long old_alarmRisingEventIndex;
-    long alarmFallingEventIndex;
-    long old_alarmFallingEventIndex;
-    char alarmOwner[256];
-    size_t alarmOwner_len;
-    char old_alarmOwner[256];
-    size_t old_alarmOwner_len;
-    long alarmStatus;
-    long old_alarmStatus;
+  /* Column values */
+  long alarmInterval;
+  long old_alarmInterval;
+  oid alarmVariable[64];
+  size_t alarmVariable_len;
+  oid old_alarmVariable[64];
+  size_t old_alarmVariable_len;
+  long alarmSampleType;
+  long old_alarmSampleType;
+  long alarmValue;
+  long alarmStartupAlarm;
+  long old_alarmStartupAlarm;
+  long alarmRisingThreshold;
+  long old_alarmRisingThreshold;
+  long alarmFallingThreshold;
+  long old_alarmFallingThreshold;
+  long alarmRisingEventIndex;
+  long old_alarmRisingEventIndex;
+  long alarmFallingEventIndex;
+  long old_alarmFallingEventIndex;
+  char alarmOwner[256];
+  size_t alarmOwner_len;
+  char old_alarmOwner[256];
+  size_t old_alarmOwner_len;
+  long alarmStatus;
+  long old_alarmStatus;
 
-    int   valid;
-    
-    time_t nLastTime;
-    int    nLastStat;
-    unsigned long   nLastVal; // for Delta
-    int    nAlarmObjID;
-    int    bFirst;
+  int valid;
+
+  time_t nLastTime;
+  int nLastStat;
+  unsigned long nLastVal; // for Delta
+  int nAlarmObjID;
+  int bFirst;
 };
 
 /* create a new row in the table */
 struct alarmTable_entry *
-alarmTable_createEntry(netsnmp_container *container
-                 , long  alarmIndex
-                ) {
-    struct alarmTable_entry *entry;
+alarmTable_createEntry(netsnmp_container *container, long alarmIndex)
+{
+  struct alarmTable_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct alarmTable_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct alarmTable_entry);
+  if (!entry)
+    return NULL;
 
-    entry->alarmIndex = alarmIndex;
-    entry->oid_index.len  = 1;
-    entry->oid_index.oids = (oid*)&entry->alarmIndex;
-    entry->nLastTime = 0;
-    entry->nLastStat = 0;
-    entry->nLastVal = 0;
-    entry->nAlarmObjID = 0;
-    entry->bFirst  =1;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->alarmIndex = alarmIndex;
+  entry->oid_index.len = 1;
+  entry->oid_index.oids = (oid *)&entry->alarmIndex;
+  entry->nLastTime = 0;
+  entry->nLastStat = 0;
+  entry->nLastVal = 0;
+  entry->nAlarmObjID = 0;
+  entry->bFirst = 1;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-alarmTable_removeEntry(netsnmp_container *container,
-                 struct alarmTable_entry *entry) {
+void alarmTable_removeEntry(netsnmp_container *container,
+                            struct alarmTable_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the alarmTable table */
-int
-alarmTable_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
+int alarmTable_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
+{
 
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct alarmTable_entry          *table_entry;
-    int                         ret;
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct alarmTable_entry *table_entry;
+  int ret;
 
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct alarmTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_ALARMINDEX:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->alarmIndex);
-                break;
-            case COLUMN_ALARMINTERVAL:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->alarmInterval);
-                break;
-            case COLUMN_ALARMVARIABLE:
-                snmp_set_var_typed_value( request->requestvb, ASN_OBJECT_ID,
-                                 (u_char*)table_entry->alarmVariable,
-                                          table_entry->alarmVariable_len);
-                break;
-            case COLUMN_ALARMSAMPLETYPE:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->alarmSampleType);
-                break;
-            case COLUMN_ALARMVALUE:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->alarmValue);
-                break;
-            case COLUMN_ALARMSTARTUPALARM:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->alarmStartupAlarm);
-                break;
-            case COLUMN_ALARMRISINGTHRESHOLD:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->alarmRisingThreshold);
-                break;
-            case COLUMN_ALARMFALLINGTHRESHOLD:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->alarmFallingThreshold);
-                break;
-            case COLUMN_ALARMRISINGEVENTINDEX:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->alarmRisingEventIndex);
-                break;
-            case COLUMN_ALARMFALLINGEVENTINDEX:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->alarmFallingEventIndex);
-                break;
-            case COLUMN_ALARMOWNER:
-                snmp_set_var_typed_value( request->requestvb, ASN_OCTET_STR,
-                                 (u_char*)table_entry->alarmOwner,
-                                          table_entry->alarmOwner_len);
-                break;
-            case COLUMN_ALARMSTATUS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->alarmStatus);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct alarmTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_ALARMINDEX:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->alarmIndex);
         break;
-
-        /*
-         * Write-support
-         */
-    case MODE_SET_RESERVE1:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct alarmTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if(  table_info == NULL ) {
-                continue;
-			}
-    
-            switch (table_info->colnum) {
-            case COLUMN_ALARMINTERVAL:
-                /* or possibly 'netsnmp_check_vb_int_range' */
-                ret = netsnmp_check_vb_int_range( request->requestvb,10,1000 );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_ALARMVARIABLE:
-                /* or possibly 'netsnmp_check_vb_type_and_max_size' */
-                ret = netsnmp_check_vb_type_and_max_size(
-                          request->requestvb, ASN_OBJECT_ID, 64 );
-                if( GetAlarmObjID((oid*)request->requestvb->val.string,request->requestvb->val_len/sizeof(oid)) < 0 ) {
-					ret = SNMP_ERR_BADVALUE;
-				}
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_ALARMSAMPLETYPE:
-                /* or possibly 'netsnmp_check_vb_int_range' */
-                ret = netsnmp_check_vb_int( request->requestvb );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_ALARMSTARTUPALARM:
-                /* or possibly 'netsnmp_check_vb_int_range' */
-                ret = netsnmp_check_vb_int( request->requestvb );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_ALARMRISINGTHRESHOLD:
-                /* or possibly 'netsnmp_check_vb_int_range' */
-                ret = netsnmp_check_vb_int( request->requestvb );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_ALARMFALLINGTHRESHOLD:
-                /* or possibly 'netsnmp_check_vb_int_range' */
-                ret = netsnmp_check_vb_int( request->requestvb );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_ALARMRISINGEVENTINDEX:
-                /* or possibly 'netsnmp_check_vb_int_range' */
-                ret = netsnmp_check_vb_int( request->requestvb );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_ALARMFALLINGEVENTINDEX:
-                /* or possibly 'netsnmp_check_vb_int_range' */
-                ret = netsnmp_check_vb_int( request->requestvb );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_ALARMOWNER:
-                /* or possibly 'netsnmp_check_vb_type_and_max_size' */
-                ret = netsnmp_check_vb_type_and_max_size(
-                          request->requestvb, ASN_OCTET_STR, 256 );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_ALARMSTATUS:
-                /* or possibly 'netsnmp_check_vb_int_range' */
-                ret = netsnmp_check_vb_int( request->requestvb );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            default:
-                netsnmp_set_request_error( reqinfo, request,
-                                           SNMP_ERR_NOTWRITABLE );
-                return SNMP_ERR_NOERROR;
-            }
-        }
+      case COLUMN_ALARMINTERVAL:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->alarmInterval);
         break;
-
-    case MODE_SET_RESERVE2:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct alarmTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if(  table_info == NULL ) {
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_ALARMINTERVAL:
-            case COLUMN_ALARMVARIABLE:
-            case COLUMN_ALARMSAMPLETYPE:
-            case COLUMN_ALARMSTARTUPALARM:
-            case COLUMN_ALARMRISINGTHRESHOLD:
-            case COLUMN_ALARMFALLINGTHRESHOLD:
-            case COLUMN_ALARMRISINGEVENTINDEX:
-            case COLUMN_ALARMFALLINGEVENTINDEX:
-            case COLUMN_ALARMOWNER:
-            case COLUMN_ALARMSTATUS:
-                if ( !table_entry ) {
-                    table_entry = alarmTable_createEntry(container
-                        , *table_info->indexes->val.integer
-                        );
-                    if (table_entry) {
-                        netsnmp_container_table_row_insert( request, (netsnmp_index*)table_entry );
-                    } else {
-                        netsnmp_set_request_error( reqinfo, request,
-                                                   SNMP_ERR_RESOURCEUNAVAILABLE );
-                        return SNMP_ERR_NOERROR;
-                    }
-                }
-                break;
-            }
-        }
+      case COLUMN_ALARMVARIABLE:
+        snmp_set_var_typed_value(request->requestvb, ASN_OBJECT_ID,
+                                 (u_char *)table_entry->alarmVariable,
+                                 table_entry->alarmVariable_len);
         break;
-
-    case MODE_SET_FREE:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct alarmTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                continue;
-			}
-    
-            switch (table_info->colnum) {
-            case COLUMN_ALARMINTERVAL:
-            case COLUMN_ALARMVARIABLE:
-            case COLUMN_ALARMSAMPLETYPE:
-            case COLUMN_ALARMSTARTUPALARM:
-            case COLUMN_ALARMRISINGTHRESHOLD:
-            case COLUMN_ALARMFALLINGTHRESHOLD:
-            case COLUMN_ALARMRISINGEVENTINDEX:
-            case COLUMN_ALARMFALLINGEVENTINDEX:
-            case COLUMN_ALARMOWNER:
-            case COLUMN_ALARMSTATUS:
-                if ( table_entry && !table_entry->valid ) {
-                    alarmTable_removeEntry(container, table_entry );
-                }
-                break;
-            }
-        }
+      case COLUMN_ALARMSAMPLETYPE:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->alarmSampleType);
         break;
-
-    case MODE_SET_ACTION:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct alarmTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_ALARMINTERVAL:
-                table_entry->old_alarmInterval = table_entry->alarmInterval;
-                table_entry->alarmInterval     = *request->requestvb->val.integer;
-                break;
-            case COLUMN_ALARMVARIABLE:
-                memcpy( table_entry->old_alarmVariable,
-                        table_entry->alarmVariable,
-                        sizeof(table_entry->alarmVariable));
-                table_entry->old_alarmVariable_len =
-                        table_entry->alarmVariable_len;
-                memset( table_entry->alarmVariable, 0,
-                        sizeof(table_entry->alarmVariable));
-                memcpy( table_entry->alarmVariable,
-                        request->requestvb->val.string,
-                        request->requestvb->val_len);
-                table_entry->alarmVariable_len =
-                        request->requestvb->val_len;
-                table_entry->nAlarmObjID = 0;
-                break;
-            case COLUMN_ALARMSAMPLETYPE:
-                table_entry->old_alarmSampleType = table_entry->alarmSampleType;
-                table_entry->alarmSampleType     = *request->requestvb->val.integer;
-                break;
-            case COLUMN_ALARMSTARTUPALARM:
-                table_entry->old_alarmStartupAlarm = table_entry->alarmStartupAlarm;
-                table_entry->alarmStartupAlarm     = *request->requestvb->val.integer;
-                break;
-            case COLUMN_ALARMRISINGTHRESHOLD:
-                table_entry->old_alarmRisingThreshold = table_entry->alarmRisingThreshold;
-                table_entry->alarmRisingThreshold     = *request->requestvb->val.integer;
-                break;
-            case COLUMN_ALARMFALLINGTHRESHOLD:
-                table_entry->old_alarmFallingThreshold = table_entry->alarmFallingThreshold;
-                table_entry->alarmFallingThreshold     = *request->requestvb->val.integer;
-                break;
-            case COLUMN_ALARMRISINGEVENTINDEX:
-                table_entry->old_alarmRisingEventIndex = table_entry->alarmRisingEventIndex;
-                table_entry->alarmRisingEventIndex     = *request->requestvb->val.integer;
-                break;
-            case COLUMN_ALARMFALLINGEVENTINDEX:
-                table_entry->old_alarmFallingEventIndex = table_entry->alarmFallingEventIndex;
-                table_entry->alarmFallingEventIndex     = *request->requestvb->val.integer;
-                break;
-            case COLUMN_ALARMOWNER:
-                memcpy( table_entry->old_alarmOwner,
-                        table_entry->alarmOwner,
-                        sizeof(table_entry->alarmOwner));
-                table_entry->old_alarmOwner_len =
-                        table_entry->alarmOwner_len;
-                memset( table_entry->alarmOwner, 0,
-                        sizeof(table_entry->alarmOwner));
-                memcpy( table_entry->alarmOwner,
-                        request->requestvb->val.string,
-                        request->requestvb->val_len);
-                table_entry->alarmOwner_len =
-                        request->requestvb->val_len;
-                break;
-            case COLUMN_ALARMSTATUS:
-                table_entry->old_alarmStatus = table_entry->alarmStatus;
-                table_entry->alarmStatus     = *request->requestvb->val.integer;
-                break;
-            }
-        }
+      case COLUMN_ALARMVALUE:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->alarmValue);
         break;
-
-    case MODE_SET_UNDO:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct alarmTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                continue;
-			}
-    
-            switch (table_info->colnum) {
-            case COLUMN_ALARMINTERVAL:
-                if ( table_entry && !table_entry->valid ) {
-                    alarmTable_removeEntry(container, table_entry );
-                } else {
-                    table_entry->alarmInterval     = table_entry->old_alarmInterval;
-                    table_entry->old_alarmInterval = 0;
-                }
-                break;
-            case COLUMN_ALARMVARIABLE:
-                if ( table_entry && !table_entry->valid ) {
-                    alarmTable_removeEntry(container, table_entry );
-                } else {
-                    memcpy( table_entry->alarmVariable,
-                            table_entry->old_alarmVariable,
-                            sizeof(table_entry->alarmVariable));
-                    memset( table_entry->old_alarmVariable, 0,
-                            sizeof(table_entry->alarmVariable));
-                    table_entry->alarmVariable_len =
-                            table_entry->old_alarmVariable_len;
-                }
-                break;
-            case COLUMN_ALARMSAMPLETYPE:
-                if ( table_entry && !table_entry->valid ) {
-                    alarmTable_removeEntry(container, table_entry );
-                } else {
-                    table_entry->alarmSampleType     = table_entry->old_alarmSampleType;
-                    table_entry->old_alarmSampleType = 0;
-                }
-                break;
-            case COLUMN_ALARMSTARTUPALARM:
-                if ( table_entry && !table_entry->valid ) {
-                    alarmTable_removeEntry(container, table_entry );
-                } else {
-                    table_entry->alarmStartupAlarm     = table_entry->old_alarmStartupAlarm;
-                    table_entry->old_alarmStartupAlarm = 0;
-                }
-                break;
-            case COLUMN_ALARMRISINGTHRESHOLD:
-                if ( table_entry && !table_entry->valid ) {
-                    alarmTable_removeEntry(container, table_entry );
-                } else {
-                    table_entry->alarmRisingThreshold     = table_entry->old_alarmRisingThreshold;
-                    table_entry->old_alarmRisingThreshold = 0;
-                }
-                break;
-            case COLUMN_ALARMFALLINGTHRESHOLD:
-                if ( table_entry && !table_entry->valid ) {
-                    alarmTable_removeEntry(container, table_entry );
-                } else {
-                    table_entry->alarmFallingThreshold     = table_entry->old_alarmFallingThreshold;
-                    table_entry->old_alarmFallingThreshold = 0;
-                }
-                break;
-            case COLUMN_ALARMRISINGEVENTINDEX:
-                if ( table_entry && !table_entry->valid ) {
-                    alarmTable_removeEntry(container, table_entry );
-                } else {
-                    table_entry->alarmRisingEventIndex     = table_entry->old_alarmRisingEventIndex;
-                    table_entry->old_alarmRisingEventIndex = 0;
-                }
-                break;
-            case COLUMN_ALARMFALLINGEVENTINDEX:
-                if ( table_entry && !table_entry->valid ) {
-                    alarmTable_removeEntry(container, table_entry );
-                } else {
-                    table_entry->alarmFallingEventIndex     = table_entry->old_alarmFallingEventIndex;
-                    table_entry->old_alarmFallingEventIndex = 0;
-                }
-                break;
-            case COLUMN_ALARMOWNER:
-                if ( table_entry && !table_entry->valid ) {
-                    alarmTable_removeEntry(container, table_entry );
-                } else {
-                    memcpy( table_entry->alarmOwner,
-                            table_entry->old_alarmOwner,
-                            sizeof(table_entry->alarmOwner));
-                    memset( table_entry->old_alarmOwner, 0,
-                            sizeof(table_entry->alarmOwner));
-                    table_entry->alarmOwner_len =
-                            table_entry->old_alarmOwner_len;
-                }
-                break;
-            case COLUMN_ALARMSTATUS:
-                if ( table_entry && !table_entry->valid ) {
-                    alarmTable_removeEntry(container, table_entry );
-                } else {
-                    table_entry->alarmStatus     = table_entry->old_alarmStatus;
-                    table_entry->old_alarmStatus = 0;
-                }
-                break;
-            }
-        }
+      case COLUMN_ALARMSTARTUPALARM:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->alarmStartupAlarm);
         break;
-
-    case MODE_SET_COMMIT:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct alarmTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-    
-            switch (table_info->colnum) {
-            case COLUMN_ALARMINTERVAL:
-            case COLUMN_ALARMVARIABLE:
-            case COLUMN_ALARMSAMPLETYPE:
-            case COLUMN_ALARMSTARTUPALARM:
-            case COLUMN_ALARMRISINGTHRESHOLD:
-            case COLUMN_ALARMFALLINGTHRESHOLD:
-            case COLUMN_ALARMRISINGEVENTINDEX:
-            case COLUMN_ALARMFALLINGEVENTINDEX:
-            case COLUMN_ALARMOWNER:
-            case COLUMN_ALARMSTATUS:
-                if ( table_entry && !table_entry->valid ) {
-                    table_entry->valid = 1;
-                }
-            }
-        }
+      case COLUMN_ALARMRISINGTHRESHOLD:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->alarmRisingThreshold);
         break;
+      case COLUMN_ALARMFALLINGTHRESHOLD:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->alarmFallingThreshold);
+        break;
+      case COLUMN_ALARMRISINGEVENTINDEX:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->alarmRisingEventIndex);
+        break;
+      case COLUMN_ALARMFALLINGEVENTINDEX:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->alarmFallingEventIndex);
+        break;
+      case COLUMN_ALARMOWNER:
+        snmp_set_var_typed_value(request->requestvb, ASN_OCTET_STR,
+                                 (u_char *)table_entry->alarmOwner,
+                                 table_entry->alarmOwner_len);
+        break;
+      case COLUMN_ALARMSTATUS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->alarmStatus);
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
     }
-    return SNMP_ERR_NOERROR;
+    break;
+
+    /*
+     * Write-support
+     */
+  case MODE_SET_RESERVE1:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct alarmTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_info == NULL)
+      {
+        continue;
+      }
+
+      switch (table_info->colnum)
+      {
+      case COLUMN_ALARMINTERVAL:
+        /* or possibly 'netsnmp_check_vb_int_range' */
+        ret = netsnmp_check_vb_int_range(request->requestvb, 10, 1000);
+        if (ret != SNMP_ERR_NOERROR)
+        {
+          netsnmp_set_request_error(reqinfo, request, ret);
+          return SNMP_ERR_NOERROR;
+        }
+        break;
+      case COLUMN_ALARMVARIABLE:
+        /* or possibly 'netsnmp_check_vb_type_and_max_size' */
+        ret = netsnmp_check_vb_type_and_max_size(
+            request->requestvb, ASN_OBJECT_ID, 64);
+        if (GetAlarmObjID((oid *)request->requestvb->val.string, request->requestvb->val_len / sizeof(oid)) < 0)
+        {
+          ret = SNMP_ERR_BADVALUE;
+        }
+        if (ret != SNMP_ERR_NOERROR)
+        {
+          netsnmp_set_request_error(reqinfo, request, ret);
+          return SNMP_ERR_NOERROR;
+        }
+        break;
+      case COLUMN_ALARMSAMPLETYPE:
+        /* or possibly 'netsnmp_check_vb_int_range' */
+        ret = netsnmp_check_vb_int(request->requestvb);
+        if (ret != SNMP_ERR_NOERROR)
+        {
+          netsnmp_set_request_error(reqinfo, request, ret);
+          return SNMP_ERR_NOERROR;
+        }
+        break;
+      case COLUMN_ALARMSTARTUPALARM:
+        /* or possibly 'netsnmp_check_vb_int_range' */
+        ret = netsnmp_check_vb_int(request->requestvb);
+        if (ret != SNMP_ERR_NOERROR)
+        {
+          netsnmp_set_request_error(reqinfo, request, ret);
+          return SNMP_ERR_NOERROR;
+        }
+        break;
+      case COLUMN_ALARMRISINGTHRESHOLD:
+        /* or possibly 'netsnmp_check_vb_int_range' */
+        ret = netsnmp_check_vb_int(request->requestvb);
+        if (ret != SNMP_ERR_NOERROR)
+        {
+          netsnmp_set_request_error(reqinfo, request, ret);
+          return SNMP_ERR_NOERROR;
+        }
+        break;
+      case COLUMN_ALARMFALLINGTHRESHOLD:
+        /* or possibly 'netsnmp_check_vb_int_range' */
+        ret = netsnmp_check_vb_int(request->requestvb);
+        if (ret != SNMP_ERR_NOERROR)
+        {
+          netsnmp_set_request_error(reqinfo, request, ret);
+          return SNMP_ERR_NOERROR;
+        }
+        break;
+      case COLUMN_ALARMRISINGEVENTINDEX:
+        /* or possibly 'netsnmp_check_vb_int_range' */
+        ret = netsnmp_check_vb_int(request->requestvb);
+        if (ret != SNMP_ERR_NOERROR)
+        {
+          netsnmp_set_request_error(reqinfo, request, ret);
+          return SNMP_ERR_NOERROR;
+        }
+        break;
+      case COLUMN_ALARMFALLINGEVENTINDEX:
+        /* or possibly 'netsnmp_check_vb_int_range' */
+        ret = netsnmp_check_vb_int(request->requestvb);
+        if (ret != SNMP_ERR_NOERROR)
+        {
+          netsnmp_set_request_error(reqinfo, request, ret);
+          return SNMP_ERR_NOERROR;
+        }
+        break;
+      case COLUMN_ALARMOWNER:
+        /* or possibly 'netsnmp_check_vb_type_and_max_size' */
+        ret = netsnmp_check_vb_type_and_max_size(
+            request->requestvb, ASN_OCTET_STR, 256);
+        if (ret != SNMP_ERR_NOERROR)
+        {
+          netsnmp_set_request_error(reqinfo, request, ret);
+          return SNMP_ERR_NOERROR;
+        }
+        break;
+      case COLUMN_ALARMSTATUS:
+        /* or possibly 'netsnmp_check_vb_int_range' */
+        ret = netsnmp_check_vb_int(request->requestvb);
+        if (ret != SNMP_ERR_NOERROR)
+        {
+          netsnmp_set_request_error(reqinfo, request, ret);
+          return SNMP_ERR_NOERROR;
+        }
+        break;
+      default:
+        netsnmp_set_request_error(reqinfo, request,
+                                  SNMP_ERR_NOTWRITABLE);
+        return SNMP_ERR_NOERROR;
+      }
+    }
+    break;
+
+  case MODE_SET_RESERVE2:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct alarmTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_info == NULL)
+      {
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_ALARMINTERVAL:
+      case COLUMN_ALARMVARIABLE:
+      case COLUMN_ALARMSAMPLETYPE:
+      case COLUMN_ALARMSTARTUPALARM:
+      case COLUMN_ALARMRISINGTHRESHOLD:
+      case COLUMN_ALARMFALLINGTHRESHOLD:
+      case COLUMN_ALARMRISINGEVENTINDEX:
+      case COLUMN_ALARMFALLINGEVENTINDEX:
+      case COLUMN_ALARMOWNER:
+      case COLUMN_ALARMSTATUS:
+        if (!table_entry)
+        {
+          table_entry = alarmTable_createEntry(container, *table_info->indexes->val.integer);
+          if (table_entry)
+          {
+            netsnmp_container_table_row_insert(request, (netsnmp_index *)table_entry);
+          }
+          else
+          {
+            netsnmp_set_request_error(reqinfo, request,
+                                      SNMP_ERR_RESOURCEUNAVAILABLE);
+            return SNMP_ERR_NOERROR;
+          }
+        }
+        break;
+      }
+    }
+    break;
+
+  case MODE_SET_FREE:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct alarmTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        continue;
+      }
+
+      switch (table_info->colnum)
+      {
+      case COLUMN_ALARMINTERVAL:
+      case COLUMN_ALARMVARIABLE:
+      case COLUMN_ALARMSAMPLETYPE:
+      case COLUMN_ALARMSTARTUPALARM:
+      case COLUMN_ALARMRISINGTHRESHOLD:
+      case COLUMN_ALARMFALLINGTHRESHOLD:
+      case COLUMN_ALARMRISINGEVENTINDEX:
+      case COLUMN_ALARMFALLINGEVENTINDEX:
+      case COLUMN_ALARMOWNER:
+      case COLUMN_ALARMSTATUS:
+        if (table_entry && !table_entry->valid)
+        {
+          alarmTable_removeEntry(container, table_entry);
+        }
+        break;
+      }
+    }
+    break;
+
+  case MODE_SET_ACTION:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct alarmTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_ALARMINTERVAL:
+        table_entry->old_alarmInterval = table_entry->alarmInterval;
+        table_entry->alarmInterval = *request->requestvb->val.integer;
+        break;
+      case COLUMN_ALARMVARIABLE:
+        memcpy(table_entry->old_alarmVariable,
+               table_entry->alarmVariable,
+               sizeof(table_entry->alarmVariable));
+        table_entry->old_alarmVariable_len =
+            table_entry->alarmVariable_len;
+        memset(table_entry->alarmVariable, 0,
+               sizeof(table_entry->alarmVariable));
+        memcpy(table_entry->alarmVariable,
+               request->requestvb->val.string,
+               request->requestvb->val_len);
+        table_entry->alarmVariable_len =
+            request->requestvb->val_len;
+        table_entry->nAlarmObjID = 0;
+        break;
+      case COLUMN_ALARMSAMPLETYPE:
+        table_entry->old_alarmSampleType = table_entry->alarmSampleType;
+        table_entry->alarmSampleType = *request->requestvb->val.integer;
+        break;
+      case COLUMN_ALARMSTARTUPALARM:
+        table_entry->old_alarmStartupAlarm = table_entry->alarmStartupAlarm;
+        table_entry->alarmStartupAlarm = *request->requestvb->val.integer;
+        break;
+      case COLUMN_ALARMRISINGTHRESHOLD:
+        table_entry->old_alarmRisingThreshold = table_entry->alarmRisingThreshold;
+        table_entry->alarmRisingThreshold = *request->requestvb->val.integer;
+        break;
+      case COLUMN_ALARMFALLINGTHRESHOLD:
+        table_entry->old_alarmFallingThreshold = table_entry->alarmFallingThreshold;
+        table_entry->alarmFallingThreshold = *request->requestvb->val.integer;
+        break;
+      case COLUMN_ALARMRISINGEVENTINDEX:
+        table_entry->old_alarmRisingEventIndex = table_entry->alarmRisingEventIndex;
+        table_entry->alarmRisingEventIndex = *request->requestvb->val.integer;
+        break;
+      case COLUMN_ALARMFALLINGEVENTINDEX:
+        table_entry->old_alarmFallingEventIndex = table_entry->alarmFallingEventIndex;
+        table_entry->alarmFallingEventIndex = *request->requestvb->val.integer;
+        break;
+      case COLUMN_ALARMOWNER:
+        memcpy(table_entry->old_alarmOwner,
+               table_entry->alarmOwner,
+               sizeof(table_entry->alarmOwner));
+        table_entry->old_alarmOwner_len =
+            table_entry->alarmOwner_len;
+        memset(table_entry->alarmOwner, 0,
+               sizeof(table_entry->alarmOwner));
+        memcpy(table_entry->alarmOwner,
+               request->requestvb->val.string,
+               request->requestvb->val_len);
+        table_entry->alarmOwner_len =
+            request->requestvb->val_len;
+        break;
+      case COLUMN_ALARMSTATUS:
+        table_entry->old_alarmStatus = table_entry->alarmStatus;
+        table_entry->alarmStatus = *request->requestvb->val.integer;
+        break;
+      }
+    }
+    break;
+
+  case MODE_SET_UNDO:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct alarmTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        continue;
+      }
+
+      switch (table_info->colnum)
+      {
+      case COLUMN_ALARMINTERVAL:
+        if (table_entry && !table_entry->valid)
+        {
+          alarmTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          table_entry->alarmInterval = table_entry->old_alarmInterval;
+          table_entry->old_alarmInterval = 0;
+        }
+        break;
+      case COLUMN_ALARMVARIABLE:
+        if (table_entry && !table_entry->valid)
+        {
+          alarmTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          memcpy(table_entry->alarmVariable,
+                 table_entry->old_alarmVariable,
+                 sizeof(table_entry->alarmVariable));
+          memset(table_entry->old_alarmVariable, 0,
+                 sizeof(table_entry->alarmVariable));
+          table_entry->alarmVariable_len =
+              table_entry->old_alarmVariable_len;
+        }
+        break;
+      case COLUMN_ALARMSAMPLETYPE:
+        if (table_entry && !table_entry->valid)
+        {
+          alarmTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          table_entry->alarmSampleType = table_entry->old_alarmSampleType;
+          table_entry->old_alarmSampleType = 0;
+        }
+        break;
+      case COLUMN_ALARMSTARTUPALARM:
+        if (table_entry && !table_entry->valid)
+        {
+          alarmTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          table_entry->alarmStartupAlarm = table_entry->old_alarmStartupAlarm;
+          table_entry->old_alarmStartupAlarm = 0;
+        }
+        break;
+      case COLUMN_ALARMRISINGTHRESHOLD:
+        if (table_entry && !table_entry->valid)
+        {
+          alarmTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          table_entry->alarmRisingThreshold = table_entry->old_alarmRisingThreshold;
+          table_entry->old_alarmRisingThreshold = 0;
+        }
+        break;
+      case COLUMN_ALARMFALLINGTHRESHOLD:
+        if (table_entry && !table_entry->valid)
+        {
+          alarmTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          table_entry->alarmFallingThreshold = table_entry->old_alarmFallingThreshold;
+          table_entry->old_alarmFallingThreshold = 0;
+        }
+        break;
+      case COLUMN_ALARMRISINGEVENTINDEX:
+        if (table_entry && !table_entry->valid)
+        {
+          alarmTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          table_entry->alarmRisingEventIndex = table_entry->old_alarmRisingEventIndex;
+          table_entry->old_alarmRisingEventIndex = 0;
+        }
+        break;
+      case COLUMN_ALARMFALLINGEVENTINDEX:
+        if (table_entry && !table_entry->valid)
+        {
+          alarmTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          table_entry->alarmFallingEventIndex = table_entry->old_alarmFallingEventIndex;
+          table_entry->old_alarmFallingEventIndex = 0;
+        }
+        break;
+      case COLUMN_ALARMOWNER:
+        if (table_entry && !table_entry->valid)
+        {
+          alarmTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          memcpy(table_entry->alarmOwner,
+                 table_entry->old_alarmOwner,
+                 sizeof(table_entry->alarmOwner));
+          memset(table_entry->old_alarmOwner, 0,
+                 sizeof(table_entry->alarmOwner));
+          table_entry->alarmOwner_len =
+              table_entry->old_alarmOwner_len;
+        }
+        break;
+      case COLUMN_ALARMSTATUS:
+        if (table_entry && !table_entry->valid)
+        {
+          alarmTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          table_entry->alarmStatus = table_entry->old_alarmStatus;
+          table_entry->old_alarmStatus = 0;
+        }
+        break;
+      }
+    }
+    break;
+
+  case MODE_SET_COMMIT:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct alarmTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+
+      switch (table_info->colnum)
+      {
+      case COLUMN_ALARMINTERVAL:
+      case COLUMN_ALARMVARIABLE:
+      case COLUMN_ALARMSAMPLETYPE:
+      case COLUMN_ALARMSTARTUPALARM:
+      case COLUMN_ALARMRISINGTHRESHOLD:
+      case COLUMN_ALARMFALLINGTHRESHOLD:
+      case COLUMN_ALARMRISINGEVENTINDEX:
+      case COLUMN_ALARMFALLINGEVENTINDEX:
+      case COLUMN_ALARMOWNER:
+      case COLUMN_ALARMSTATUS:
+        if (table_entry && !table_entry->valid)
+        {
+          table_entry->valid = 1;
+        }
+      }
+    }
+    break;
+  }
+  return SNMP_ERR_NOERROR;
 }
 
 /** Initialize the hostControlTable table by defining its contents and how it's structured */
-void
-initialize_table_hostControlTable(void)
+void initialize_table_hostControlTable(void)
 {
-    static oid hostControlTable_oid[] = {1,3,6,1,2,1,16,4,1};
-    size_t hostControlTable_oid_len   = OID_LENGTH(hostControlTable_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_container               *container;
-    netsnmp_table_registration_info *table_info;
+  static oid hostControlTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 4, 1};
+  size_t hostControlTable_oid_len = OID_LENGTH(hostControlTable_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_container *container;
+  netsnmp_table_registration_info *table_info;
 
-    reg = netsnmp_create_handler_registration(
-              "hostControlTable",     hostControlTable_handler,
-              hostControlTable_oid, hostControlTable_oid_len,
-              HANDLER_CAN_RWRITE
-              );
+  reg = netsnmp_create_handler_registration(
+      "hostControlTable", hostControlTable_handler,
+      hostControlTable_oid, hostControlTable_oid_len,
+      HANDLER_CAN_RWRITE);
 
-    container  = netsnmp_container_find( "table_container" );
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: hostControlIndex */
-                           0);
-    table_info->min_column = COLUMN_HOSTCONTROLINDEX;
-    table_info->max_column = COLUMN_HOSTCONTROLSTATUS;
-    
-    netsnmp_container_table_register( reg, table_info, container, 0 );
+  container = netsnmp_container_find("table_container");
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER, /* index: hostControlIndex */
+                                   0);
+  table_info->min_column = COLUMN_HOSTCONTROLINDEX;
+  table_info->max_column = COLUMN_HOSTCONTROLSTATUS;
 
-    /* Initialise the contents of the table here */
-    InitHostContEnt(container);
+  netsnmp_container_table_register(reg, table_info, container, 0);
+
+  /* Initialise the contents of the table here */
+  InitHostContEnt(container);
 }
 
-    /* Typical data structure for a row entry */
-struct hostControlTable_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct hostControlTable_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long hostControlIndex;
+  /* Index values */
+  long hostControlIndex;
 
-    /* Column values */
-    oid hostControlDataSource[16];
-    size_t hostControlDataSource_len;
-    oid old_hostControlDataSource[16];
-    size_t old_hostControlDataSource_len;
-    long hostControlTableSize;
-    u_long hostControlLastDeleteTime;
-    char hostControlOwner[256];
-    size_t hostControlOwner_len;
-    char old_hostControlOwner[256];
-    size_t old_hostControlOwner_len;
-    long hostControlStatus;
-    long old_hostControlStatus;
+  /* Column values */
+  oid hostControlDataSource[16];
+  size_t hostControlDataSource_len;
+  oid old_hostControlDataSource[16];
+  size_t old_hostControlDataSource_len;
+  long hostControlTableSize;
+  u_long hostControlLastDeleteTime;
+  char hostControlOwner[256];
+  size_t hostControlOwner_len;
+  char old_hostControlOwner[256];
+  size_t old_hostControlOwner_len;
+  long hostControlStatus;
+  long old_hostControlStatus;
 
-    int   valid;
+  int valid;
 };
 
 /* create a new row in the table */
 struct hostControlTable_entry *
-hostControlTable_createEntry(netsnmp_container *container
-                 , long  hostControlIndex
-                ) {
-    struct hostControlTable_entry *entry;
+hostControlTable_createEntry(netsnmp_container *container, long hostControlIndex)
+{
+  struct hostControlTable_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct hostControlTable_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct hostControlTable_entry);
+  if (!entry)
+    return NULL;
 
-    entry->hostControlIndex = hostControlIndex;
-    entry->oid_index.len  = 1;
-    entry->oid_index.oids = (oid*)&entry->hostControlIndex;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->hostControlIndex = hostControlIndex;
+  entry->oid_index.len = 1;
+  entry->oid_index.oids = (oid *)&entry->hostControlIndex;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-hostControlTable_removeEntry(netsnmp_container *container,
-                 struct hostControlTable_entry *entry) {
+void hostControlTable_removeEntry(netsnmp_container *container,
+                                  struct hostControlTable_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the hostControlTable table */
-int
-hostControlTable_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
+int hostControlTable_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
+{
 
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct hostControlTable_entry          *table_entry;
-    int                         ret;
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct hostControlTable_entry *table_entry;
+  int ret;
 
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct hostControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct hostControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
 
-            switch (table_info->colnum) {
-            case COLUMN_HOSTCONTROLINDEX:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->hostControlIndex);
-                break;
-            case COLUMN_HOSTCONTROLDATASOURCE:
-                snmp_set_var_typed_value( request->requestvb, ASN_OBJECT_ID,
-                                 (u_char*)table_entry->hostControlDataSource,
-                                          table_entry->hostControlDataSource_len);
-                break;
-            case COLUMN_HOSTCONTROLTABLESIZE:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->hostControlTableSize);
-                break;
-            case COLUMN_HOSTCONTROLLASTDELETETIME:
-                snmp_set_var_typed_integer( request->requestvb, ASN_TIMETICKS,
-                                            table_entry->hostControlLastDeleteTime);
-                break;
-            case COLUMN_HOSTCONTROLOWNER:
-                snmp_set_var_typed_value( request->requestvb, ASN_OCTET_STR,
-                                 (u_char*)table_entry->hostControlOwner,
-                                          table_entry->hostControlOwner_len);
-                break;
-            case COLUMN_HOSTCONTROLSTATUS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->hostControlStatus);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
+      switch (table_info->colnum)
+      {
+      case COLUMN_HOSTCONTROLINDEX:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->hostControlIndex);
         break;
+      case COLUMN_HOSTCONTROLDATASOURCE:
+        snmp_set_var_typed_value(request->requestvb, ASN_OBJECT_ID,
+                                 (u_char *)table_entry->hostControlDataSource,
+                                 table_entry->hostControlDataSource_len);
+        break;
+      case COLUMN_HOSTCONTROLTABLESIZE:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->hostControlTableSize);
+        break;
+      case COLUMN_HOSTCONTROLLASTDELETETIME:
+        snmp_set_var_typed_integer(request->requestvb, ASN_TIMETICKS,
+                                   table_entry->hostControlLastDeleteTime);
+        break;
+      case COLUMN_HOSTCONTROLOWNER:
+        snmp_set_var_typed_value(request->requestvb, ASN_OCTET_STR,
+                                 (u_char *)table_entry->hostControlOwner,
+                                 table_entry->hostControlOwner_len);
+        break;
+      case COLUMN_HOSTCONTROLSTATUS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->hostControlStatus);
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
+    }
+    break;
 
-        /*
-         * Write-support
-         */
-    case MODE_SET_RESERVE1:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct hostControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if(  table_info == NULL ) {
-                continue;
-			}
-            switch (table_info->colnum) {
+    /*
+     * Write-support
+     */
+  case MODE_SET_RESERVE1:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct hostControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_info == NULL)
+      {
+        continue;
+      }
+      switch (table_info->colnum)
+      {
 #if 0				
             case COLUMN_HOSTCONTROLDATASOURCE:
                 /* or possibly 'netsnmp_check_vb_type_and_max_size' */
@@ -2652,830 +2786,852 @@ hostControlTable_handler(
                 }
                 break;
 #endif
-            default:
-                netsnmp_set_request_error( reqinfo, request,
-                                           SNMP_ERR_NOTWRITABLE );
-                return SNMP_ERR_NOERROR;
-            }
-        }
-        break;
-
-    case MODE_SET_RESERVE2:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct hostControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if(  table_info == NULL ) {
-                continue;
-			}
-    
-            switch (table_info->colnum) {
-            case COLUMN_HOSTCONTROLDATASOURCE:
-            case COLUMN_HOSTCONTROLOWNER:
-            case COLUMN_HOSTCONTROLSTATUS:
-                if ( !table_entry ) {
-                    table_entry = hostControlTable_createEntry(container
-                        , *table_info->indexes->val.integer
-                        );
-                    if (table_entry) {
-                        netsnmp_container_table_row_insert( request,(netsnmp_index*) table_entry );
-                    } else {
-                        netsnmp_set_request_error( reqinfo, request,
-                                                   SNMP_ERR_RESOURCEUNAVAILABLE );
-                        return SNMP_ERR_NOERROR;
-                    }
-                }
-                break;
-            }
-        }
-        break;
-
-    case MODE_SET_FREE:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct hostControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-    
-            switch (table_info->colnum) {
-            case COLUMN_HOSTCONTROLDATASOURCE:
-            case COLUMN_HOSTCONTROLOWNER:
-            case COLUMN_HOSTCONTROLSTATUS:
-                if ( table_entry && !table_entry->valid ) {
-                    hostControlTable_removeEntry(container, table_entry );
-                }
-                break;
-            }
-        }
-        break;
-
-    case MODE_SET_ACTION:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct hostControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_HOSTCONTROLDATASOURCE:
-                memcpy( table_entry->old_hostControlDataSource,
-                        table_entry->hostControlDataSource,
-                        sizeof(table_entry->hostControlDataSource));
-                table_entry->old_hostControlDataSource_len =
-                        table_entry->hostControlDataSource_len;
-                memset( table_entry->hostControlDataSource, 0,
-                        sizeof(table_entry->hostControlDataSource));
-                memcpy( table_entry->hostControlDataSource,
-                        request->requestvb->val.string,
-                        request->requestvb->val_len);
-                table_entry->hostControlDataSource_len =
-                        request->requestvb->val_len;
-                break;
-            case COLUMN_HOSTCONTROLOWNER:
-                memcpy( table_entry->old_hostControlOwner,
-                        table_entry->hostControlOwner,
-                        sizeof(table_entry->hostControlOwner));
-                table_entry->old_hostControlOwner_len =
-                        table_entry->hostControlOwner_len;
-                memset( table_entry->hostControlOwner, 0,
-                        sizeof(table_entry->hostControlOwner));
-                memcpy( table_entry->hostControlOwner,
-                        request->requestvb->val.string,
-                        request->requestvb->val_len);
-                table_entry->hostControlOwner_len =
-                        request->requestvb->val_len;
-                break;
-            case COLUMN_HOSTCONTROLSTATUS:
-                table_entry->old_hostControlStatus = table_entry->hostControlStatus;
-                table_entry->hostControlStatus     = *request->requestvb->val.integer;
-                break;
-            }
-        }
-        break;
-
-    case MODE_SET_UNDO:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct hostControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_HOSTCONTROLDATASOURCE:
-                if ( table_entry && !table_entry->valid ) {
-                    hostControlTable_removeEntry(container, table_entry );
-                } else {
-                    memcpy( table_entry->hostControlDataSource,
-                            table_entry->old_hostControlDataSource,
-                            sizeof(table_entry->hostControlDataSource));
-                    memset( table_entry->old_hostControlDataSource, 0,
-                            sizeof(table_entry->hostControlDataSource));
-                    table_entry->hostControlDataSource_len =
-                            table_entry->old_hostControlDataSource_len;
-                }
-                break;
-            case COLUMN_HOSTCONTROLOWNER:
-                if ( table_entry && !table_entry->valid ) {
-                    hostControlTable_removeEntry(container, table_entry );
-                } else {
-                    memcpy( table_entry->hostControlOwner,
-                            table_entry->old_hostControlOwner,
-                            sizeof(table_entry->hostControlOwner));
-                    memset( table_entry->old_hostControlOwner, 0,
-                            sizeof(table_entry->hostControlOwner));
-                    table_entry->hostControlOwner_len =
-                            table_entry->old_hostControlOwner_len;
-                }
-                break;
-            case COLUMN_HOSTCONTROLSTATUS:
-                if ( table_entry && !table_entry->valid ) {
-                    hostControlTable_removeEntry(container, table_entry );
-                } else {
-                    table_entry->hostControlStatus     = table_entry->old_hostControlStatus;
-                    table_entry->old_hostControlStatus = 0;
-                }
-                break;
-            }
-        }
-        break;
-
-    case MODE_SET_COMMIT:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct hostControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                continue;
-			}
-    
-            switch (table_info->colnum) {
-            case COLUMN_HOSTCONTROLDATASOURCE:
-            case COLUMN_HOSTCONTROLOWNER:
-            case COLUMN_HOSTCONTROLSTATUS:
-                if ( table_entry && !table_entry->valid ) {
-                    table_entry->valid = 1;
-                }
-            }
-        }
-        break;
+      default:
+        netsnmp_set_request_error(reqinfo, request,
+                                  SNMP_ERR_NOTWRITABLE);
+        return SNMP_ERR_NOERROR;
+      }
     }
-    return SNMP_ERR_NOERROR;
-}
+    break;
 
+  case MODE_SET_RESERVE2:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct hostControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_info == NULL)
+      {
+        continue;
+      }
+
+      switch (table_info->colnum)
+      {
+      case COLUMN_HOSTCONTROLDATASOURCE:
+      case COLUMN_HOSTCONTROLOWNER:
+      case COLUMN_HOSTCONTROLSTATUS:
+        if (!table_entry)
+        {
+          table_entry = hostControlTable_createEntry(container, *table_info->indexes->val.integer);
+          if (table_entry)
+          {
+            netsnmp_container_table_row_insert(request, (netsnmp_index *)table_entry);
+          }
+          else
+          {
+            netsnmp_set_request_error(reqinfo, request,
+                                      SNMP_ERR_RESOURCEUNAVAILABLE);
+            return SNMP_ERR_NOERROR;
+          }
+        }
+        break;
+      }
+    }
+    break;
+
+  case MODE_SET_FREE:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct hostControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+
+      switch (table_info->colnum)
+      {
+      case COLUMN_HOSTCONTROLDATASOURCE:
+      case COLUMN_HOSTCONTROLOWNER:
+      case COLUMN_HOSTCONTROLSTATUS:
+        if (table_entry && !table_entry->valid)
+        {
+          hostControlTable_removeEntry(container, table_entry);
+        }
+        break;
+      }
+    }
+    break;
+
+  case MODE_SET_ACTION:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct hostControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_HOSTCONTROLDATASOURCE:
+        memcpy(table_entry->old_hostControlDataSource,
+               table_entry->hostControlDataSource,
+               sizeof(table_entry->hostControlDataSource));
+        table_entry->old_hostControlDataSource_len =
+            table_entry->hostControlDataSource_len;
+        memset(table_entry->hostControlDataSource, 0,
+               sizeof(table_entry->hostControlDataSource));
+        memcpy(table_entry->hostControlDataSource,
+               request->requestvb->val.string,
+               request->requestvb->val_len);
+        table_entry->hostControlDataSource_len =
+            request->requestvb->val_len;
+        break;
+      case COLUMN_HOSTCONTROLOWNER:
+        memcpy(table_entry->old_hostControlOwner,
+               table_entry->hostControlOwner,
+               sizeof(table_entry->hostControlOwner));
+        table_entry->old_hostControlOwner_len =
+            table_entry->hostControlOwner_len;
+        memset(table_entry->hostControlOwner, 0,
+               sizeof(table_entry->hostControlOwner));
+        memcpy(table_entry->hostControlOwner,
+               request->requestvb->val.string,
+               request->requestvb->val_len);
+        table_entry->hostControlOwner_len =
+            request->requestvb->val_len;
+        break;
+      case COLUMN_HOSTCONTROLSTATUS:
+        table_entry->old_hostControlStatus = table_entry->hostControlStatus;
+        table_entry->hostControlStatus = *request->requestvb->val.integer;
+        break;
+      }
+    }
+    break;
+
+  case MODE_SET_UNDO:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct hostControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_HOSTCONTROLDATASOURCE:
+        if (table_entry && !table_entry->valid)
+        {
+          hostControlTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          memcpy(table_entry->hostControlDataSource,
+                 table_entry->old_hostControlDataSource,
+                 sizeof(table_entry->hostControlDataSource));
+          memset(table_entry->old_hostControlDataSource, 0,
+                 sizeof(table_entry->hostControlDataSource));
+          table_entry->hostControlDataSource_len =
+              table_entry->old_hostControlDataSource_len;
+        }
+        break;
+      case COLUMN_HOSTCONTROLOWNER:
+        if (table_entry && !table_entry->valid)
+        {
+          hostControlTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          memcpy(table_entry->hostControlOwner,
+                 table_entry->old_hostControlOwner,
+                 sizeof(table_entry->hostControlOwner));
+          memset(table_entry->old_hostControlOwner, 0,
+                 sizeof(table_entry->hostControlOwner));
+          table_entry->hostControlOwner_len =
+              table_entry->old_hostControlOwner_len;
+        }
+        break;
+      case COLUMN_HOSTCONTROLSTATUS:
+        if (table_entry && !table_entry->valid)
+        {
+          hostControlTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          table_entry->hostControlStatus = table_entry->old_hostControlStatus;
+          table_entry->old_hostControlStatus = 0;
+        }
+        break;
+      }
+    }
+    break;
+
+  case MODE_SET_COMMIT:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct hostControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        continue;
+      }
+
+      switch (table_info->colnum)
+      {
+      case COLUMN_HOSTCONTROLDATASOURCE:
+      case COLUMN_HOSTCONTROLOWNER:
+      case COLUMN_HOSTCONTROLSTATUS:
+        if (table_entry && !table_entry->valid)
+        {
+          table_entry->valid = 1;
+        }
+      }
+    }
+    break;
+  }
+  return SNMP_ERR_NOERROR;
+}
 
 /** Initialize the hostTable table by defining its contents and how it's structured */
-void
-initialize_table_hostTable(void)
+void initialize_table_hostTable(void)
 {
-    static oid hostTable_oid[] = {1,3,6,1,2,1,16,4,2};
-    size_t hostTable_oid_len   = OID_LENGTH(hostTable_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_table_registration_info *table_info;
+  static oid hostTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 4, 2};
+  size_t hostTable_oid_len = OID_LENGTH(hostTable_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_table_registration_info *table_info;
 
-    reg = netsnmp_create_handler_registration(
-              "hostTable",     hostTable_handler,
-              hostTable_oid, hostTable_oid_len,
-              HANDLER_CAN_RONLY
-              );
+  reg = netsnmp_create_handler_registration(
+      "hostTable", hostTable_handler,
+      hostTable_oid, hostTable_oid_len,
+      HANDLER_CAN_RONLY);
 
-    pHostContainer  = netsnmp_container_find( "table_container" );
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: hostIndex */
-                           ASN_OCTET_STR,  /* index: hostAddress */
-                           0);
-    table_info->min_column = COLUMN_HOSTADDRESS;
-    table_info->max_column = COLUMN_HOSTOUTMULTICASTPKTS;
-    
-    netsnmp_container_table_register( reg, table_info, pHostContainer, 0 );
+  pHostContainer = netsnmp_container_find("table_container");
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER,   /* index: hostIndex */
+                                   ASN_OCTET_STR, /* index: hostAddress */
+                                   0);
+  table_info->min_column = COLUMN_HOSTADDRESS;
+  table_info->max_column = COLUMN_HOSTOUTMULTICASTPKTS;
 
-    /* Initialise the contents of the table here */
-    
+  netsnmp_container_table_register(reg, table_info, pHostContainer, 0);
+
+  /* Initialise the contents of the table here */
 }
 
-    /* Typical data structure for a row entry */
-struct hostTable_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct hostTable_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long hostIndex;
-    char hostAddress[6];
-    size_t hostAddress_len;
+  /* Index values */
+  long hostIndex;
+  char hostAddress[6];
+  size_t hostAddress_len;
 
-    oid   IndexOid[6+1+1];
+  oid IndexOid[6 + 1 + 1];
 
-    /* Column values */
-    long hostCreationOrder;
-    u_long hostInPkts;
-    u_long hostOutPkts;
-    u_long hostInOctets;
-    u_long hostOutOctets;
-    u_long hostOutErrors;
-    u_long hostOutBroadcastPkts;
-    u_long hostOutMulticastPkts;
+  /* Column values */
+  long hostCreationOrder;
+  u_long hostInPkts;
+  u_long hostOutPkts;
+  u_long hostInOctets;
+  u_long hostOutOctets;
+  u_long hostOutErrors;
+  u_long hostOutBroadcastPkts;
+  u_long hostOutMulticastPkts;
 
-    int   valid;
+  int valid;
 };
 
-static size_t MakeHostIndex(char *hostAddress,oid *pOid)
+static size_t MakeHostIndex(char *hostAddress, oid *pOid)
 {
-	int i;
-	int j;
-	i =0;
-	pOid[i++] = 1;
-	pOid[i++] = 6; //Length
-	for(j = 0;j < 6;j++ ) {
-		pOid[i++] = (long) hostAddress[j] & 0x00ff;
-	}
-	return((size_t) i);
+  int i;
+  int j;
+  i = 0;
+  pOid[i++] = 1;
+  pOid[i++] = 6; // Length
+  for (j = 0; j < 6; j++)
+  {
+    pOid[i++] = (long)hostAddress[j] & 0x00ff;
+  }
+  return ((size_t)i);
 }
 /* create a new row in the table */
 struct hostTable_entry *
-hostTable_createEntry(netsnmp_container *container
-                 , long  hostIndex
-                 , char* hostAddress
-                 , size_t hostAddress_len
-                ) {
-    struct hostTable_entry *entry;
+hostTable_createEntry(netsnmp_container *container, long hostIndex, char *hostAddress, size_t hostAddress_len)
+{
+  struct hostTable_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct hostTable_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct hostTable_entry);
+  if (!entry)
+    return NULL;
 
-    entry->hostIndex = hostIndex;
-    memcpy(entry->hostAddress, hostAddress, hostAddress_len);
-    entry->hostAddress_len = hostAddress_len;
+  entry->hostIndex = hostIndex;
+  memcpy(entry->hostAddress, hostAddress, hostAddress_len);
+  entry->hostAddress_len = hostAddress_len;
 
-    entry->oid_index.len  = MakeHostIndex(hostAddress,entry->IndexOid);
-    entry->oid_index.oids = entry->IndexOid;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->oid_index.len = MakeHostIndex(hostAddress, entry->IndexOid);
+  entry->oid_index.oids = entry->IndexOid;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-hostTable_removeEntry(netsnmp_container *container, 
-                 struct hostTable_entry *entry) {
+void hostTable_removeEntry(netsnmp_container *container,
+                           struct hostTable_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the hostTable table */
-int
-hostTable_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
+int hostTable_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
+{
 
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct hostTable_entry          *table_entry;
-    int                         ret;
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct hostTable_entry *table_entry;
+  int ret;
 
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct hostTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct hostTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
 
-            switch (table_info->colnum) {
-            case COLUMN_HOSTADDRESS:
-                snmp_set_var_typed_value( request->requestvb, ASN_OCTET_STR,
-                                 (u_char*)table_entry->hostAddress,
-                                          table_entry->hostAddress_len);
-                break;
-            case COLUMN_HOSTCREATIONORDER:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->hostCreationOrder);
-                break;
-            case COLUMN_HOSTINDEX:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->hostIndex);
-                break;
-            case COLUMN_HOSTINPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->hostInPkts);
-                break;
-            case COLUMN_HOSTOUTPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->hostOutPkts);
-                break;
-            case COLUMN_HOSTINOCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->hostInOctets);
-                break;
-            case COLUMN_HOSTOUTOCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->hostOutOctets);
-                break;
-            case COLUMN_HOSTOUTERRORS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->hostOutErrors);
-                break;
-            case COLUMN_HOSTOUTBROADCASTPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->hostOutBroadcastPkts);
-                break;
-            case COLUMN_HOSTOUTMULTICASTPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->hostOutMulticastPkts);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
+      switch (table_info->colnum)
+      {
+      case COLUMN_HOSTADDRESS:
+        snmp_set_var_typed_value(request->requestvb, ASN_OCTET_STR,
+                                 (u_char *)table_entry->hostAddress,
+                                 table_entry->hostAddress_len);
         break;
-
+      case COLUMN_HOSTCREATIONORDER:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->hostCreationOrder);
+        break;
+      case COLUMN_HOSTINDEX:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->hostIndex);
+        break;
+      case COLUMN_HOSTINPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->hostInPkts);
+        break;
+      case COLUMN_HOSTOUTPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->hostOutPkts);
+        break;
+      case COLUMN_HOSTINOCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->hostInOctets);
+        break;
+      case COLUMN_HOSTOUTOCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->hostOutOctets);
+        break;
+      case COLUMN_HOSTOUTERRORS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->hostOutErrors);
+        break;
+      case COLUMN_HOSTOUTBROADCASTPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->hostOutBroadcastPkts);
+        break;
+      case COLUMN_HOSTOUTMULTICASTPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->hostOutMulticastPkts);
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
     }
-    return SNMP_ERR_NOERROR;
+    break;
+  }
+  return SNMP_ERR_NOERROR;
 }
-
-
 
 /** Initialize the hostTimeTable table by defining its contents and how it's structured */
-void
-initialize_table_hostTimeTable(void)
+void initialize_table_hostTimeTable(void)
 {
-    static oid hostTimeTable_oid[] = {1,3,6,1,2,1,16,4,3};
-    size_t hostTimeTable_oid_len   = OID_LENGTH(hostTimeTable_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_table_registration_info *table_info;
+  static oid hostTimeTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 4, 3};
+  size_t hostTimeTable_oid_len = OID_LENGTH(hostTimeTable_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_table_registration_info *table_info;
 
-    reg = netsnmp_create_handler_registration(
-              "hostTimeTable",     hostTimeTable_handler,
-              hostTimeTable_oid, hostTimeTable_oid_len,
-              HANDLER_CAN_RONLY
-              );
+  reg = netsnmp_create_handler_registration(
+      "hostTimeTable", hostTimeTable_handler,
+      hostTimeTable_oid, hostTimeTable_oid_len,
+      HANDLER_CAN_RONLY);
 
-    pHostTimeContainer  = netsnmp_container_find( "table_container" );
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: hostTimeIndex */
-                           ASN_INTEGER,  /* index: hostTimeCreationOrder */
-                           0);
-    table_info->min_column = COLUMN_HOSTTIMEADDRESS;
-    table_info->max_column = COLUMN_HOSTTIMEOUTMULTICASTPKTS;
-    
-    netsnmp_container_table_register( reg, table_info, pHostTimeContainer, 0 );
+  pHostTimeContainer = netsnmp_container_find("table_container");
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER, /* index: hostTimeIndex */
+                                   ASN_INTEGER, /* index: hostTimeCreationOrder */
+                                   0);
+  table_info->min_column = COLUMN_HOSTTIMEADDRESS;
+  table_info->max_column = COLUMN_HOSTTIMEOUTMULTICASTPKTS;
 
-    /* Initialise the contents of the table here */
+  netsnmp_container_table_register(reg, table_info, pHostTimeContainer, 0);
+
+  /* Initialise the contents of the table here */
 }
 
-    /* Typical data structure for a row entry */
-struct hostTimeTable_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct hostTimeTable_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long hostTimeIndex;
-    long hostTimeCreationOrder;
+  /* Index values */
+  long hostTimeIndex;
+  long hostTimeCreationOrder;
 
-    /* Column values */
-    //Link ToHostEnt
-    struct hostTable_entry          *pHostEnt;
+  /* Column values */
+  // Link ToHostEnt
+  struct hostTable_entry *pHostEnt;
 
-/*    char hostTimeAddress[NNN];
-    size_t hostTimeAddress_len;
-    long hostTimeCreationOrder;
-    long hostTimeIndex;
-    u_long hostTimeInPkts;
-    u_long hostTimeOutPkts;
-    u_long hostTimeInOctets;
-    u_long hostTimeOutOctets;
-    u_long hostTimeOutErrors;
-    u_long hostTimeOutBroadcastPkts;
-    u_long hostTimeOutMulticastPkts;
-*/
-    int   valid;
+  /*    char hostTimeAddress[NNN];
+      size_t hostTimeAddress_len;
+      long hostTimeCreationOrder;
+      long hostTimeIndex;
+      u_long hostTimeInPkts;
+      u_long hostTimeOutPkts;
+      u_long hostTimeInOctets;
+      u_long hostTimeOutOctets;
+      u_long hostTimeOutErrors;
+      u_long hostTimeOutBroadcastPkts;
+      u_long hostTimeOutMulticastPkts;
+  */
+  int valid;
 };
 
 /* create a new row in the table */
 struct hostTimeTable_entry *
-hostTimeTable_createEntry(netsnmp_container *container
-                 , long  hostTimeIndex
-                 , long  hostTimeCreationOrder
-                ) {
-    struct hostTimeTable_entry *entry;
+hostTimeTable_createEntry(netsnmp_container *container, long hostTimeIndex, long hostTimeCreationOrder)
+{
+  struct hostTimeTable_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct hostTimeTable_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct hostTimeTable_entry);
+  if (!entry)
+    return NULL;
 
-    entry->hostTimeIndex = hostTimeIndex;
-    entry->hostTimeCreationOrder = hostTimeCreationOrder;
-    entry->oid_index.len  = 2;
-    entry->oid_index.oids = (oid*) &entry->hostTimeIndex;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->hostTimeIndex = hostTimeIndex;
+  entry->hostTimeCreationOrder = hostTimeCreationOrder;
+  entry->oid_index.len = 2;
+  entry->oid_index.oids = (oid *)&entry->hostTimeIndex;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-hostTimeTable_removeEntry(netsnmp_container *container, 
-                 struct hostTimeTable_entry *entry) {
+void hostTimeTable_removeEntry(netsnmp_container *container,
+                               struct hostTimeTable_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the hostTimeTable table */
-int
-hostTimeTable_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
+int hostTimeTable_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
+{
 
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct hostTimeTable_entry      *table_entry;
-    struct hostTable_entry          *table_entry2;
-    int                         ret;
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct hostTimeTable_entry *table_entry;
+  struct hostTable_entry *table_entry2;
+  int ret;
 
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct hostTimeTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
-    		table_entry2 = table_entry->pHostEnt;
-    		
-            switch (table_info->colnum) {
-            case COLUMN_HOSTTIMEADDRESS:
-                snmp_set_var_typed_value( request->requestvb, ASN_OCTET_STR,
-                                 (u_char*)table_entry2->hostAddress,
-                                          table_entry2->hostAddress_len);
-                break;
-            case COLUMN_HOSTTIMECREATIONORDER:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->hostTimeCreationOrder);
-                break;
-            case COLUMN_HOSTTIMEINDEX:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->hostTimeIndex);
-                break;
-            case COLUMN_HOSTTIMEINPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry2->hostInPkts);
-                break;
-            case COLUMN_HOSTTIMEOUTPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry2->hostOutPkts);
-                break;
-            case COLUMN_HOSTTIMEINOCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry2->hostInOctets);
-                break;
-            case COLUMN_HOSTTIMEOUTOCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry2->hostOutOctets);
-                break;
-            case COLUMN_HOSTTIMEOUTERRORS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry2->hostOutErrors);
-                break;
-            case COLUMN_HOSTTIMEOUTBROADCASTPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry2->hostOutBroadcastPkts);
-                break;
-            case COLUMN_HOSTTIMEOUTMULTICASTPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry2->hostOutMulticastPkts);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct hostTimeTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
+      table_entry2 = table_entry->pHostEnt;
+
+      switch (table_info->colnum)
+      {
+      case COLUMN_HOSTTIMEADDRESS:
+        snmp_set_var_typed_value(request->requestvb, ASN_OCTET_STR,
+                                 (u_char *)table_entry2->hostAddress,
+                                 table_entry2->hostAddress_len);
         break;
-
+      case COLUMN_HOSTTIMECREATIONORDER:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->hostTimeCreationOrder);
+        break;
+      case COLUMN_HOSTTIMEINDEX:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->hostTimeIndex);
+        break;
+      case COLUMN_HOSTTIMEINPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry2->hostInPkts);
+        break;
+      case COLUMN_HOSTTIMEOUTPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry2->hostOutPkts);
+        break;
+      case COLUMN_HOSTTIMEINOCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry2->hostInOctets);
+        break;
+      case COLUMN_HOSTTIMEOUTOCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry2->hostOutOctets);
+        break;
+      case COLUMN_HOSTTIMEOUTERRORS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry2->hostOutErrors);
+        break;
+      case COLUMN_HOSTTIMEOUTBROADCASTPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry2->hostOutBroadcastPkts);
+        break;
+      case COLUMN_HOSTTIMEOUTMULTICASTPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry2->hostOutMulticastPkts);
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
     }
-    return SNMP_ERR_NOERROR;
+    break;
+  }
+  return SNMP_ERR_NOERROR;
 }
-
-
 
 /** Initialize the hostControl2Table table by defining its contents and how it's structured */
-void
-initialize_table_hostControl2Table(void)
+void initialize_table_hostControl2Table(void)
 {
-    static oid hostControl2Table_oid[] = {1,3,6,1,2,1,16,4,4};
-    size_t hostControl2Table_oid_len   = OID_LENGTH(hostControl2Table_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_container               *container;
-    netsnmp_table_registration_info *table_info;
+  static oid hostControl2Table_oid[] = {1, 3, 6, 1, 2, 1, 16, 4, 4};
+  size_t hostControl2Table_oid_len = OID_LENGTH(hostControl2Table_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_container *container;
+  netsnmp_table_registration_info *table_info;
 
-    reg = netsnmp_create_handler_registration(
-              "hostControl2Table",     hostControl2Table_handler,
-              hostControl2Table_oid, hostControl2Table_oid_len,
-              HANDLER_CAN_RONLY
-              );
+  reg = netsnmp_create_handler_registration(
+      "hostControl2Table", hostControl2Table_handler,
+      hostControl2Table_oid, hostControl2Table_oid_len,
+      HANDLER_CAN_RONLY);
 
-    container  = netsnmp_container_find( "table_container" );
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: hostControlIndex */
-                           0);
-    table_info->min_column = COLUMN_HOSTCONTROLDROPPEDFRAMES;
-    table_info->max_column = COLUMN_HOSTCONTROLCREATETIME;
-    
-    netsnmp_container_table_register( reg, table_info, container, 0 );
+  container = netsnmp_container_find("table_container");
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER, /* index: hostControlIndex */
+                                   0);
+  table_info->min_column = COLUMN_HOSTCONTROLDROPPEDFRAMES;
+  table_info->max_column = COLUMN_HOSTCONTROLCREATETIME;
 
-    /* Initialise the contents of the table here */
-    InitHostCont2Ent(container);
+  netsnmp_container_table_register(reg, table_info, container, 0);
+
+  /* Initialise the contents of the table here */
+  InitHostCont2Ent(container);
 }
 
-    /* Typical data structure for a row entry */
-struct hostControl2Table_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct hostControl2Table_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long hostControlIndex;
+  /* Index values */
+  long hostControlIndex;
 
-    /* Column values */
-    u_long hostControlDroppedFrames;
-    u_long hostControlCreateTime;
+  /* Column values */
+  u_long hostControlDroppedFrames;
+  u_long hostControlCreateTime;
 
-    int   valid;
+  int valid;
 };
 
 /* create a new row in the table */
 struct hostControl2Table_entry *
-hostControl2Table_createEntry(netsnmp_container *container 
-                 , long  hostControlIndex
-                ) {
-    struct hostControl2Table_entry *entry;
+hostControl2Table_createEntry(netsnmp_container *container, long hostControlIndex)
+{
+  struct hostControl2Table_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct hostControl2Table_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct hostControl2Table_entry);
+  if (!entry)
+    return NULL;
 
-    entry->hostControlIndex = hostControlIndex;
-    entry->oid_index.len  = 1;
-    entry->oid_index.oids = (oid*) &entry->hostControlIndex;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->hostControlIndex = hostControlIndex;
+  entry->oid_index.len = 1;
+  entry->oid_index.oids = (oid *)&entry->hostControlIndex;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-hostControl2Table_removeEntry(netsnmp_container *container, 
-                 struct hostControl2Table_entry *entry) {
+void hostControl2Table_removeEntry(netsnmp_container *container,
+                                   struct hostControl2Table_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the hostControl2Table table */
-int
-hostControl2Table_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
+int hostControl2Table_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
+{
 
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct hostControl2Table_entry          *table_entry;
-    int                         ret;
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct hostControl2Table_entry *table_entry;
+  int ret;
 
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct hostControl2Table_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_HOSTCONTROLDROPPEDFRAMES:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->hostControlDroppedFrames);
-                break;
-            case COLUMN_HOSTCONTROLCREATETIME:
-                snmp_set_var_typed_integer( request->requestvb, ASN_TIMETICKS,
-                                            table_entry->hostControlCreateTime);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct hostControl2Table_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_HOSTCONTROLDROPPEDFRAMES:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->hostControlDroppedFrames);
         break;
-
+      case COLUMN_HOSTCONTROLCREATETIME:
+        snmp_set_var_typed_integer(request->requestvb, ASN_TIMETICKS,
+                                   table_entry->hostControlCreateTime);
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
     }
-    return SNMP_ERR_NOERROR;
+    break;
+  }
+  return SNMP_ERR_NOERROR;
 }
-
-
-
 
 /** Initialize the matrixControlTable table by defining its contents and how it's structured */
-void
-initialize_table_matrixControlTable(void)
+void initialize_table_matrixControlTable(void)
 {
-    static oid matrixControlTable_oid[] = {1,3,6,1,2,1,16,6,1};
-    size_t matrixControlTable_oid_len   = OID_LENGTH(matrixControlTable_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_container               *container;
-    netsnmp_table_registration_info *table_info;
+  static oid matrixControlTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 6, 1};
+  size_t matrixControlTable_oid_len = OID_LENGTH(matrixControlTable_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_container *container;
+  netsnmp_table_registration_info *table_info;
 
-    reg = netsnmp_create_handler_registration(
-              "matrixControlTable",     matrixControlTable_handler,
-              matrixControlTable_oid, matrixControlTable_oid_len,
-              HANDLER_CAN_RWRITE
-              );
+  reg = netsnmp_create_handler_registration(
+      "matrixControlTable", matrixControlTable_handler,
+      matrixControlTable_oid, matrixControlTable_oid_len,
+      HANDLER_CAN_RWRITE);
 
-    container  = netsnmp_container_find( "table_container" );
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: matrixControlIndex */
-                           0);
-    table_info->min_column = COLUMN_MATRIXCONTROLINDEX;
-    table_info->max_column = COLUMN_MATRIXCONTROLSTATUS;
-    
-    netsnmp_container_table_register( reg, table_info, container, 0 );
+  container = netsnmp_container_find("table_container");
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER, /* index: matrixControlIndex */
+                                   0);
+  table_info->min_column = COLUMN_MATRIXCONTROLINDEX;
+  table_info->max_column = COLUMN_MATRIXCONTROLSTATUS;
 
-    /* Initialise the contents of the table here */
-    InitMtxContEnt(container);
+  netsnmp_container_table_register(reg, table_info, container, 0);
 
+  /* Initialise the contents of the table here */
+  InitMtxContEnt(container);
 }
 
-    /* Typical data structure for a row entry */
-struct matrixControlTable_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct matrixControlTable_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long matrixControlIndex;
+  /* Index values */
+  long matrixControlIndex;
 
-    /* Column values */
-    oid matrixControlDataSource[16];
-    size_t matrixControlDataSource_len;
-    oid old_matrixControlDataSource[16];
-    size_t old_matrixControlDataSource_len;
-    long matrixControlTableSize;
-    u_long matrixControlLastDeleteTime;
-    char matrixControlOwner[256];
-    size_t matrixControlOwner_len;
-    char old_matrixControlOwner[256];
-    size_t old_matrixControlOwner_len;
-    long matrixControlStatus;
-    long old_matrixControlStatus;
+  /* Column values */
+  oid matrixControlDataSource[16];
+  size_t matrixControlDataSource_len;
+  oid old_matrixControlDataSource[16];
+  size_t old_matrixControlDataSource_len;
+  long matrixControlTableSize;
+  u_long matrixControlLastDeleteTime;
+  char matrixControlOwner[256];
+  size_t matrixControlOwner_len;
+  char old_matrixControlOwner[256];
+  size_t old_matrixControlOwner_len;
+  long matrixControlStatus;
+  long old_matrixControlStatus;
 
-    int   valid;
+  int valid;
 };
 
 /* create a new row in the table */
 struct matrixControlTable_entry *
-matrixControlTable_createEntry(netsnmp_container *container
-                 , long  matrixControlIndex
-                ) {
-    struct matrixControlTable_entry *entry;
+matrixControlTable_createEntry(netsnmp_container *container, long matrixControlIndex)
+{
+  struct matrixControlTable_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct matrixControlTable_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct matrixControlTable_entry);
+  if (!entry)
+    return NULL;
 
-    entry->matrixControlIndex = matrixControlIndex;
-    entry->oid_index.len  = 1;
-    entry->oid_index.oids = (oid*)&entry->matrixControlIndex;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->matrixControlIndex = matrixControlIndex;
+  entry->oid_index.len = 1;
+  entry->oid_index.oids = (oid *)&entry->matrixControlIndex;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-matrixControlTable_removeEntry(netsnmp_container *container,
-                 struct matrixControlTable_entry *entry) {
+void matrixControlTable_removeEntry(netsnmp_container *container,
+                                    struct matrixControlTable_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the matrixControlTable table */
-int
-matrixControlTable_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
+int matrixControlTable_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
+{
 
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct matrixControlTable_entry          *table_entry;
-    int                         ret;
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct matrixControlTable_entry *table_entry;
+  int ret;
 
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct matrixControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
- 			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_MATRIXCONTROLINDEX:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->matrixControlIndex);
-                break;
-            case COLUMN_MATRIXCONTROLDATASOURCE:
-                snmp_set_var_typed_value( request->requestvb, ASN_OBJECT_ID,
-                                 (u_char*)table_entry->matrixControlDataSource,
-                                          table_entry->matrixControlDataSource_len);
-                break;
-            case COLUMN_MATRIXCONTROLTABLESIZE:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->matrixControlTableSize);
-                break;
-            case COLUMN_MATRIXCONTROLLASTDELETETIME:
-                snmp_set_var_typed_integer( request->requestvb, ASN_TIMETICKS,
-                                            table_entry->matrixControlLastDeleteTime);
-                break;
-            case COLUMN_MATRIXCONTROLOWNER:
-                snmp_set_var_typed_value( request->requestvb, ASN_OCTET_STR,
-                                 (u_char*)table_entry->matrixControlOwner,
-                                          table_entry->matrixControlOwner_len);
-                break;
-            case COLUMN_MATRIXCONTROLSTATUS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->matrixControlStatus);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct matrixControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_MATRIXCONTROLINDEX:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->matrixControlIndex);
         break;
+      case COLUMN_MATRIXCONTROLDATASOURCE:
+        snmp_set_var_typed_value(request->requestvb, ASN_OBJECT_ID,
+                                 (u_char *)table_entry->matrixControlDataSource,
+                                 table_entry->matrixControlDataSource_len);
+        break;
+      case COLUMN_MATRIXCONTROLTABLESIZE:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->matrixControlTableSize);
+        break;
+      case COLUMN_MATRIXCONTROLLASTDELETETIME:
+        snmp_set_var_typed_integer(request->requestvb, ASN_TIMETICKS,
+                                   table_entry->matrixControlLastDeleteTime);
+        break;
+      case COLUMN_MATRIXCONTROLOWNER:
+        snmp_set_var_typed_value(request->requestvb, ASN_OCTET_STR,
+                                 (u_char *)table_entry->matrixControlOwner,
+                                 table_entry->matrixControlOwner_len);
+        break;
+      case COLUMN_MATRIXCONTROLSTATUS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->matrixControlStatus);
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
+    }
+    break;
 
-        /*
-         * Write-support
-         */
-    case MODE_SET_RESERVE1:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct matrixControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-            switch (table_info->colnum) {
+    /*
+     * Write-support
+     */
+  case MODE_SET_RESERVE1:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct matrixControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      switch (table_info->colnum)
+      {
 #if 0				
             case COLUMN_MATRIXCONTROLDATASOURCE:
                 /* or possibly 'netsnmp_check_vb_type_and_max_size' */
@@ -3504,1423 +3660,1490 @@ matrixControlTable_handler(
                 }
                 break;
 #endif
-            default:
-                netsnmp_set_request_error( reqinfo, request,
-                                           SNMP_ERR_NOTWRITABLE );
-                return SNMP_ERR_NOERROR;
-            }
-        }
-        break;
-
-    case MODE_SET_RESERVE2:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct matrixControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if(  table_info == NULL ) continue;
-            switch (table_info->colnum) {
-            case COLUMN_MATRIXCONTROLDATASOURCE:
-            case COLUMN_MATRIXCONTROLOWNER:
-            case COLUMN_MATRIXCONTROLSTATUS:
-                if ( !table_entry ) {
-                    table_entry = matrixControlTable_createEntry(container
-                        , *table_info->indexes->val.integer
-                        );
-                    if (table_entry) {
-                        netsnmp_container_table_row_insert( request, (netsnmp_index*)table_entry );
-                    } else {
-                        netsnmp_set_request_error( reqinfo, request,
-                                                   SNMP_ERR_RESOURCEUNAVAILABLE );
-                        return SNMP_ERR_NOERROR;
-                    }
-                }
-                break;
-            }
-        }
-        break;
-
-    case MODE_SET_FREE:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct matrixControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
- 			if( table_entry == NULL || table_info == NULL ) continue;
-            switch (table_info->colnum) {
-            case COLUMN_MATRIXCONTROLDATASOURCE:
-            case COLUMN_MATRIXCONTROLOWNER:
-            case COLUMN_MATRIXCONTROLSTATUS:
-                if ( table_entry && !table_entry->valid ) {
-                    matrixControlTable_removeEntry(container, table_entry );
-                }
-                break;
-            }
-        }
-        break;
-
-    case MODE_SET_ACTION:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct matrixControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-             switch (table_info->colnum) {
-            case COLUMN_MATRIXCONTROLDATASOURCE:
-                memcpy( table_entry->old_matrixControlDataSource,
-                        table_entry->matrixControlDataSource,
-                        sizeof(table_entry->matrixControlDataSource));
-                table_entry->old_matrixControlDataSource_len =
-                        table_entry->matrixControlDataSource_len;
-                memset( table_entry->matrixControlDataSource, 0,
-                        sizeof(table_entry->matrixControlDataSource));
-                memcpy( table_entry->matrixControlDataSource,
-                        request->requestvb->val.string,
-                        request->requestvb->val_len);
-                table_entry->matrixControlDataSource_len =
-                        request->requestvb->val_len;
-                break;
-            case COLUMN_MATRIXCONTROLOWNER:
-                memcpy( table_entry->old_matrixControlOwner,
-                        table_entry->matrixControlOwner,
-                        sizeof(table_entry->matrixControlOwner));
-                table_entry->old_matrixControlOwner_len =
-                        table_entry->matrixControlOwner_len;
-                memset( table_entry->matrixControlOwner, 0,
-                        sizeof(table_entry->matrixControlOwner));
-                memcpy( table_entry->matrixControlOwner,
-                        request->requestvb->val.string,
-                        request->requestvb->val_len);
-                table_entry->matrixControlOwner_len =
-                        request->requestvb->val_len;
-                break;
-            case COLUMN_MATRIXCONTROLSTATUS:
-                table_entry->old_matrixControlStatus = table_entry->matrixControlStatus;
-                table_entry->matrixControlStatus     = *request->requestvb->val.integer;
-                break;
-            }
-        }
-        break;
-
-    case MODE_SET_UNDO:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct matrixControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-            switch (table_info->colnum) {
-            case COLUMN_MATRIXCONTROLDATASOURCE:
-                if ( table_entry && !table_entry->valid ) {
-                    matrixControlTable_removeEntry(container, table_entry );
-                } else {
-                    memcpy( table_entry->matrixControlDataSource,
-                            table_entry->old_matrixControlDataSource,
-                            sizeof(table_entry->matrixControlDataSource));
-                    memset( table_entry->old_matrixControlDataSource, 0,
-                            sizeof(table_entry->matrixControlDataSource));
-                    table_entry->matrixControlDataSource_len =
-                            table_entry->old_matrixControlDataSource_len;
-                }
-                break;
-            case COLUMN_MATRIXCONTROLOWNER:
-                if ( table_entry && !table_entry->valid ) {
-                    matrixControlTable_removeEntry(container, table_entry );
-                } else {
-                    memcpy( table_entry->matrixControlOwner,
-                            table_entry->old_matrixControlOwner,
-                            sizeof(table_entry->matrixControlOwner));
-                    memset( table_entry->old_matrixControlOwner, 0,
-                            sizeof(table_entry->matrixControlOwner));
-                    table_entry->matrixControlOwner_len =
-                            table_entry->old_matrixControlOwner_len;
-                }
-                break;
-            case COLUMN_MATRIXCONTROLSTATUS:
-                if ( table_entry && !table_entry->valid ) {
-                    matrixControlTable_removeEntry(container, table_entry );
-                } else {
-                    table_entry->matrixControlStatus     = table_entry->old_matrixControlStatus;
-                    table_entry->old_matrixControlStatus = 0;
-                }
-                break;
-            }
-        }
-        break;
-
-    case MODE_SET_COMMIT:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct matrixControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-            switch (table_info->colnum) {
-            case COLUMN_MATRIXCONTROLDATASOURCE:
-            case COLUMN_MATRIXCONTROLOWNER:
-            case COLUMN_MATRIXCONTROLSTATUS:
-                if ( table_entry && !table_entry->valid ) {
-                    table_entry->valid = 1;
-                }
-            }
-        }
-        break;
+      default:
+        netsnmp_set_request_error(reqinfo, request,
+                                  SNMP_ERR_NOTWRITABLE);
+        return SNMP_ERR_NOERROR;
+      }
     }
-    return SNMP_ERR_NOERROR;
-}
+    break;
 
+  case MODE_SET_RESERVE2:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct matrixControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_info == NULL)
+        continue;
+      switch (table_info->colnum)
+      {
+      case COLUMN_MATRIXCONTROLDATASOURCE:
+      case COLUMN_MATRIXCONTROLOWNER:
+      case COLUMN_MATRIXCONTROLSTATUS:
+        if (!table_entry)
+        {
+          table_entry = matrixControlTable_createEntry(container, *table_info->indexes->val.integer);
+          if (table_entry)
+          {
+            netsnmp_container_table_row_insert(request, (netsnmp_index *)table_entry);
+          }
+          else
+          {
+            netsnmp_set_request_error(reqinfo, request,
+                                      SNMP_ERR_RESOURCEUNAVAILABLE);
+            return SNMP_ERR_NOERROR;
+          }
+        }
+        break;
+      }
+    }
+    break;
+
+  case MODE_SET_FREE:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct matrixControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+      switch (table_info->colnum)
+      {
+      case COLUMN_MATRIXCONTROLDATASOURCE:
+      case COLUMN_MATRIXCONTROLOWNER:
+      case COLUMN_MATRIXCONTROLSTATUS:
+        if (table_entry && !table_entry->valid)
+        {
+          matrixControlTable_removeEntry(container, table_entry);
+        }
+        break;
+      }
+    }
+    break;
+
+  case MODE_SET_ACTION:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct matrixControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+      switch (table_info->colnum)
+      {
+      case COLUMN_MATRIXCONTROLDATASOURCE:
+        memcpy(table_entry->old_matrixControlDataSource,
+               table_entry->matrixControlDataSource,
+               sizeof(table_entry->matrixControlDataSource));
+        table_entry->old_matrixControlDataSource_len =
+            table_entry->matrixControlDataSource_len;
+        memset(table_entry->matrixControlDataSource, 0,
+               sizeof(table_entry->matrixControlDataSource));
+        memcpy(table_entry->matrixControlDataSource,
+               request->requestvb->val.string,
+               request->requestvb->val_len);
+        table_entry->matrixControlDataSource_len =
+            request->requestvb->val_len;
+        break;
+      case COLUMN_MATRIXCONTROLOWNER:
+        memcpy(table_entry->old_matrixControlOwner,
+               table_entry->matrixControlOwner,
+               sizeof(table_entry->matrixControlOwner));
+        table_entry->old_matrixControlOwner_len =
+            table_entry->matrixControlOwner_len;
+        memset(table_entry->matrixControlOwner, 0,
+               sizeof(table_entry->matrixControlOwner));
+        memcpy(table_entry->matrixControlOwner,
+               request->requestvb->val.string,
+               request->requestvb->val_len);
+        table_entry->matrixControlOwner_len =
+            request->requestvb->val_len;
+        break;
+      case COLUMN_MATRIXCONTROLSTATUS:
+        table_entry->old_matrixControlStatus = table_entry->matrixControlStatus;
+        table_entry->matrixControlStatus = *request->requestvb->val.integer;
+        break;
+      }
+    }
+    break;
+
+  case MODE_SET_UNDO:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct matrixControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+      switch (table_info->colnum)
+      {
+      case COLUMN_MATRIXCONTROLDATASOURCE:
+        if (table_entry && !table_entry->valid)
+        {
+          matrixControlTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          memcpy(table_entry->matrixControlDataSource,
+                 table_entry->old_matrixControlDataSource,
+                 sizeof(table_entry->matrixControlDataSource));
+          memset(table_entry->old_matrixControlDataSource, 0,
+                 sizeof(table_entry->matrixControlDataSource));
+          table_entry->matrixControlDataSource_len =
+              table_entry->old_matrixControlDataSource_len;
+        }
+        break;
+      case COLUMN_MATRIXCONTROLOWNER:
+        if (table_entry && !table_entry->valid)
+        {
+          matrixControlTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          memcpy(table_entry->matrixControlOwner,
+                 table_entry->old_matrixControlOwner,
+                 sizeof(table_entry->matrixControlOwner));
+          memset(table_entry->old_matrixControlOwner, 0,
+                 sizeof(table_entry->matrixControlOwner));
+          table_entry->matrixControlOwner_len =
+              table_entry->old_matrixControlOwner_len;
+        }
+        break;
+      case COLUMN_MATRIXCONTROLSTATUS:
+        if (table_entry && !table_entry->valid)
+        {
+          matrixControlTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          table_entry->matrixControlStatus = table_entry->old_matrixControlStatus;
+          table_entry->old_matrixControlStatus = 0;
+        }
+        break;
+      }
+    }
+    break;
+
+  case MODE_SET_COMMIT:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct matrixControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+      switch (table_info->colnum)
+      {
+      case COLUMN_MATRIXCONTROLDATASOURCE:
+      case COLUMN_MATRIXCONTROLOWNER:
+      case COLUMN_MATRIXCONTROLSTATUS:
+        if (table_entry && !table_entry->valid)
+        {
+          table_entry->valid = 1;
+        }
+      }
+    }
+    break;
+  }
+  return SNMP_ERR_NOERROR;
+}
 
 /** Initialize the matrixSDTable table by defining its contents and how it's structured */
-void
-initialize_table_matrixSDTable(void)
+void initialize_table_matrixSDTable(void)
 {
-    static oid matrixSDTable_oid[] = {1,3,6,1,2,1,16,6,2};
-    size_t matrixSDTable_oid_len   = OID_LENGTH(matrixSDTable_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_table_registration_info *table_info;
+  static oid matrixSDTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 6, 2};
+  size_t matrixSDTable_oid_len = OID_LENGTH(matrixSDTable_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_table_registration_info *table_info;
 
-    reg = netsnmp_create_handler_registration(
-              "matrixSDTable",     matrixSDTable_handler,
-              matrixSDTable_oid, matrixSDTable_oid_len,
-              HANDLER_CAN_RONLY
-              );
+  reg = netsnmp_create_handler_registration(
+      "matrixSDTable", matrixSDTable_handler,
+      matrixSDTable_oid, matrixSDTable_oid_len,
+      HANDLER_CAN_RONLY);
 
-    pMtxSDContainer  = netsnmp_container_find( "table_container" );
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: matrixSDIndex */
-                           ASN_OCTET_STR,  /* index: matrixSDSourceAddress */
-                           ASN_OCTET_STR,  /* index: matrixSDDestAddress */
-                           0);
-    table_info->min_column = COLUMN_MATRIXSDSOURCEADDRESS;
-    table_info->max_column = COLUMN_MATRIXSDERRORS;
-    
-    netsnmp_container_table_register( reg, table_info, pMtxSDContainer, 0 );
+  pMtxSDContainer = netsnmp_container_find("table_container");
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER,   /* index: matrixSDIndex */
+                                   ASN_OCTET_STR, /* index: matrixSDSourceAddress */
+                                   ASN_OCTET_STR, /* index: matrixSDDestAddress */
+                                   0);
+  table_info->min_column = COLUMN_MATRIXSDSOURCEADDRESS;
+  table_info->max_column = COLUMN_MATRIXSDERRORS;
 
-    /* Initialise the contents of the table here */
+  netsnmp_container_table_register(reg, table_info, pMtxSDContainer, 0);
+
+  /* Initialise the contents of the table here */
 }
 
-    /* Typical data structure for a row entry */
-struct matrixSDTable_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct matrixSDTable_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long matrixSDIndex;
-    char matrixSDSourceAddress[6];
-    size_t matrixSDSourceAddress_len;
-    char matrixSDDestAddress[6];
-    size_t matrixSDDestAddress_len;
-	oid    IndexOid[1+7*2];
-    /* Column values */
-    u_long matrixSDPkts;
-    u_long matrixSDOctets;
-    u_long matrixSDErrors;
-// YMI Added 
-    void *pMtxDS;
+  /* Index values */
+  long matrixSDIndex;
+  char matrixSDSourceAddress[6];
+  size_t matrixSDSourceAddress_len;
+  char matrixSDDestAddress[6];
+  size_t matrixSDDestAddress_len;
+  oid IndexOid[1 + 7 * 2];
+  /* Column values */
+  u_long matrixSDPkts;
+  u_long matrixSDOctets;
+  u_long matrixSDErrors;
+  // YMI Added
+  void *pMtxDS;
 
-    int   valid;
+  int valid;
 };
 
-size_t MakeMtxIndex(long nIndex,char *pMac1,char *pMac2,oid *pOid)
+size_t MakeMtxIndex(long nIndex, char *pMac1, char *pMac2, oid *pOid)
 {
-	int i=0;
-	int j;
-	pOid[i++] = nIndex;
-	pOid[i++] = 6;
-	for(j = 0;j < 6;j++ ) {
-		pOid[i++]= (long) pMac1[j]  & 0x00ff;
-	}		
-	pOid[i++] = 6;
-	for(j = 0;j < 6;j++ ) {
-		pOid[i++]= (long) pMac2[j]  & 0x00ff;
-	}
-	return((size_t) i);
+  int i = 0;
+  int j;
+  pOid[i++] = nIndex;
+  pOid[i++] = 6;
+  for (j = 0; j < 6; j++)
+  {
+    pOid[i++] = (long)pMac1[j] & 0x00ff;
+  }
+  pOid[i++] = 6;
+  for (j = 0; j < 6; j++)
+  {
+    pOid[i++] = (long)pMac2[j] & 0x00ff;
+  }
+  return ((size_t)i);
 }
 
 /* create a new row in the table */
 struct matrixSDTable_entry *
-matrixSDTable_createEntry(netsnmp_container *container
-                 , long  matrixSDIndex
-                 , char* matrixSDSourceAddress
-                 , size_t matrixSDSourceAddress_len
-                 , char* matrixSDDestAddress
-                 , size_t matrixSDDestAddress_len
-                ) {
-    struct matrixSDTable_entry *entry;
+matrixSDTable_createEntry(netsnmp_container *container, long matrixSDIndex, char *matrixSDSourceAddress, size_t matrixSDSourceAddress_len, char *matrixSDDestAddress, size_t matrixSDDestAddress_len)
+{
+  struct matrixSDTable_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct matrixSDTable_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct matrixSDTable_entry);
+  if (!entry)
+    return NULL;
 
-    entry->matrixSDIndex = matrixSDIndex;
-    memcpy(entry->matrixSDSourceAddress, matrixSDSourceAddress, matrixSDSourceAddress_len);
-    entry->matrixSDSourceAddress_len = matrixSDSourceAddress_len;
-    memcpy(entry->matrixSDDestAddress, matrixSDDestAddress, matrixSDDestAddress_len);
-    entry->matrixSDDestAddress_len = matrixSDDestAddress_len;
-    entry->oid_index.len  = MakeMtxIndex(matrixSDIndex,matrixSDSourceAddress,matrixSDDestAddress,entry->IndexOid);
-    entry->oid_index.oids = entry->IndexOid;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->matrixSDIndex = matrixSDIndex;
+  memcpy(entry->matrixSDSourceAddress, matrixSDSourceAddress, matrixSDSourceAddress_len);
+  entry->matrixSDSourceAddress_len = matrixSDSourceAddress_len;
+  memcpy(entry->matrixSDDestAddress, matrixSDDestAddress, matrixSDDestAddress_len);
+  entry->matrixSDDestAddress_len = matrixSDDestAddress_len;
+  entry->oid_index.len = MakeMtxIndex(matrixSDIndex, matrixSDSourceAddress, matrixSDDestAddress, entry->IndexOid);
+  entry->oid_index.oids = entry->IndexOid;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-matrixSDTable_removeEntry(netsnmp_container *container, 
-                 struct matrixSDTable_entry *entry) {
+void matrixSDTable_removeEntry(netsnmp_container *container,
+                               struct matrixSDTable_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the matrixSDTable table */
-int
-matrixSDTable_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
+int matrixSDTable_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
+{
 
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct matrixSDTable_entry          *table_entry;
-    int                         ret;
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct matrixSDTable_entry *table_entry;
+  int ret;
 
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct matrixSDTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_MATRIXSDSOURCEADDRESS:
-                snmp_set_var_typed_value( request->requestvb, ASN_OCTET_STR,
-                                 (u_char*)table_entry->matrixSDSourceAddress,
-                                          table_entry->matrixSDSourceAddress_len);
-                break;
-            case COLUMN_MATRIXSDDESTADDRESS:
-                snmp_set_var_typed_value( request->requestvb, ASN_OCTET_STR,
-                                 (u_char*)table_entry->matrixSDDestAddress,
-                                          table_entry->matrixSDDestAddress_len);
-                break;
-            case COLUMN_MATRIXSDINDEX:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->matrixSDIndex);
-                break;
-            case COLUMN_MATRIXSDPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->matrixSDPkts);
-                break;
-            case COLUMN_MATRIXSDOCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->matrixSDOctets);
-                break;
-            case COLUMN_MATRIXSDERRORS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->matrixSDErrors);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct matrixSDTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_MATRIXSDSOURCEADDRESS:
+        snmp_set_var_typed_value(request->requestvb, ASN_OCTET_STR,
+                                 (u_char *)table_entry->matrixSDSourceAddress,
+                                 table_entry->matrixSDSourceAddress_len);
         break;
-
+      case COLUMN_MATRIXSDDESTADDRESS:
+        snmp_set_var_typed_value(request->requestvb, ASN_OCTET_STR,
+                                 (u_char *)table_entry->matrixSDDestAddress,
+                                 table_entry->matrixSDDestAddress_len);
+        break;
+      case COLUMN_MATRIXSDINDEX:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->matrixSDIndex);
+        break;
+      case COLUMN_MATRIXSDPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->matrixSDPkts);
+        break;
+      case COLUMN_MATRIXSDOCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->matrixSDOctets);
+        break;
+      case COLUMN_MATRIXSDERRORS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->matrixSDErrors);
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
     }
-    return SNMP_ERR_NOERROR;
+    break;
+  }
+  return SNMP_ERR_NOERROR;
 }
-
-
-
 
 /** Initialize the matrixDSTable table by defining its contents and how it's structured */
-void
-initialize_table_matrixDSTable(void)
+void initialize_table_matrixDSTable(void)
 {
-    static oid matrixDSTable_oid[] = {1,3,6,1,2,1,16,6,3};
-    size_t matrixDSTable_oid_len   = OID_LENGTH(matrixDSTable_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_table_registration_info *table_info;
+  static oid matrixDSTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 6, 3};
+  size_t matrixDSTable_oid_len = OID_LENGTH(matrixDSTable_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_table_registration_info *table_info;
 
-    reg = netsnmp_create_handler_registration(
-              "matrixDSTable",     matrixDSTable_handler,
-              matrixDSTable_oid, matrixDSTable_oid_len,
-              HANDLER_CAN_RONLY
-              );
+  reg = netsnmp_create_handler_registration(
+      "matrixDSTable", matrixDSTable_handler,
+      matrixDSTable_oid, matrixDSTable_oid_len,
+      HANDLER_CAN_RONLY);
 
-    pMtxDSContainer  = netsnmp_container_find( "table_container" );
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: matrixDSIndex */
-                           ASN_OCTET_STR,  /* index: matrixDSDestAddress */
-                           ASN_OCTET_STR,  /* index: matrixDSSourceAddress */
-                           0);
-    table_info->min_column = COLUMN_MATRIXDSSOURCEADDRESS;
-    table_info->max_column = COLUMN_MATRIXDSERRORS;
-    
-    netsnmp_container_table_register( reg, table_info, pMtxDSContainer, 0 );
+  pMtxDSContainer = netsnmp_container_find("table_container");
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER,   /* index: matrixDSIndex */
+                                   ASN_OCTET_STR, /* index: matrixDSDestAddress */
+                                   ASN_OCTET_STR, /* index: matrixDSSourceAddress */
+                                   0);
+  table_info->min_column = COLUMN_MATRIXDSSOURCEADDRESS;
+  table_info->max_column = COLUMN_MATRIXDSERRORS;
 
-    /* Initialise the contents of the table here */
+  netsnmp_container_table_register(reg, table_info, pMtxDSContainer, 0);
+
+  /* Initialise the contents of the table here */
 }
 
-    /* Typical data structure for a row entry */
-struct matrixDSTable_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct matrixDSTable_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long matrixDSIndex;
-    char matrixDSDestAddress[6];
-    size_t matrixDSDestAddress_len;
-    char matrixDSSourceAddress[6];
-    size_t matrixDSSourceAddress_len;
-    oid   IndexOid[1+7*2];
+  /* Index values */
+  long matrixDSIndex;
+  char matrixDSDestAddress[6];
+  size_t matrixDSDestAddress_len;
+  char matrixDSSourceAddress[6];
+  size_t matrixDSSourceAddress_len;
+  oid IndexOid[1 + 7 * 2];
 
-    /* Column values */
-    u_long matrixDSPkts;
-    u_long matrixDSOctets;
-    u_long matrixDSErrors;
-    
-    void *pMtxSD;
+  /* Column values */
+  u_long matrixDSPkts;
+  u_long matrixDSOctets;
+  u_long matrixDSErrors;
 
-    int   valid;
+  void *pMtxSD;
+
+  int valid;
 };
 
 /* create a new row in the table */
 struct matrixDSTable_entry *
-matrixDSTable_createEntry(netsnmp_container *container 
-                 , long  matrixDSIndex
-                 , char* matrixDSDestAddress
-                 , size_t matrixDSDestAddress_len
-                 , char* matrixDSSourceAddress
-                 , size_t matrixDSSourceAddress_len
-                ) {
-    struct matrixDSTable_entry *entry;
+matrixDSTable_createEntry(netsnmp_container *container, long matrixDSIndex, char *matrixDSDestAddress, size_t matrixDSDestAddress_len, char *matrixDSSourceAddress, size_t matrixDSSourceAddress_len)
+{
+  struct matrixDSTable_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct matrixDSTable_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct matrixDSTable_entry);
+  if (!entry)
+    return NULL;
 
-    entry->matrixDSIndex = matrixDSIndex;
-    memcpy(entry->matrixDSDestAddress, matrixDSDestAddress, matrixDSDestAddress_len);
-    entry->matrixDSDestAddress_len = matrixDSDestAddress_len;
-    memcpy(entry->matrixDSSourceAddress, matrixDSSourceAddress, matrixDSSourceAddress_len);
-    entry->matrixDSSourceAddress_len = matrixDSSourceAddress_len;
-    entry->oid_index.len  = MakeMtxIndex(matrixDSIndex,matrixDSDestAddress,matrixDSSourceAddress,entry->IndexOid);
-    entry->oid_index.oids = entry->IndexOid;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->matrixDSIndex = matrixDSIndex;
+  memcpy(entry->matrixDSDestAddress, matrixDSDestAddress, matrixDSDestAddress_len);
+  entry->matrixDSDestAddress_len = matrixDSDestAddress_len;
+  memcpy(entry->matrixDSSourceAddress, matrixDSSourceAddress, matrixDSSourceAddress_len);
+  entry->matrixDSSourceAddress_len = matrixDSSourceAddress_len;
+  entry->oid_index.len = MakeMtxIndex(matrixDSIndex, matrixDSDestAddress, matrixDSSourceAddress, entry->IndexOid);
+  entry->oid_index.oids = entry->IndexOid;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-matrixDSTable_removeEntry(netsnmp_container *container, 
-                 struct matrixDSTable_entry *entry) {
+void matrixDSTable_removeEntry(netsnmp_container *container,
+                               struct matrixDSTable_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the matrixDSTable table */
-int
-matrixDSTable_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
+int matrixDSTable_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
+{
 
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct matrixDSTable_entry          *table_entry;
-    int                         ret;
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct matrixDSTable_entry *table_entry;
+  int ret;
 
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct matrixDSTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_MATRIXDSSOURCEADDRESS:
-                snmp_set_var_typed_value( request->requestvb, ASN_OCTET_STR,
-                                 (u_char*)table_entry->matrixDSSourceAddress,
-                                          table_entry->matrixDSSourceAddress_len);
-                break;
-            case COLUMN_MATRIXDSDESTADDRESS:
-                snmp_set_var_typed_value( request->requestvb, ASN_OCTET_STR,
-                                 (u_char*)table_entry->matrixDSDestAddress,
-                                          table_entry->matrixDSDestAddress_len);
-                break;
-            case COLUMN_MATRIXDSINDEX:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->matrixDSIndex);
-                break;
-            case COLUMN_MATRIXDSPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->matrixDSPkts);
-                break;
-            case COLUMN_MATRIXDSOCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->matrixDSOctets);
-                break;
-            case COLUMN_MATRIXDSERRORS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->matrixDSErrors);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct matrixDSTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_MATRIXDSSOURCEADDRESS:
+        snmp_set_var_typed_value(request->requestvb, ASN_OCTET_STR,
+                                 (u_char *)table_entry->matrixDSSourceAddress,
+                                 table_entry->matrixDSSourceAddress_len);
         break;
-
+      case COLUMN_MATRIXDSDESTADDRESS:
+        snmp_set_var_typed_value(request->requestvb, ASN_OCTET_STR,
+                                 (u_char *)table_entry->matrixDSDestAddress,
+                                 table_entry->matrixDSDestAddress_len);
+        break;
+      case COLUMN_MATRIXDSINDEX:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->matrixDSIndex);
+        break;
+      case COLUMN_MATRIXDSPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->matrixDSPkts);
+        break;
+      case COLUMN_MATRIXDSOCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->matrixDSOctets);
+        break;
+      case COLUMN_MATRIXDSERRORS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->matrixDSErrors);
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
     }
-    return SNMP_ERR_NOERROR;
+    break;
+  }
+  return SNMP_ERR_NOERROR;
 }
 
-
 /** Initialize the matrixControl2Table table by defining its contents and how it's structured */
-void
-initialize_table_matrixControl2Table(void)
+void initialize_table_matrixControl2Table(void)
 {
-    static oid matrixControl2Table_oid[] = {1,3,6,1,2,1,16,6,4};
-    size_t matrixControl2Table_oid_len   = OID_LENGTH(matrixControl2Table_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_container               *container;
-    netsnmp_table_registration_info *table_info;
+  static oid matrixControl2Table_oid[] = {1, 3, 6, 1, 2, 1, 16, 6, 4};
+  size_t matrixControl2Table_oid_len = OID_LENGTH(matrixControl2Table_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_container *container;
+  netsnmp_table_registration_info *table_info;
 
-    reg = netsnmp_create_handler_registration(
-              "matrixControl2Table",     matrixControl2Table_handler,
-              matrixControl2Table_oid, matrixControl2Table_oid_len,
-              HANDLER_CAN_RONLY
-              );
+  reg = netsnmp_create_handler_registration(
+      "matrixControl2Table", matrixControl2Table_handler,
+      matrixControl2Table_oid, matrixControl2Table_oid_len,
+      HANDLER_CAN_RONLY);
 
-    container  = netsnmp_container_find( "table_container" );
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: matrixControlIndex */
-                           0);
-    table_info->min_column = COLUMN_MATRIXCONTROLDROPPEDFRAMES;
-    table_info->max_column = COLUMN_MATRIXCONTROLCREATETIME;
-    
-    netsnmp_container_table_register( reg, table_info, container, 0 );
+  container = netsnmp_container_find("table_container");
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER, /* index: matrixControlIndex */
+                                   0);
+  table_info->min_column = COLUMN_MATRIXCONTROLDROPPEDFRAMES;
+  table_info->max_column = COLUMN_MATRIXCONTROLCREATETIME;
 
-    /* Initialise the contents of the table here */
-    InitMtxCont2Ent(container);
- }
+  netsnmp_container_table_register(reg, table_info, container, 0);
 
-    /* Typical data structure for a row entry */
-struct matrixControl2Table_entry {
-    netsnmp_index oid_index;
+  /* Initialise the contents of the table here */
+  InitMtxCont2Ent(container);
+}
 
-    /* Index values */
-    long matrixControlIndex;
+/* Typical data structure for a row entry */
+struct matrixControl2Table_entry
+{
+  netsnmp_index oid_index;
 
-    /* Column values */
-    u_long matrixControlDroppedFrames;
-    u_long matrixControlCreateTime;
+  /* Index values */
+  long matrixControlIndex;
 
-    int   valid;
+  /* Column values */
+  u_long matrixControlDroppedFrames;
+  u_long matrixControlCreateTime;
+
+  int valid;
 };
 
 /* create a new row in the table */
 struct matrixControl2Table_entry *
-matrixControl2Table_createEntry(netsnmp_container *container 
-                 , long  matrixControlIndex
-                ) {
-    struct matrixControl2Table_entry *entry;
+matrixControl2Table_createEntry(netsnmp_container *container, long matrixControlIndex)
+{
+  struct matrixControl2Table_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct matrixControl2Table_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct matrixControl2Table_entry);
+  if (!entry)
+    return NULL;
 
-    entry->matrixControlIndex = matrixControlIndex;
-    entry->oid_index.len  = 1;
-    entry->oid_index.oids = (oid*) &entry->matrixControlIndex;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->matrixControlIndex = matrixControlIndex;
+  entry->oid_index.len = 1;
+  entry->oid_index.oids = (oid *)&entry->matrixControlIndex;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-matrixControl2Table_removeEntry(netsnmp_container *container, 
-                 struct matrixControl2Table_entry *entry) {
+void matrixControl2Table_removeEntry(netsnmp_container *container,
+                                     struct matrixControl2Table_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the matrixControl2Table table */
-int
-matrixControl2Table_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
+int matrixControl2Table_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
+{
 
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct matrixControl2Table_entry          *table_entry;
-    int                         ret;
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct matrixControl2Table_entry *table_entry;
+  int ret;
 
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct matrixControl2Table_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_MATRIXCONTROLDROPPEDFRAMES:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->matrixControlDroppedFrames);
-                break;
-            case COLUMN_MATRIXCONTROLCREATETIME:
-                snmp_set_var_typed_integer( request->requestvb, ASN_TIMETICKS,
-                                            table_entry->matrixControlCreateTime);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct matrixControl2Table_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_MATRIXCONTROLDROPPEDFRAMES:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->matrixControlDroppedFrames);
         break;
-
+      case COLUMN_MATRIXCONTROLCREATETIME:
+        snmp_set_var_typed_integer(request->requestvb, ASN_TIMETICKS,
+                                   table_entry->matrixControlCreateTime);
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
     }
-    return SNMP_ERR_NOERROR;
+    break;
+  }
+  return SNMP_ERR_NOERROR;
 }
-
 
 /** Initialize the eventTable table by defining its contents and how it's structured */
-void
-initialize_table_eventTable(void)
+void initialize_table_eventTable(void)
 {
-    static oid eventTable_oid[] = {1,3,6,1,2,1,16,9,1};
-    size_t eventTable_oid_len   = OID_LENGTH(eventTable_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_table_registration_info *table_info;
+  static oid eventTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 9, 1};
+  size_t eventTable_oid_len = OID_LENGTH(eventTable_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_table_registration_info *table_info;
 
-    reg = netsnmp_create_handler_registration(
-              "eventTable",     eventTable_handler,
-              eventTable_oid, eventTable_oid_len,
-              HANDLER_CAN_RWRITE
-              );
+  reg = netsnmp_create_handler_registration(
+      "eventTable", eventTable_handler,
+      eventTable_oid, eventTable_oid_len,
+      HANDLER_CAN_RWRITE);
 
-    pEventContainer  = netsnmp_container_find( "table_container" );
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: eventIndex */
-                           0);
-    table_info->min_column = COLUMN_EVENTINDEX;
-    table_info->max_column = COLUMN_EVENTSTATUS;
-    
-    netsnmp_container_table_register( reg, table_info,pEventContainer, 0 );
+  pEventContainer = netsnmp_container_find("table_container");
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER, /* index: eventIndex */
+                                   0);
+  table_info->min_column = COLUMN_EVENTINDEX;
+  table_info->max_column = COLUMN_EVENTSTATUS;
 
-    /* Initialise the contents of the table here */
-    // LoadEventTable();
+  netsnmp_container_table_register(reg, table_info, pEventContainer, 0);
+
+  /* Initialise the contents of the table here */
+  // LoadEventTable();
 }
 
-    /* Typical data structure for a row entry */
-struct eventTable_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct eventTable_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long eventIndex;
+  /* Index values */
+  long eventIndex;
 
-    /* Column values */
-    char eventDescription[256];
-    size_t eventDescription_len;
-    char old_eventDescription[256];
-    size_t old_eventDescription_len;
-    long eventType;
-    long old_eventType;
-    char eventCommunity[128];
-    size_t eventCommunity_len;
-    char old_eventCommunity[128];
-    size_t old_eventCommunity_len;
-    u_long eventLastTimeSent;
-    char eventOwner[256];
-    size_t eventOwner_len;
-    char old_eventOwner[256];
-    size_t old_eventOwner_len;
-    long eventStatus;
-    long old_eventStatus;
+  /* Column values */
+  char eventDescription[256];
+  size_t eventDescription_len;
+  char old_eventDescription[256];
+  size_t old_eventDescription_len;
+  long eventType;
+  long old_eventType;
+  char eventCommunity[128];
+  size_t eventCommunity_len;
+  char old_eventCommunity[128];
+  size_t old_eventCommunity_len;
+  u_long eventLastTimeSent;
+  char eventOwner[256];
+  size_t eventOwner_len;
+  char old_eventOwner[256];
+  size_t old_eventOwner_len;
+  long eventStatus;
+  long old_eventStatus;
 
-    int   valid;
-    long  nLogID;
+  int valid;
+  long nLogID;
 };
 
 /* create a new row in the table */
 struct eventTable_entry *
-eventTable_createEntry(netsnmp_container *container 
-                 , long  eventIndex
-                ) {
-    struct eventTable_entry *entry;
+eventTable_createEntry(netsnmp_container *container, long eventIndex)
+{
+  struct eventTable_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct eventTable_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct eventTable_entry);
+  if (!entry)
+    return NULL;
 
-    entry->eventIndex = eventIndex;
-    entry->oid_index.len  = 1;
-    entry->oid_index.oids = (oid*)&entry->eventIndex;
-    CONTAINER_INSERT( container, entry );
-    entry->nLogID =1;
-    return entry;
+  entry->eventIndex = eventIndex;
+  entry->oid_index.len = 1;
+  entry->oid_index.oids = (oid *)&entry->eventIndex;
+  CONTAINER_INSERT(container, entry);
+  entry->nLogID = 1;
+  return entry;
 }
 
 /* remove a row from the table */
-void
-eventTable_removeEntry(netsnmp_container *container, 
-                 struct eventTable_entry *entry) {
+void eventTable_removeEntry(netsnmp_container *container,
+                            struct eventTable_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the eventTable table */
-int
-eventTable_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
+int eventTable_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
+{
 
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct eventTable_entry          *table_entry;
-    int                         ret;
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct eventTable_entry *table_entry;
+  int ret;
 
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct eventTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_EVENTINDEX:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->eventIndex);
-                break;
-            case COLUMN_EVENTDESCRIPTION:
-                snmp_set_var_typed_value( request->requestvb, ASN_OCTET_STR,
-                                 (u_char*)table_entry->eventDescription,
-                                          table_entry->eventDescription_len);
-                break;
-            case COLUMN_EVENTTYPE:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->eventType);
-                break;
-            case COLUMN_EVENTCOMMUNITY:
-                snmp_set_var_typed_value( request->requestvb, ASN_OCTET_STR,
-                                 (u_char*)table_entry->eventCommunity,
-                                          table_entry->eventCommunity_len);
-                break;
-            case COLUMN_EVENTLASTTIMESENT:
-                snmp_set_var_typed_integer( request->requestvb, ASN_TIMETICKS,
-                                            table_entry->eventLastTimeSent);
-                break;
-            case COLUMN_EVENTOWNER:
-                snmp_set_var_typed_value( request->requestvb, ASN_OCTET_STR,
-                                 (u_char*)table_entry->eventOwner,
-                                          table_entry->eventOwner_len);
-                break;
-            case COLUMN_EVENTSTATUS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->eventStatus);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct eventTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_EVENTINDEX:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->eventIndex);
         break;
-
-        /*
-         * Write-support
-         */
-    case MODE_SET_RESERVE1:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct eventTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if(  table_info == NULL ) continue;
-            switch (table_info->colnum) {
-            case COLUMN_EVENTDESCRIPTION:
-                /* or possibly 'netsnmp_check_vb_type_and_max_size' */
-                ret = netsnmp_check_vb_type_and_max_size(
-                          request->requestvb, ASN_OCTET_STR,256 );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_EVENTTYPE:
-                /* or possibly 'netsnmp_check_vb_int_range' */
-                ret = netsnmp_check_vb_int_range( request->requestvb,1,4);
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_EVENTCOMMUNITY:
-                /* or possibly 'netsnmp_check_vb_type_and_max_size' */
-                ret = netsnmp_check_vb_type_and_max_size(
-                          request->requestvb, ASN_OCTET_STR, 128 );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_EVENTOWNER:
-                /* or possibly 'netsnmp_check_vb_type_and_max_size' */
-                ret = netsnmp_check_vb_type_and_max_size(
-                          request->requestvb, ASN_OCTET_STR, 256 );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_EVENTSTATUS:
-                /* or possibly 'netsnmp_check_vb_int_range' */
-                ret = netsnmp_check_vb_int_range( request->requestvb,1,4);
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            default:
-                netsnmp_set_request_error( reqinfo, request,
-                                           SNMP_ERR_NOTWRITABLE );
-                return SNMP_ERR_NOERROR;
-            }
-        }
+      case COLUMN_EVENTDESCRIPTION:
+        snmp_set_var_typed_value(request->requestvb, ASN_OCTET_STR,
+                                 (u_char *)table_entry->eventDescription,
+                                 table_entry->eventDescription_len);
         break;
-
-    case MODE_SET_RESERVE2:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct eventTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if(  table_info == NULL ) continue;
-            switch (table_info->colnum) {
-            case COLUMN_EVENTDESCRIPTION:
-            case COLUMN_EVENTTYPE:
-            case COLUMN_EVENTCOMMUNITY:
-            case COLUMN_EVENTOWNER:
-            case COLUMN_EVENTSTATUS:
-                if ( !table_entry ) {
-                    table_entry = eventTable_createEntry(container
-                        , *table_info->indexes->val.integer
-                        );
-                    if (table_entry) {
-                        netsnmp_container_table_row_insert( request, (netsnmp_index*)table_entry );
-                    } else {
-                        netsnmp_set_request_error( reqinfo, request,
-                                                   SNMP_ERR_RESOURCEUNAVAILABLE );
-                        return SNMP_ERR_NOERROR;
-                    }
-                }
-                break;
-            }
-        }
+      case COLUMN_EVENTTYPE:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->eventType);
         break;
-
-    case MODE_SET_FREE:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct eventTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-            switch (table_info->colnum) {
-            case COLUMN_EVENTDESCRIPTION:
-            case COLUMN_EVENTTYPE:
-            case COLUMN_EVENTCOMMUNITY:
-            case COLUMN_EVENTOWNER:
-            case COLUMN_EVENTSTATUS:
-                if ( table_entry && !table_entry->valid ) {
-                    eventTable_removeEntry(container, table_entry );
-                }
-                break;
-            }
-        }
+      case COLUMN_EVENTCOMMUNITY:
+        snmp_set_var_typed_value(request->requestvb, ASN_OCTET_STR,
+                                 (u_char *)table_entry->eventCommunity,
+                                 table_entry->eventCommunity_len);
         break;
-
-    case MODE_SET_ACTION:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct eventTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-            switch (table_info->colnum) {
-            case COLUMN_EVENTDESCRIPTION:
-                memcpy( table_entry->old_eventDescription,
-                        table_entry->eventDescription,
-                        sizeof(table_entry->eventDescription));
-                table_entry->old_eventDescription_len =
-                        table_entry->eventDescription_len;
-                memset( table_entry->eventDescription, 0,
-                        sizeof(table_entry->eventDescription));
-                memcpy( table_entry->eventDescription,
-                        request->requestvb->val.string,
-                        request->requestvb->val_len);
-                table_entry->eventDescription_len =
-                        request->requestvb->val_len;
-                break;
-            case COLUMN_EVENTTYPE:
-                table_entry->old_eventType = table_entry->eventType;
-                table_entry->eventType     = *request->requestvb->val.integer;
-                break;
-            case COLUMN_EVENTCOMMUNITY:
-                memcpy( table_entry->old_eventCommunity,
-                        table_entry->eventCommunity,
-                        sizeof(table_entry->eventCommunity));
-                table_entry->old_eventCommunity_len =
-                        table_entry->eventCommunity_len;
-                memset( table_entry->eventCommunity, 0,
-                        sizeof(table_entry->eventCommunity));
-                memcpy( table_entry->eventCommunity,
-                        request->requestvb->val.string,
-                        request->requestvb->val_len);
-                table_entry->eventCommunity_len =
-                        request->requestvb->val_len;
-                break;
-            case COLUMN_EVENTOWNER:
-                memcpy( table_entry->old_eventOwner,
-                        table_entry->eventOwner,
-                        sizeof(table_entry->eventOwner));
-                table_entry->old_eventOwner_len =
-                        table_entry->eventOwner_len;
-                memset( table_entry->eventOwner, 0,
-                        sizeof(table_entry->eventOwner));
-                memcpy( table_entry->eventOwner,
-                        request->requestvb->val.string,
-                        request->requestvb->val_len);
-                table_entry->eventOwner_len =
-                        request->requestvb->val_len;
-                break;
-            case COLUMN_EVENTSTATUS:
-                table_entry->old_eventStatus = table_entry->eventStatus;
-                table_entry->eventStatus     = *request->requestvb->val.integer;
-                break;
-            }
-        }
+      case COLUMN_EVENTLASTTIMESENT:
+        snmp_set_var_typed_integer(request->requestvb, ASN_TIMETICKS,
+                                   table_entry->eventLastTimeSent);
         break;
-
-    case MODE_SET_UNDO:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct eventTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-            switch (table_info->colnum) {
-            case COLUMN_EVENTDESCRIPTION:
-                if ( table_entry && !table_entry->valid ) {
-                    eventTable_removeEntry(container, table_entry );
-                } else {
-                    memcpy( table_entry->eventDescription,
-                            table_entry->old_eventDescription,
-                            sizeof(table_entry->eventDescription));
-                    memset( table_entry->old_eventDescription, 0,
-                            sizeof(table_entry->eventDescription));
-                    table_entry->eventDescription_len =
-                            table_entry->old_eventDescription_len;
-                }
-                break;
-            case COLUMN_EVENTTYPE:
-                if ( table_entry && !table_entry->valid ) {
-                    eventTable_removeEntry(container, table_entry );
-                } else {
-                    table_entry->eventType     = table_entry->old_eventType;
-                    table_entry->old_eventType = 0;
-                }
-                break;
-            case COLUMN_EVENTCOMMUNITY:
-                if ( table_entry && !table_entry->valid ) {
-                    eventTable_removeEntry(container, table_entry );
-                } else {
-                    memcpy( table_entry->eventCommunity,
-                            table_entry->old_eventCommunity,
-                            sizeof(table_entry->eventCommunity));
-                    memset( table_entry->old_eventCommunity, 0,
-                            sizeof(table_entry->eventCommunity));
-                    table_entry->eventCommunity_len =
-                            table_entry->old_eventCommunity_len;
-                }
-                break;
-            case COLUMN_EVENTOWNER:
-                if ( table_entry && !table_entry->valid ) {
-                    eventTable_removeEntry(container, table_entry );
-                } else {
-                    memcpy( table_entry->eventOwner,
-                            table_entry->old_eventOwner,
-                            sizeof(table_entry->eventOwner));
-                    memset( table_entry->old_eventOwner, 0,
-                            sizeof(table_entry->eventOwner));
-                    table_entry->eventOwner_len =
-                            table_entry->old_eventOwner_len;
-                }
-                break;
-            case COLUMN_EVENTSTATUS:
-                if ( table_entry && !table_entry->valid ) {
-                    eventTable_removeEntry(container, table_entry );
-                } else {
-                    table_entry->eventStatus     = table_entry->old_eventStatus;
-                    table_entry->old_eventStatus = 0;
-                }
-                break;
-            }
-        }
+      case COLUMN_EVENTOWNER:
+        snmp_set_var_typed_value(request->requestvb, ASN_OCTET_STR,
+                                 (u_char *)table_entry->eventOwner,
+                                 table_entry->eventOwner_len);
         break;
-
-    case MODE_SET_COMMIT:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct eventTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-            switch (table_info->colnum) {
-            case COLUMN_EVENTDESCRIPTION:
-            case COLUMN_EVENTTYPE:
-            case COLUMN_EVENTCOMMUNITY:
-            case COLUMN_EVENTOWNER:
-            case COLUMN_EVENTSTATUS:
-                if ( table_entry && !table_entry->valid ) {
-                    table_entry->valid = 1;
-                }
-            }
-        }
+      case COLUMN_EVENTSTATUS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->eventStatus);
         break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
     }
-    return SNMP_ERR_NOERROR;
+    break;
+
+    /*
+     * Write-support
+     */
+  case MODE_SET_RESERVE1:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct eventTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_info == NULL)
+        continue;
+      switch (table_info->colnum)
+      {
+      case COLUMN_EVENTDESCRIPTION:
+        /* or possibly 'netsnmp_check_vb_type_and_max_size' */
+        ret = netsnmp_check_vb_type_and_max_size(
+            request->requestvb, ASN_OCTET_STR, 256);
+        if (ret != SNMP_ERR_NOERROR)
+        {
+          netsnmp_set_request_error(reqinfo, request, ret);
+          return SNMP_ERR_NOERROR;
+        }
+        break;
+      case COLUMN_EVENTTYPE:
+        /* or possibly 'netsnmp_check_vb_int_range' */
+        ret = netsnmp_check_vb_int_range(request->requestvb, 1, 4);
+        if (ret != SNMP_ERR_NOERROR)
+        {
+          netsnmp_set_request_error(reqinfo, request, ret);
+          return SNMP_ERR_NOERROR;
+        }
+        break;
+      case COLUMN_EVENTCOMMUNITY:
+        /* or possibly 'netsnmp_check_vb_type_and_max_size' */
+        ret = netsnmp_check_vb_type_and_max_size(
+            request->requestvb, ASN_OCTET_STR, 128);
+        if (ret != SNMP_ERR_NOERROR)
+        {
+          netsnmp_set_request_error(reqinfo, request, ret);
+          return SNMP_ERR_NOERROR;
+        }
+        break;
+      case COLUMN_EVENTOWNER:
+        /* or possibly 'netsnmp_check_vb_type_and_max_size' */
+        ret = netsnmp_check_vb_type_and_max_size(
+            request->requestvb, ASN_OCTET_STR, 256);
+        if (ret != SNMP_ERR_NOERROR)
+        {
+          netsnmp_set_request_error(reqinfo, request, ret);
+          return SNMP_ERR_NOERROR;
+        }
+        break;
+      case COLUMN_EVENTSTATUS:
+        /* or possibly 'netsnmp_check_vb_int_range' */
+        ret = netsnmp_check_vb_int_range(request->requestvb, 1, 4);
+        if (ret != SNMP_ERR_NOERROR)
+        {
+          netsnmp_set_request_error(reqinfo, request, ret);
+          return SNMP_ERR_NOERROR;
+        }
+        break;
+      default:
+        netsnmp_set_request_error(reqinfo, request,
+                                  SNMP_ERR_NOTWRITABLE);
+        return SNMP_ERR_NOERROR;
+      }
+    }
+    break;
+
+  case MODE_SET_RESERVE2:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct eventTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_info == NULL)
+        continue;
+      switch (table_info->colnum)
+      {
+      case COLUMN_EVENTDESCRIPTION:
+      case COLUMN_EVENTTYPE:
+      case COLUMN_EVENTCOMMUNITY:
+      case COLUMN_EVENTOWNER:
+      case COLUMN_EVENTSTATUS:
+        if (!table_entry)
+        {
+          table_entry = eventTable_createEntry(container, *table_info->indexes->val.integer);
+          if (table_entry)
+          {
+            netsnmp_container_table_row_insert(request, (netsnmp_index *)table_entry);
+          }
+          else
+          {
+            netsnmp_set_request_error(reqinfo, request,
+                                      SNMP_ERR_RESOURCEUNAVAILABLE);
+            return SNMP_ERR_NOERROR;
+          }
+        }
+        break;
+      }
+    }
+    break;
+
+  case MODE_SET_FREE:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct eventTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+      switch (table_info->colnum)
+      {
+      case COLUMN_EVENTDESCRIPTION:
+      case COLUMN_EVENTTYPE:
+      case COLUMN_EVENTCOMMUNITY:
+      case COLUMN_EVENTOWNER:
+      case COLUMN_EVENTSTATUS:
+        if (table_entry && !table_entry->valid)
+        {
+          eventTable_removeEntry(container, table_entry);
+        }
+        break;
+      }
+    }
+    break;
+
+  case MODE_SET_ACTION:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct eventTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+      switch (table_info->colnum)
+      {
+      case COLUMN_EVENTDESCRIPTION:
+        memcpy(table_entry->old_eventDescription,
+               table_entry->eventDescription,
+               sizeof(table_entry->eventDescription));
+        table_entry->old_eventDescription_len =
+            table_entry->eventDescription_len;
+        memset(table_entry->eventDescription, 0,
+               sizeof(table_entry->eventDescription));
+        memcpy(table_entry->eventDescription,
+               request->requestvb->val.string,
+               request->requestvb->val_len);
+        table_entry->eventDescription_len =
+            request->requestvb->val_len;
+        break;
+      case COLUMN_EVENTTYPE:
+        table_entry->old_eventType = table_entry->eventType;
+        table_entry->eventType = *request->requestvb->val.integer;
+        break;
+      case COLUMN_EVENTCOMMUNITY:
+        memcpy(table_entry->old_eventCommunity,
+               table_entry->eventCommunity,
+               sizeof(table_entry->eventCommunity));
+        table_entry->old_eventCommunity_len =
+            table_entry->eventCommunity_len;
+        memset(table_entry->eventCommunity, 0,
+               sizeof(table_entry->eventCommunity));
+        memcpy(table_entry->eventCommunity,
+               request->requestvb->val.string,
+               request->requestvb->val_len);
+        table_entry->eventCommunity_len =
+            request->requestvb->val_len;
+        break;
+      case COLUMN_EVENTOWNER:
+        memcpy(table_entry->old_eventOwner,
+               table_entry->eventOwner,
+               sizeof(table_entry->eventOwner));
+        table_entry->old_eventOwner_len =
+            table_entry->eventOwner_len;
+        memset(table_entry->eventOwner, 0,
+               sizeof(table_entry->eventOwner));
+        memcpy(table_entry->eventOwner,
+               request->requestvb->val.string,
+               request->requestvb->val_len);
+        table_entry->eventOwner_len =
+            request->requestvb->val_len;
+        break;
+      case COLUMN_EVENTSTATUS:
+        table_entry->old_eventStatus = table_entry->eventStatus;
+        table_entry->eventStatus = *request->requestvb->val.integer;
+        break;
+      }
+    }
+    break;
+
+  case MODE_SET_UNDO:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct eventTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+      switch (table_info->colnum)
+      {
+      case COLUMN_EVENTDESCRIPTION:
+        if (table_entry && !table_entry->valid)
+        {
+          eventTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          memcpy(table_entry->eventDescription,
+                 table_entry->old_eventDescription,
+                 sizeof(table_entry->eventDescription));
+          memset(table_entry->old_eventDescription, 0,
+                 sizeof(table_entry->eventDescription));
+          table_entry->eventDescription_len =
+              table_entry->old_eventDescription_len;
+        }
+        break;
+      case COLUMN_EVENTTYPE:
+        if (table_entry && !table_entry->valid)
+        {
+          eventTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          table_entry->eventType = table_entry->old_eventType;
+          table_entry->old_eventType = 0;
+        }
+        break;
+      case COLUMN_EVENTCOMMUNITY:
+        if (table_entry && !table_entry->valid)
+        {
+          eventTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          memcpy(table_entry->eventCommunity,
+                 table_entry->old_eventCommunity,
+                 sizeof(table_entry->eventCommunity));
+          memset(table_entry->old_eventCommunity, 0,
+                 sizeof(table_entry->eventCommunity));
+          table_entry->eventCommunity_len =
+              table_entry->old_eventCommunity_len;
+        }
+        break;
+      case COLUMN_EVENTOWNER:
+        if (table_entry && !table_entry->valid)
+        {
+          eventTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          memcpy(table_entry->eventOwner,
+                 table_entry->old_eventOwner,
+                 sizeof(table_entry->eventOwner));
+          memset(table_entry->old_eventOwner, 0,
+                 sizeof(table_entry->eventOwner));
+          table_entry->eventOwner_len =
+              table_entry->old_eventOwner_len;
+        }
+        break;
+      case COLUMN_EVENTSTATUS:
+        if (table_entry && !table_entry->valid)
+        {
+          eventTable_removeEntry(container, table_entry);
+        }
+        else
+        {
+          table_entry->eventStatus = table_entry->old_eventStatus;
+          table_entry->old_eventStatus = 0;
+        }
+        break;
+      }
+    }
+    break;
+
+  case MODE_SET_COMMIT:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct eventTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+      switch (table_info->colnum)
+      {
+      case COLUMN_EVENTDESCRIPTION:
+      case COLUMN_EVENTTYPE:
+      case COLUMN_EVENTCOMMUNITY:
+      case COLUMN_EVENTOWNER:
+      case COLUMN_EVENTSTATUS:
+        if (table_entry && !table_entry->valid)
+        {
+          table_entry->valid = 1;
+        }
+      }
+    }
+    break;
+  }
+  return SNMP_ERR_NOERROR;
 }
-
-
 
 /** Initialize the logTable table by defining its contents and how it's structured */
-void
-initialize_table_logTable(void)
+void initialize_table_logTable(void)
 {
-    static oid logTable_oid[] = {1,3,6,1,2,1,16,9,2};
-    size_t logTable_oid_len   = OID_LENGTH(logTable_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_table_registration_info *table_info;
+  static oid logTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 9, 2};
+  size_t logTable_oid_len = OID_LENGTH(logTable_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_table_registration_info *table_info;
 
-    reg = netsnmp_create_handler_registration(
-              "logTable",     logTable_handler,
-              logTable_oid, logTable_oid_len,
-              HANDLER_CAN_RONLY
-              );
+  reg = netsnmp_create_handler_registration(
+      "logTable", logTable_handler,
+      logTable_oid, logTable_oid_len,
+      HANDLER_CAN_RONLY);
 
-    pLogContainer  = netsnmp_container_find( "table_container" );
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: logEventIndex */
-                           ASN_INTEGER,  /* index: logIndex */
-                           0);
-    table_info->min_column = COLUMN_LOGEVENTINDEX;
-    table_info->max_column = COLUMN_LOGDESCRIPTION;
-    
-    netsnmp_container_table_register( reg, table_info, pLogContainer, 0 );
+  pLogContainer = netsnmp_container_find("table_container");
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER, /* index: logEventIndex */
+                                   ASN_INTEGER, /* index: logIndex */
+                                   0);
+  table_info->min_column = COLUMN_LOGEVENTINDEX;
+  table_info->max_column = COLUMN_LOGDESCRIPTION;
 
-    /* Initialise the contents of the table here */
+  netsnmp_container_table_register(reg, table_info, pLogContainer, 0);
+
+  /* Initialise the contents of the table here */
 }
 
-    /* Typical data structure for a row entry */
-struct logTable_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct logTable_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long logEventIndex;
-    long logIndex;
+  /* Index values */
+  long logEventIndex;
+  long logIndex;
 
-    /* Column values */
-    u_long logTime;
-    char logDescription[256];
-    size_t logDescription_len;
+  /* Column values */
+  u_long logTime;
+  char logDescription[256];
+  size_t logDescription_len;
 
-    int   valid;
+  int valid;
 };
 
 /* create a new row in the table */
 struct logTable_entry *
-logTable_createEntry(netsnmp_container *container 
-                 , long  logEventIndex
-                 , long  logIndex
-                ) {
-    struct logTable_entry *entry;
+logTable_createEntry(netsnmp_container *container, long logEventIndex, long logIndex)
+{
+  struct logTable_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct logTable_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct logTable_entry);
+  if (!entry)
+    return NULL;
 
-    entry->logEventIndex = logEventIndex;
-    entry->logIndex = logIndex;
-    entry->oid_index.len  = 2;
-    entry->oid_index.oids = (oid*)&entry->logEventIndex;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->logEventIndex = logEventIndex;
+  entry->logIndex = logIndex;
+  entry->oid_index.len = 2;
+  entry->oid_index.oids = (oid *)&entry->logEventIndex;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-logTable_removeEntry(netsnmp_container *container, 
-                 struct logTable_entry *entry) {
+void logTable_removeEntry(netsnmp_container *container,
+                          struct logTable_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the logTable table */
-int
-logTable_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
+int logTable_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
+{
 
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct logTable_entry          *table_entry;
-    int                         ret;
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct logTable_entry *table_entry;
+  int ret;
 
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct logTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct logTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
 
-            switch (table_info->colnum) {
-            case COLUMN_LOGEVENTINDEX:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->logEventIndex);
-                break;
-            case COLUMN_LOGINDEX:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->logIndex);
-                break;
-            case COLUMN_LOGTIME:
-                snmp_set_var_typed_integer( request->requestvb, ASN_TIMETICKS,
-                                            table_entry->logTime);
-                break;
-            case COLUMN_LOGDESCRIPTION:
-                snmp_set_var_typed_value( request->requestvb, ASN_OCTET_STR,
-                                 (u_char*)table_entry->logDescription,
-                                          table_entry->logDescription_len);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
+      switch (table_info->colnum)
+      {
+      case COLUMN_LOGEVENTINDEX:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->logEventIndex);
         break;
-
+      case COLUMN_LOGINDEX:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->logIndex);
+        break;
+      case COLUMN_LOGTIME:
+        snmp_set_var_typed_integer(request->requestvb, ASN_TIMETICKS,
+                                   table_entry->logTime);
+        break;
+      case COLUMN_LOGDESCRIPTION:
+        snmp_set_var_typed_value(request->requestvb, ASN_OCTET_STR,
+                                 (u_char *)table_entry->logDescription,
+                                 table_entry->logDescription_len);
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
     }
-    return SNMP_ERR_NOERROR;
+    break;
+  }
+  return SNMP_ERR_NOERROR;
 }
-
 
 /** Initialize the protocolDirTable table by defining its contents and how it's structured */
-void
-initialize_table_protocolDirTable(void)
+void initialize_table_protocolDirTable(void)
 {
-    static oid protocolDirTable_oid[] = {1,3,6,1,2,1,16,11,2};
-    size_t protocolDirTable_oid_len   = OID_LENGTH(protocolDirTable_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_table_registration_info *table_info;
+  static oid protocolDirTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 11, 2};
+  size_t protocolDirTable_oid_len = OID_LENGTH(protocolDirTable_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_table_registration_info *table_info;
 
-    reg = netsnmp_create_handler_registration(
-              "protocolDirTable",     protocolDirTable_handler,
-              protocolDirTable_oid, protocolDirTable_oid_len,
-              HANDLER_CAN_RWRITE
-              );
+  reg = netsnmp_create_handler_registration(
+      "protocolDirTable", protocolDirTable_handler,
+      protocolDirTable_oid, protocolDirTable_oid_len,
+      HANDLER_CAN_RWRITE);
 
-    pProtDirContainer  = netsnmp_container_find( "table_container" );
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_OCTET_STR,  /* index: protocolDirID */
-                           ASN_OCTET_STR,  /* index: protocolDirParameters */
-                           0);
-    table_info->min_column = COLUMN_PROTOCOLDIRLOCALINDEX;
-    table_info->max_column = COLUMN_PROTOCOLDIRSTATUS;
-    
-    netsnmp_container_table_register( reg, table_info, pProtDirContainer, 0 );
+  pProtDirContainer = netsnmp_container_find("table_container");
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_OCTET_STR, /* index: protocolDirID */
+                                   ASN_OCTET_STR, /* index: protocolDirParameters */
+                                   0);
+  table_info->min_column = COLUMN_PROTOCOLDIRLOCALINDEX;
+  table_info->max_column = COLUMN_PROTOCOLDIRSTATUS;
 
-    /* Initialise the contents of the table here */
+  netsnmp_container_table_register(reg, table_info, pProtDirContainer, 0);
+
+  /* Initialise the contents of the table here */
 }
 
-    /* Typical data structure for a row entry */
-struct protocolDirTable_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct protocolDirTable_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    char protocolDirID[32];
-    size_t protocolDirID_len;
-    char protocolDirParameters[8];
-    size_t protocolDirParameters_len;
-	oid    IndexOid[32+1+1+8];
-    /* Column values */
-    long protocolDirLocalIndex;
-    char protocolDirDescr[64];
-    size_t protocolDirDescr_len;
-    char old_protocolDirDescr[64];
-    size_t old_protocolDirDescr_len;
-    char protocolDirType[1];
-    size_t protocolDirType_len;
-    long protocolDirAddressMapConfig;
-    long old_protocolDirAddressMapConfig;
-    long protocolDirHostConfig;
-    long old_protocolDirHostConfig;
-    long protocolDirMatrixConfig;
-    long old_protocolDirMatrixConfig;
-    char protocolDirOwner[32];
-    size_t protocolDirOwner_len;
-    char old_protocolDirOwner[32];
-    size_t old_protocolDirOwner_len;
-    long protocolDirStatus;
+  /* Index values */
+  char protocolDirID[32];
+  size_t protocolDirID_len;
+  char protocolDirParameters[8];
+  size_t protocolDirParameters_len;
+  oid IndexOid[32 + 1 + 1 + 8];
+  /* Column values */
+  long protocolDirLocalIndex;
+  char protocolDirDescr[64];
+  size_t protocolDirDescr_len;
+  char old_protocolDirDescr[64];
+  size_t old_protocolDirDescr_len;
+  char protocolDirType[1];
+  size_t protocolDirType_len;
+  long protocolDirAddressMapConfig;
+  long old_protocolDirAddressMapConfig;
+  long protocolDirHostConfig;
+  long old_protocolDirHostConfig;
+  long protocolDirMatrixConfig;
+  long old_protocolDirMatrixConfig;
+  char protocolDirOwner[32];
+  size_t protocolDirOwner_len;
+  char old_protocolDirOwner[32];
+  size_t old_protocolDirOwner_len;
+  long protocolDirStatus;
 
-    int   valid;
+  int valid;
 };
 
-size_t MakeProtDirIndex(int nIDLen,char *pID,int nParamLen,char *pParam,oid *pOid)
+size_t MakeProtDirIndex(int nIDLen, char *pID, int nParamLen, char *pParam, oid *pOid)
 {
-	int i;
-	int j;
-	i = 0;
-	pOid[i++] = nIDLen;
-	for( j  = 0;j < nIDLen;j++ ) {
-		pOid[i++] = (long) pID[j] & 0x00ff;
-	}
-	pOid[i++] = nParamLen;
-	for( j  = 0;j < nParamLen;j++ ) {
-		pOid[i++] = (long) pParam[j] & 0x00ff;
-	}
-	return((size_t)i);
+  int i;
+  int j;
+  i = 0;
+  pOid[i++] = nIDLen;
+  for (j = 0; j < nIDLen; j++)
+  {
+    pOid[i++] = (long)pID[j] & 0x00ff;
+  }
+  pOid[i++] = nParamLen;
+  for (j = 0; j < nParamLen; j++)
+  {
+    pOid[i++] = (long)pParam[j] & 0x00ff;
+  }
+  return ((size_t)i);
 }
 
-int SetProtID(long nType,char *pID)
+int SetProtID(long nType, char *pID)
 {
-	int i;
-	for( i=24; i >= 0;i-=8) {
-		*pID++ = (char) ((nType>>i) & 0x00ff);
-	}
-	return(4);
+  int i;
+  for (i = 24; i >= 0; i -= 8)
+  {
+    *pID++ = (char)((nType >> i) & 0x00ff);
+  }
+  return (4);
 }
 
-int MakeProtID(long nEType,long nIPProt,long nPort,char *szProtID)
+int MakeProtID(long nEType, long nIPProt, long nPort, char *szProtID)
 {
-	int i =0;
-	int nRet=0;
-	char *p = szProtID;
-	i = SetProtID(1,p);
-	p+=i;
-	nRet+=i;
-	if( nEType == 0 ) return(0);
-	i = SetProtID(nEType,p);
-	nRet+=i;
-	if( nIPProt == 0 ) return(nRet);
-	p+=i;
-	i = SetProtID(nIPProt,p);
-	nRet+=i;
-	if( nPort == 0 ) return(nRet);
-	p+=i;
-	i = SetProtID(nPort,p);
-	nRet+=i;
-	return(nRet);
+  int i = 0;
+  int nRet = 0;
+  char *p = szProtID;
+  i = SetProtID(1, p);
+  p += i;
+  nRet += i;
+  if (nEType == 0)
+    return (0);
+  i = SetProtID(nEType, p);
+  nRet += i;
+  if (nIPProt == 0)
+    return (nRet);
+  p += i;
+  i = SetProtID(nIPProt, p);
+  nRet += i;
+  if (nPort == 0)
+    return (nRet);
+  p += i;
+  i = SetProtID(nPort, p);
+  nRet += i;
+  return (nRet);
 }
-
 
 /* create a new row in the table */
 struct protocolDirTable_entry *
-protocolDirTable_createEntry(netsnmp_container *container 
-                 , char* protocolDirID
-                 , size_t protocolDirID_len
-                 , char* protocolDirParameters
-                 , size_t protocolDirParameters_len
-                ) {
-    struct protocolDirTable_entry *entry;
+protocolDirTable_createEntry(netsnmp_container *container, char *protocolDirID, size_t protocolDirID_len, char *protocolDirParameters, size_t protocolDirParameters_len)
+{
+  struct protocolDirTable_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct protocolDirTable_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct protocolDirTable_entry);
+  if (!entry)
+    return NULL;
 
-    memcpy(entry->protocolDirID, protocolDirID, protocolDirID_len);
-    entry->protocolDirID_len = protocolDirID_len;
-    memcpy(entry->protocolDirParameters, protocolDirParameters, protocolDirParameters_len);
-    entry->protocolDirParameters_len = protocolDirParameters_len;
-    entry->oid_index.len  = MakeProtDirIndex(protocolDirID_len,protocolDirID,protocolDirParameters_len,protocolDirParameters,entry->IndexOid);
-    entry->oid_index.oids = entry->IndexOid;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  memcpy(entry->protocolDirID, protocolDirID, protocolDirID_len);
+  entry->protocolDirID_len = protocolDirID_len;
+  memcpy(entry->protocolDirParameters, protocolDirParameters, protocolDirParameters_len);
+  entry->protocolDirParameters_len = protocolDirParameters_len;
+  entry->oid_index.len = MakeProtDirIndex(protocolDirID_len, protocolDirID, protocolDirParameters_len, protocolDirParameters, entry->IndexOid);
+  entry->oid_index.oids = entry->IndexOid;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-protocolDirTable_removeEntry(netsnmp_container *container, 
-                 struct protocolDirTable_entry *entry) {
+void protocolDirTable_removeEntry(netsnmp_container *container,
+                                  struct protocolDirTable_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the protocolDirTable table */
-int
-protocolDirTable_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
+int protocolDirTable_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
+{
 
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct protocolDirTable_entry          *table_entry;
-    int                         ret;
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct protocolDirTable_entry *table_entry;
+  int ret;
 
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct protocolDirTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-				continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_PROTOCOLDIRLOCALINDEX:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->protocolDirLocalIndex);
-                break;
-            case COLUMN_PROTOCOLDIRDESCR:
-                snmp_set_var_typed_value( request->requestvb, ASN_OCTET_STR,
-                                 (u_char*)table_entry->protocolDirDescr,
-                                          table_entry->protocolDirDescr_len);
-                break;
-            case COLUMN_PROTOCOLDIRTYPE:
-                snmp_set_var_typed_value( request->requestvb, ASN_OCTET_STR,
-                                 (u_char*)table_entry->protocolDirType,
-                                          table_entry->protocolDirType_len);
-                break;
-            case COLUMN_PROTOCOLDIRADDRESSMAPCONFIG:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->protocolDirAddressMapConfig);
-                break;
-            case COLUMN_PROTOCOLDIRHOSTCONFIG:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->protocolDirHostConfig);
-                break;
-            case COLUMN_PROTOCOLDIRMATRIXCONFIG:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->protocolDirMatrixConfig);
-                break;
-            case COLUMN_PROTOCOLDIROWNER:
-                snmp_set_var_typed_value( request->requestvb, ASN_OCTET_STR,
-                                 (u_char*)table_entry->protocolDirOwner,
-                                          table_entry->protocolDirOwner_len);
-                break;
-            case COLUMN_PROTOCOLDIRSTATUS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->protocolDirStatus);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct protocolDirTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_PROTOCOLDIRLOCALINDEX:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->protocolDirLocalIndex);
         break;
+      case COLUMN_PROTOCOLDIRDESCR:
+        snmp_set_var_typed_value(request->requestvb, ASN_OCTET_STR,
+                                 (u_char *)table_entry->protocolDirDescr,
+                                 table_entry->protocolDirDescr_len);
+        break;
+      case COLUMN_PROTOCOLDIRTYPE:
+        snmp_set_var_typed_value(request->requestvb, ASN_OCTET_STR,
+                                 (u_char *)table_entry->protocolDirType,
+                                 table_entry->protocolDirType_len);
+        break;
+      case COLUMN_PROTOCOLDIRADDRESSMAPCONFIG:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->protocolDirAddressMapConfig);
+        break;
+      case COLUMN_PROTOCOLDIRHOSTCONFIG:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->protocolDirHostConfig);
+        break;
+      case COLUMN_PROTOCOLDIRMATRIXCONFIG:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->protocolDirMatrixConfig);
+        break;
+      case COLUMN_PROTOCOLDIROWNER:
+        snmp_set_var_typed_value(request->requestvb, ASN_OCTET_STR,
+                                 (u_char *)table_entry->protocolDirOwner,
+                                 table_entry->protocolDirOwner_len);
+        break;
+      case COLUMN_PROTOCOLDIRSTATUS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->protocolDirStatus);
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
+    }
+    break;
 
-        /*
-         * Write-support
-         */
-    case MODE_SET_RESERVE1:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct protocolDirTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-            switch (table_info->colnum) {
+    /*
+     * Write-support
+     */
+  case MODE_SET_RESERVE1:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct protocolDirTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+      switch (table_info->colnum)
+      {
 #if 0
             case COLUMN_PROTOCOLDIRDESCR:
                 /* or possibly 'netsnmp_check_vb_type_and_max_size' */
@@ -4973,124 +5196,138 @@ protocolDirTable_handler(
                 }
                 break;
 #endif
-            default:
-                netsnmp_set_request_error( reqinfo, request,
-                                           SNMP_ERR_NOTWRITABLE );
-                return SNMP_ERR_NOERROR;
-            }
-        }
-        break;
+      default:
+        netsnmp_set_request_error(reqinfo, request,
+                                  SNMP_ERR_NOTWRITABLE);
+        return SNMP_ERR_NOERROR;
+      }
+    }
+    break;
 
-    case MODE_SET_RESERVE2:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct protocolDirTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-            switch (table_info->colnum) {
-            case COLUMN_PROTOCOLDIRSTATUS:
-                switch (*request->requestvb->val.integer) {
-                case RS_CREATEANDGO:
-                case RS_CREATEANDWAIT:
-                    table_entry = protocolDirTable_createEntry(container
-                        ,  table_info->indexes->val.string
-                        ,  table_info->indexes->val_len
-                        ,  table_info->indexes->val.string
-                        ,  table_info->indexes->val_len
-                        );
-                    if (table_entry) {
-                        netsnmp_container_table_row_insert( request, (netsnmp_index*)table_entry );
-                    } else {
-                        netsnmp_set_request_error( reqinfo, request,
-                                                   SNMP_ERR_RESOURCEUNAVAILABLE );
-                        return SNMP_ERR_NOERROR;
-                    }
-                }
-            }
+  case MODE_SET_RESERVE2:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct protocolDirTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+      switch (table_info->colnum)
+      {
+      case COLUMN_PROTOCOLDIRSTATUS:
+        switch (*request->requestvb->val.integer)
+        {
+        case RS_CREATEANDGO:
+        case RS_CREATEANDWAIT:
+          table_entry = protocolDirTable_createEntry(container, table_info->indexes->val.string, table_info->indexes->val_len, table_info->indexes->val.string, table_info->indexes->val_len);
+          if (table_entry)
+          {
+            netsnmp_container_table_row_insert(request, (netsnmp_index *)table_entry);
+          }
+          else
+          {
+            netsnmp_set_request_error(reqinfo, request,
+                                      SNMP_ERR_RESOURCEUNAVAILABLE);
+            return SNMP_ERR_NOERROR;
+          }
         }
-        break;
+      }
+    }
+    break;
 
-    case MODE_SET_FREE:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct protocolDirTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-            switch (table_info->colnum) {
-            case COLUMN_PROTOCOLDIRSTATUS:
-                switch (*request->requestvb->val.integer) {
-                case RS_CREATEANDGO:
-                case RS_CREATEANDWAIT:
-                    if (table_entry && !table_entry->valid) {
-                        protocolDirTable_removeEntry(container, table_entry );
-                    }
-                }
-            }
+  case MODE_SET_FREE:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct protocolDirTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+      switch (table_info->colnum)
+      {
+      case COLUMN_PROTOCOLDIRSTATUS:
+        switch (*request->requestvb->val.integer)
+        {
+        case RS_CREATEANDGO:
+        case RS_CREATEANDWAIT:
+          if (table_entry && !table_entry->valid)
+          {
+            protocolDirTable_removeEntry(container, table_entry);
+          }
         }
-        break;
+      }
+    }
+    break;
 
-    case MODE_SET_ACTION:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct protocolDirTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-            switch (table_info->colnum) {
-            case COLUMN_PROTOCOLDIRDESCR:
-                memcpy( table_entry->old_protocolDirDescr,
-                        table_entry->protocolDirDescr,
-                        sizeof(table_entry->protocolDirDescr));
-                table_entry->old_protocolDirDescr_len =
-                        table_entry->protocolDirDescr_len;
-                memset( table_entry->protocolDirDescr, 0,
-                        sizeof(table_entry->protocolDirDescr));
-                memcpy( table_entry->protocolDirDescr,
-                        request->requestvb->val.string,
-                        request->requestvb->val_len);
-                table_entry->protocolDirDescr_len =
-                        request->requestvb->val_len;
-                break;
-            case COLUMN_PROTOCOLDIRADDRESSMAPCONFIG:
-                table_entry->old_protocolDirAddressMapConfig = table_entry->protocolDirAddressMapConfig;
-                table_entry->protocolDirAddressMapConfig     = *request->requestvb->val.integer;
-                break;
-            case COLUMN_PROTOCOLDIRHOSTCONFIG:
-                table_entry->old_protocolDirHostConfig = table_entry->protocolDirHostConfig;
-                table_entry->protocolDirHostConfig     = *request->requestvb->val.integer;
-                break;
-            case COLUMN_PROTOCOLDIRMATRIXCONFIG:
-                table_entry->old_protocolDirMatrixConfig = table_entry->protocolDirMatrixConfig;
-                table_entry->protocolDirMatrixConfig     = *request->requestvb->val.integer;
-                break;
-            case COLUMN_PROTOCOLDIROWNER:
-                memcpy( table_entry->old_protocolDirOwner,
-                        table_entry->protocolDirOwner,
-                        sizeof(table_entry->protocolDirOwner));
-                table_entry->old_protocolDirOwner_len =
-                        table_entry->protocolDirOwner_len;
-                memset( table_entry->protocolDirOwner, 0,
-                        sizeof(table_entry->protocolDirOwner));
-                memcpy( table_entry->protocolDirOwner,
-                        request->requestvb->val.string,
-                        request->requestvb->val_len);
-                table_entry->protocolDirOwner_len =
-                        request->requestvb->val_len;
-                break;
-            }
-        }
-        /* Check the internal consistency of an active row */
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct protocolDirTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-            switch (table_info->colnum) {
-            case COLUMN_PROTOCOLDIRSTATUS:
-                switch (*request->requestvb->val.integer) {
-                case RS_ACTIVE:
-                case RS_CREATEANDGO:
+  case MODE_SET_ACTION:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct protocolDirTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+      switch (table_info->colnum)
+      {
+      case COLUMN_PROTOCOLDIRDESCR:
+        memcpy(table_entry->old_protocolDirDescr,
+               table_entry->protocolDirDescr,
+               sizeof(table_entry->protocolDirDescr));
+        table_entry->old_protocolDirDescr_len =
+            table_entry->protocolDirDescr_len;
+        memset(table_entry->protocolDirDescr, 0,
+               sizeof(table_entry->protocolDirDescr));
+        memcpy(table_entry->protocolDirDescr,
+               request->requestvb->val.string,
+               request->requestvb->val_len);
+        table_entry->protocolDirDescr_len =
+            request->requestvb->val_len;
+        break;
+      case COLUMN_PROTOCOLDIRADDRESSMAPCONFIG:
+        table_entry->old_protocolDirAddressMapConfig = table_entry->protocolDirAddressMapConfig;
+        table_entry->protocolDirAddressMapConfig = *request->requestvb->val.integer;
+        break;
+      case COLUMN_PROTOCOLDIRHOSTCONFIG:
+        table_entry->old_protocolDirHostConfig = table_entry->protocolDirHostConfig;
+        table_entry->protocolDirHostConfig = *request->requestvb->val.integer;
+        break;
+      case COLUMN_PROTOCOLDIRMATRIXCONFIG:
+        table_entry->old_protocolDirMatrixConfig = table_entry->protocolDirMatrixConfig;
+        table_entry->protocolDirMatrixConfig = *request->requestvb->val.integer;
+        break;
+      case COLUMN_PROTOCOLDIROWNER:
+        memcpy(table_entry->old_protocolDirOwner,
+               table_entry->protocolDirOwner,
+               sizeof(table_entry->protocolDirOwner));
+        table_entry->old_protocolDirOwner_len =
+            table_entry->protocolDirOwner_len;
+        memset(table_entry->protocolDirOwner, 0,
+               sizeof(table_entry->protocolDirOwner));
+        memcpy(table_entry->protocolDirOwner,
+               request->requestvb->val.string,
+               request->requestvb->val_len);
+        table_entry->protocolDirOwner_len =
+            request->requestvb->val_len;
+        break;
+      }
+    }
+    /* Check the internal consistency of an active row */
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct protocolDirTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+      switch (table_info->colnum)
+      {
+      case COLUMN_PROTOCOLDIRSTATUS:
+        switch (*request->requestvb->val.integer)
+        {
+        case RS_ACTIVE:
+        case RS_CREATEANDGO:
 #if 0                
                     if (/* XXX */) {
                         netsnmp_set_request_error( reqinfo, request,
@@ -5098,260 +5335,272 @@ protocolDirTable_handler(
                         return SNMP_ERR_NOERROR;
                     }
 #endif
-					break;
-                }
-            }
+          break;
         }
-        break;
-
-    case MODE_SET_UNDO:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct protocolDirTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-            switch (table_info->colnum) {
-            case COLUMN_PROTOCOLDIRDESCR:
-                memcpy( table_entry->protocolDirDescr,
-                        table_entry->old_protocolDirDescr,
-                        sizeof(table_entry->protocolDirDescr));
-                memset( table_entry->old_protocolDirDescr, 0,
-                        sizeof(table_entry->protocolDirDescr));
-                table_entry->protocolDirDescr_len =
-                        table_entry->old_protocolDirDescr_len;
-                break;
-            case COLUMN_PROTOCOLDIRADDRESSMAPCONFIG:
-                table_entry->protocolDirAddressMapConfig     = table_entry->old_protocolDirAddressMapConfig;
-                table_entry->old_protocolDirAddressMapConfig = 0;
-                break;
-            case COLUMN_PROTOCOLDIRHOSTCONFIG:
-                table_entry->protocolDirHostConfig     = table_entry->old_protocolDirHostConfig;
-                table_entry->old_protocolDirHostConfig = 0;
-                break;
-            case COLUMN_PROTOCOLDIRMATRIXCONFIG:
-                table_entry->protocolDirMatrixConfig     = table_entry->old_protocolDirMatrixConfig;
-                table_entry->old_protocolDirMatrixConfig = 0;
-                break;
-            case COLUMN_PROTOCOLDIROWNER:
-                memcpy( table_entry->protocolDirOwner,
-                        table_entry->old_protocolDirOwner,
-                        sizeof(table_entry->protocolDirOwner));
-                memset( table_entry->old_protocolDirOwner, 0,
-                        sizeof(table_entry->protocolDirOwner));
-                table_entry->protocolDirOwner_len =
-                        table_entry->old_protocolDirOwner_len;
-                break;
-            case COLUMN_PROTOCOLDIRSTATUS:
-                switch (*request->requestvb->val.integer) {
-                case RS_CREATEANDGO:
-                case RS_CREATEANDWAIT:
-                    if (table_entry && !table_entry->valid) {
-                        protocolDirTable_removeEntry(container, table_entry );
-                    }
-                }
-                break;
-            }
-        }
-        break;
-
-    case MODE_SET_COMMIT:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct protocolDirTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_PROTOCOLDIRSTATUS:
-                switch (*request->requestvb->val.integer) {
-                case RS_CREATEANDGO:
-                    table_entry->valid = 1;
-                    /* Fall-through */
-                case RS_ACTIVE:
-                    table_entry->protocolDirStatus = RS_ACTIVE;
-                    break;
-
-                case RS_CREATEANDWAIT:
-                    table_entry->valid = 1;
-                    /* Fall-through */
-                case RS_NOTINSERVICE:
-                    table_entry->protocolDirStatus = RS_NOTINSERVICE;
-                    break;
-
-                case RS_DESTROY:
-                    protocolDirTable_removeEntry(container, table_entry );
-                }
-            }
-        }
-        break;
+      }
     }
-    return SNMP_ERR_NOERROR;
-}
+    break;
 
+  case MODE_SET_UNDO:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct protocolDirTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+      switch (table_info->colnum)
+      {
+      case COLUMN_PROTOCOLDIRDESCR:
+        memcpy(table_entry->protocolDirDescr,
+               table_entry->old_protocolDirDescr,
+               sizeof(table_entry->protocolDirDescr));
+        memset(table_entry->old_protocolDirDescr, 0,
+               sizeof(table_entry->protocolDirDescr));
+        table_entry->protocolDirDescr_len =
+            table_entry->old_protocolDirDescr_len;
+        break;
+      case COLUMN_PROTOCOLDIRADDRESSMAPCONFIG:
+        table_entry->protocolDirAddressMapConfig = table_entry->old_protocolDirAddressMapConfig;
+        table_entry->old_protocolDirAddressMapConfig = 0;
+        break;
+      case COLUMN_PROTOCOLDIRHOSTCONFIG:
+        table_entry->protocolDirHostConfig = table_entry->old_protocolDirHostConfig;
+        table_entry->old_protocolDirHostConfig = 0;
+        break;
+      case COLUMN_PROTOCOLDIRMATRIXCONFIG:
+        table_entry->protocolDirMatrixConfig = table_entry->old_protocolDirMatrixConfig;
+        table_entry->old_protocolDirMatrixConfig = 0;
+        break;
+      case COLUMN_PROTOCOLDIROWNER:
+        memcpy(table_entry->protocolDirOwner,
+               table_entry->old_protocolDirOwner,
+               sizeof(table_entry->protocolDirOwner));
+        memset(table_entry->old_protocolDirOwner, 0,
+               sizeof(table_entry->protocolDirOwner));
+        table_entry->protocolDirOwner_len =
+            table_entry->old_protocolDirOwner_len;
+        break;
+      case COLUMN_PROTOCOLDIRSTATUS:
+        switch (*request->requestvb->val.integer)
+        {
+        case RS_CREATEANDGO:
+        case RS_CREATEANDWAIT:
+          if (table_entry && !table_entry->valid)
+          {
+            protocolDirTable_removeEntry(container, table_entry);
+          }
+        }
+        break;
+      }
+    }
+    break;
+
+  case MODE_SET_COMMIT:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct protocolDirTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_PROTOCOLDIRSTATUS:
+        switch (*request->requestvb->val.integer)
+        {
+        case RS_CREATEANDGO:
+          table_entry->valid = 1;
+          /* Fall-through */
+        case RS_ACTIVE:
+          table_entry->protocolDirStatus = RS_ACTIVE;
+          break;
+
+        case RS_CREATEANDWAIT:
+          table_entry->valid = 1;
+          /* Fall-through */
+        case RS_NOTINSERVICE:
+          table_entry->protocolDirStatus = RS_NOTINSERVICE;
+          break;
+
+        case RS_DESTROY:
+          protocolDirTable_removeEntry(container, table_entry);
+        }
+      }
+    }
+    break;
+  }
+  return SNMP_ERR_NOERROR;
+}
 
 /** Initialize the protocolDistControlTable table by defining its contents and how it's structured */
-void
-initialize_table_protocolDistControlTable(void)
+void initialize_table_protocolDistControlTable(void)
 {
-    static oid protocolDistControlTable_oid[] = {1,3,6,1,2,1,16,12,1};
-    size_t protocolDistControlTable_oid_len   = OID_LENGTH(protocolDistControlTable_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_container               *container;
-    netsnmp_table_registration_info *table_info;
+  static oid protocolDistControlTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 12, 1};
+  size_t protocolDistControlTable_oid_len = OID_LENGTH(protocolDistControlTable_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_container *container;
+  netsnmp_table_registration_info *table_info;
 
-    reg = netsnmp_create_handler_registration(
-              "protocolDistControlTable",     protocolDistControlTable_handler,
-              protocolDistControlTable_oid, protocolDistControlTable_oid_len,
-              HANDLER_CAN_RWRITE
-              );
+  reg = netsnmp_create_handler_registration(
+      "protocolDistControlTable", protocolDistControlTable_handler,
+      protocolDistControlTable_oid, protocolDistControlTable_oid_len,
+      HANDLER_CAN_RWRITE);
 
-    container  = netsnmp_container_find( "table_container" );
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: protocolDistControlIndex */
-                           0);
-    table_info->min_column = COLUMN_PROTOCOLDISTCONTROLDATASOURCE;
-    table_info->max_column = COLUMN_PROTOCOLDISTCONTROLSTATUS;
-    
-    netsnmp_container_table_register( reg, table_info, container, 0 );
+  container = netsnmp_container_find("table_container");
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER, /* index: protocolDistControlIndex */
+                                   0);
+  table_info->min_column = COLUMN_PROTOCOLDISTCONTROLDATASOURCE;
+  table_info->max_column = COLUMN_PROTOCOLDISTCONTROLSTATUS;
 
-    /* Initialise the contents of the table here */
-    InitProtDistContEnt(container);
- 
+  netsnmp_container_table_register(reg, table_info, container, 0);
+
+  /* Initialise the contents of the table here */
+  InitProtDistContEnt(container);
 }
 
-    /* Typical data structure for a row entry */
-struct protocolDistControlTable_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct protocolDistControlTable_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long protocolDistControlIndex;
+  /* Index values */
+  long protocolDistControlIndex;
 
-    /* Column values */
-    oid protocolDistControlDataSource[16];
-    size_t protocolDistControlDataSource_len;
-    oid old_protocolDistControlDataSource[16];
-    size_t old_protocolDistControlDataSource_len;
-    u_long protocolDistControlDroppedFrames;
-    u_long protocolDistControlCreateTime;
-    char protocolDistControlOwner[256];
-    size_t protocolDistControlOwner_len;
-    char old_protocolDistControlOwner[256];
-    size_t old_protocolDistControlOwner_len;
-    long protocolDistControlStatus;
+  /* Column values */
+  oid protocolDistControlDataSource[16];
+  size_t protocolDistControlDataSource_len;
+  oid old_protocolDistControlDataSource[16];
+  size_t old_protocolDistControlDataSource_len;
+  u_long protocolDistControlDroppedFrames;
+  u_long protocolDistControlCreateTime;
+  char protocolDistControlOwner[256];
+  size_t protocolDistControlOwner_len;
+  char old_protocolDistControlOwner[256];
+  size_t old_protocolDistControlOwner_len;
+  long protocolDistControlStatus;
 
-    int   valid;
+  int valid;
 };
 
 /* create a new row in the table */
 struct protocolDistControlTable_entry *
-protocolDistControlTable_createEntry(netsnmp_container *container 
-                 , long  protocolDistControlIndex
-                ) {
-    struct protocolDistControlTable_entry *entry;
+protocolDistControlTable_createEntry(netsnmp_container *container, long protocolDistControlIndex)
+{
+  struct protocolDistControlTable_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct protocolDistControlTable_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct protocolDistControlTable_entry);
+  if (!entry)
+    return NULL;
 
-    entry->protocolDistControlIndex = protocolDistControlIndex;
-    entry->oid_index.len  = 1;
-    entry->oid_index.oids = (oid*) &entry->protocolDistControlIndex;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->protocolDistControlIndex = protocolDistControlIndex;
+  entry->oid_index.len = 1;
+  entry->oid_index.oids = (oid *)&entry->protocolDistControlIndex;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-protocolDistControlTable_removeEntry(netsnmp_container *container, 
-                 struct protocolDistControlTable_entry *entry) {
+void protocolDistControlTable_removeEntry(netsnmp_container *container,
+                                          struct protocolDistControlTable_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the protocolDistControlTable table */
-int
-protocolDistControlTable_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
+int protocolDistControlTable_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
+{
 
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct protocolDistControlTable_entry          *table_entry;
-    int                         ret;
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct protocolDistControlTable_entry *table_entry;
+  int ret;
 
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct protocolDistControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
- 
-            switch (table_info->colnum) {
-            case COLUMN_PROTOCOLDISTCONTROLDATASOURCE:
-                snmp_set_var_typed_value( request->requestvb, ASN_OBJECT_ID,
-                                 (u_char*)table_entry->protocolDistControlDataSource,
-                                          table_entry->protocolDistControlDataSource_len);
-                break;
-            case COLUMN_PROTOCOLDISTCONTROLDROPPEDFRAMES:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->protocolDistControlDroppedFrames);
-                break;
-            case COLUMN_PROTOCOLDISTCONTROLCREATETIME:
-                snmp_set_var_typed_integer( request->requestvb, ASN_TIMETICKS,
-                                            table_entry->protocolDistControlCreateTime);
-                break;
-            case COLUMN_PROTOCOLDISTCONTROLOWNER:
-                snmp_set_var_typed_value( request->requestvb, ASN_OCTET_STR,
-                                 (u_char*)table_entry->protocolDistControlOwner,
-                                          table_entry->protocolDistControlOwner_len);
-                break;
-            case COLUMN_PROTOCOLDISTCONTROLSTATUS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->protocolDistControlStatus);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct protocolDistControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
+
+      switch (table_info->colnum)
+      {
+      case COLUMN_PROTOCOLDISTCONTROLDATASOURCE:
+        snmp_set_var_typed_value(request->requestvb, ASN_OBJECT_ID,
+                                 (u_char *)table_entry->protocolDistControlDataSource,
+                                 table_entry->protocolDistControlDataSource_len);
         break;
+      case COLUMN_PROTOCOLDISTCONTROLDROPPEDFRAMES:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->protocolDistControlDroppedFrames);
+        break;
+      case COLUMN_PROTOCOLDISTCONTROLCREATETIME:
+        snmp_set_var_typed_integer(request->requestvb, ASN_TIMETICKS,
+                                   table_entry->protocolDistControlCreateTime);
+        break;
+      case COLUMN_PROTOCOLDISTCONTROLOWNER:
+        snmp_set_var_typed_value(request->requestvb, ASN_OCTET_STR,
+                                 (u_char *)table_entry->protocolDistControlOwner,
+                                 table_entry->protocolDistControlOwner_len);
+        break;
+      case COLUMN_PROTOCOLDISTCONTROLSTATUS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->protocolDistControlStatus);
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
+    }
+    break;
 
-        /*
-         * Write-support
-         */
-    case MODE_SET_RESERVE1:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct protocolDistControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
+    /*
+     * Write-support
+     */
+  case MODE_SET_RESERVE1:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct protocolDistControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
 
-            switch (table_info->colnum) {
+      switch (table_info->colnum)
+      {
 #if 0
             case COLUMN_PROTOCOLDISTCONTROLDATASOURCE:
                 /* or possibly 'netsnmp_check_vb_type_and_max_size' */
@@ -5380,482 +5629,508 @@ protocolDistControlTable_handler(
                 }
                 break;
 #endif
-            default:
-                netsnmp_set_request_error( reqinfo, request,
-                                           SNMP_ERR_NOTWRITABLE );
-                return SNMP_ERR_NOERROR;
-            }
-        }
-        break;
+      default:
+        netsnmp_set_request_error(reqinfo, request,
+                                  SNMP_ERR_NOTWRITABLE);
+        return SNMP_ERR_NOERROR;
+      }
+    }
+    break;
 
-    case MODE_SET_RESERVE2:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct protocolDistControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-            switch (table_info->colnum) {
-            case COLUMN_PROTOCOLDISTCONTROLSTATUS:
-                switch (*request->requestvb->val.integer) {
-                case RS_CREATEANDGO:
-                case RS_CREATEANDWAIT:
-                    table_entry = protocolDistControlTable_createEntry(container
-                        , *table_info->indexes->val.integer
-                        );
-                    if (table_entry) {
-                        netsnmp_container_table_row_insert( request, (netsnmp_index*)table_entry );
-                    } else {
-                        netsnmp_set_request_error( reqinfo, request,
-                                                   SNMP_ERR_RESOURCEUNAVAILABLE );
-                        return SNMP_ERR_NOERROR;
-                    }
-                }
-            }
+  case MODE_SET_RESERVE2:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct protocolDistControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+      switch (table_info->colnum)
+      {
+      case COLUMN_PROTOCOLDISTCONTROLSTATUS:
+        switch (*request->requestvb->val.integer)
+        {
+        case RS_CREATEANDGO:
+        case RS_CREATEANDWAIT:
+          table_entry = protocolDistControlTable_createEntry(container, *table_info->indexes->val.integer);
+          if (table_entry)
+          {
+            netsnmp_container_table_row_insert(request, (netsnmp_index *)table_entry);
+          }
+          else
+          {
+            netsnmp_set_request_error(reqinfo, request,
+                                      SNMP_ERR_RESOURCEUNAVAILABLE);
+            return SNMP_ERR_NOERROR;
+          }
         }
-        break;
+      }
+    }
+    break;
 
-    case MODE_SET_FREE:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct protocolDistControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-            switch (table_info->colnum) {
-            case COLUMN_PROTOCOLDISTCONTROLSTATUS:
-                switch (*request->requestvb->val.integer) {
-                case RS_CREATEANDGO:
-                case RS_CREATEANDWAIT:
-                    if (table_entry && !table_entry->valid) {
-                        protocolDistControlTable_removeEntry(container, table_entry );
-                    }
-                }
-            }
+  case MODE_SET_FREE:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct protocolDistControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+      switch (table_info->colnum)
+      {
+      case COLUMN_PROTOCOLDISTCONTROLSTATUS:
+        switch (*request->requestvb->val.integer)
+        {
+        case RS_CREATEANDGO:
+        case RS_CREATEANDWAIT:
+          if (table_entry && !table_entry->valid)
+          {
+            protocolDistControlTable_removeEntry(container, table_entry);
+          }
         }
-        break;
+      }
+    }
+    break;
 
-    case MODE_SET_ACTION:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct protocolDistControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-            switch (table_info->colnum) {
-            case COLUMN_PROTOCOLDISTCONTROLDATASOURCE:
-                memcpy( table_entry->old_protocolDistControlDataSource,
-                        table_entry->protocolDistControlDataSource,
-                        sizeof(table_entry->protocolDistControlDataSource));
-                table_entry->old_protocolDistControlDataSource_len =
-                        table_entry->protocolDistControlDataSource_len;
-                memset( table_entry->protocolDistControlDataSource, 0,
-                        sizeof(table_entry->protocolDistControlDataSource));
-                memcpy( table_entry->protocolDistControlDataSource,
-                        request->requestvb->val.string,
-                        request->requestvb->val_len);
-                table_entry->protocolDistControlDataSource_len =
-                        request->requestvb->val_len;
-                break;
-            case COLUMN_PROTOCOLDISTCONTROLOWNER:
-                memcpy( table_entry->old_protocolDistControlOwner,
-                        table_entry->protocolDistControlOwner,
-                        sizeof(table_entry->protocolDistControlOwner));
-                table_entry->old_protocolDistControlOwner_len =
-                        table_entry->protocolDistControlOwner_len;
-                memset( table_entry->protocolDistControlOwner, 0,
-                        sizeof(table_entry->protocolDistControlOwner));
-                memcpy( table_entry->protocolDistControlOwner,
-                        request->requestvb->val.string,
-                        request->requestvb->val_len);
-                table_entry->protocolDistControlOwner_len =
-                        request->requestvb->val_len;
-                break;
-            }
-        }
-        /* Check the internal consistency of an active row */
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct protocolDistControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-            switch (table_info->colnum) {
-            case COLUMN_PROTOCOLDISTCONTROLSTATUS:
-                switch (*request->requestvb->val.integer) {
-                case RS_ACTIVE:
-                case RS_CREATEANDGO:
+  case MODE_SET_ACTION:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct protocolDistControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+      switch (table_info->colnum)
+      {
+      case COLUMN_PROTOCOLDISTCONTROLDATASOURCE:
+        memcpy(table_entry->old_protocolDistControlDataSource,
+               table_entry->protocolDistControlDataSource,
+               sizeof(table_entry->protocolDistControlDataSource));
+        table_entry->old_protocolDistControlDataSource_len =
+            table_entry->protocolDistControlDataSource_len;
+        memset(table_entry->protocolDistControlDataSource, 0,
+               sizeof(table_entry->protocolDistControlDataSource));
+        memcpy(table_entry->protocolDistControlDataSource,
+               request->requestvb->val.string,
+               request->requestvb->val_len);
+        table_entry->protocolDistControlDataSource_len =
+            request->requestvb->val_len;
+        break;
+      case COLUMN_PROTOCOLDISTCONTROLOWNER:
+        memcpy(table_entry->old_protocolDistControlOwner,
+               table_entry->protocolDistControlOwner,
+               sizeof(table_entry->protocolDistControlOwner));
+        table_entry->old_protocolDistControlOwner_len =
+            table_entry->protocolDistControlOwner_len;
+        memset(table_entry->protocolDistControlOwner, 0,
+               sizeof(table_entry->protocolDistControlOwner));
+        memcpy(table_entry->protocolDistControlOwner,
+               request->requestvb->val.string,
+               request->requestvb->val_len);
+        table_entry->protocolDistControlOwner_len =
+            request->requestvb->val_len;
+        break;
+      }
+    }
+    /* Check the internal consistency of an active row */
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct protocolDistControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+      switch (table_info->colnum)
+      {
+      case COLUMN_PROTOCOLDISTCONTROLSTATUS:
+        switch (*request->requestvb->val.integer)
+        {
+        case RS_ACTIVE:
+        case RS_CREATEANDGO:
 #if 0                
                     if (/* XXX */) {
                         netsnmp_set_request_error( reqinfo, request,
                                                    SNMP_ERR_INCONSISTENTVALUE );
                         return SNMP_ERR_NOERROR;
                     }
-#endif                
-					break;    
-                }
-            }
+#endif
+          break;
         }
-        break;
-
-    case MODE_SET_UNDO:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct protocolDistControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-            switch (table_info->colnum) {
-            case COLUMN_PROTOCOLDISTCONTROLDATASOURCE:
-                memcpy( table_entry->protocolDistControlDataSource,
-                        table_entry->old_protocolDistControlDataSource,
-                        sizeof(table_entry->protocolDistControlDataSource));
-                memset( table_entry->old_protocolDistControlDataSource, 0,
-                        sizeof(table_entry->protocolDistControlDataSource));
-                table_entry->protocolDistControlDataSource_len =
-                        table_entry->old_protocolDistControlDataSource_len;
-                break;
-            case COLUMN_PROTOCOLDISTCONTROLOWNER:
-                memcpy( table_entry->protocolDistControlOwner,
-                        table_entry->old_protocolDistControlOwner,
-                        sizeof(table_entry->protocolDistControlOwner));
-                memset( table_entry->old_protocolDistControlOwner, 0,
-                        sizeof(table_entry->protocolDistControlOwner));
-                table_entry->protocolDistControlOwner_len =
-                        table_entry->old_protocolDistControlOwner_len;
-                break;
-            case COLUMN_PROTOCOLDISTCONTROLSTATUS:
-                switch (*request->requestvb->val.integer) {
-                case RS_CREATEANDGO:
-                case RS_CREATEANDWAIT:
-                    if (table_entry && !table_entry->valid) {
-                        protocolDistControlTable_removeEntry(container, table_entry );
-                    }
-                }
-                break;
-            }
-        }
-        break;
-
-    case MODE_SET_COMMIT:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct protocolDistControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-
-            switch (table_info->colnum) {
-            case COLUMN_PROTOCOLDISTCONTROLSTATUS:
-                switch (*request->requestvb->val.integer) {
-                case RS_CREATEANDGO:
-                    table_entry->valid = 1;
-                    /* Fall-through */
-                case RS_ACTIVE:
-                    table_entry->protocolDistControlStatus = RS_ACTIVE;
-                    break;
-
-                case RS_CREATEANDWAIT:
-                    table_entry->valid = 1;
-                    /* Fall-through */
-                case RS_NOTINSERVICE:
-                    table_entry->protocolDistControlStatus = RS_NOTINSERVICE;
-                    break;
-
-                case RS_DESTROY:
-                    protocolDistControlTable_removeEntry(container, table_entry );
-                }
-            }
-        }
-        break;
+      }
     }
-    return SNMP_ERR_NOERROR;
+    break;
+
+  case MODE_SET_UNDO:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct protocolDistControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+      switch (table_info->colnum)
+      {
+      case COLUMN_PROTOCOLDISTCONTROLDATASOURCE:
+        memcpy(table_entry->protocolDistControlDataSource,
+               table_entry->old_protocolDistControlDataSource,
+               sizeof(table_entry->protocolDistControlDataSource));
+        memset(table_entry->old_protocolDistControlDataSource, 0,
+               sizeof(table_entry->protocolDistControlDataSource));
+        table_entry->protocolDistControlDataSource_len =
+            table_entry->old_protocolDistControlDataSource_len;
+        break;
+      case COLUMN_PROTOCOLDISTCONTROLOWNER:
+        memcpy(table_entry->protocolDistControlOwner,
+               table_entry->old_protocolDistControlOwner,
+               sizeof(table_entry->protocolDistControlOwner));
+        memset(table_entry->old_protocolDistControlOwner, 0,
+               sizeof(table_entry->protocolDistControlOwner));
+        table_entry->protocolDistControlOwner_len =
+            table_entry->old_protocolDistControlOwner_len;
+        break;
+      case COLUMN_PROTOCOLDISTCONTROLSTATUS:
+        switch (*request->requestvb->val.integer)
+        {
+        case RS_CREATEANDGO:
+        case RS_CREATEANDWAIT:
+          if (table_entry && !table_entry->valid)
+          {
+            protocolDistControlTable_removeEntry(container, table_entry);
+          }
+        }
+        break;
+      }
+    }
+    break;
+
+  case MODE_SET_COMMIT:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct protocolDistControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+
+      switch (table_info->colnum)
+      {
+      case COLUMN_PROTOCOLDISTCONTROLSTATUS:
+        switch (*request->requestvb->val.integer)
+        {
+        case RS_CREATEANDGO:
+          table_entry->valid = 1;
+          /* Fall-through */
+        case RS_ACTIVE:
+          table_entry->protocolDistControlStatus = RS_ACTIVE;
+          break;
+
+        case RS_CREATEANDWAIT:
+          table_entry->valid = 1;
+          /* Fall-through */
+        case RS_NOTINSERVICE:
+          table_entry->protocolDistControlStatus = RS_NOTINSERVICE;
+          break;
+
+        case RS_DESTROY:
+          protocolDistControlTable_removeEntry(container, table_entry);
+        }
+      }
+    }
+    break;
+  }
+  return SNMP_ERR_NOERROR;
 }
-
-
 
 /** Initialize the protocolDistStatsTable table by defining its contents and how it's structured */
-void
-initialize_table_protocolDistStatsTable(void)
+void initialize_table_protocolDistStatsTable(void)
 {
-    static oid protocolDistStatsTable_oid[] = {1,3,6,1,2,1,16,12,2};
-    size_t protocolDistStatsTable_oid_len   = OID_LENGTH(protocolDistStatsTable_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_table_registration_info *table_info;
+  static oid protocolDistStatsTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 12, 2};
+  size_t protocolDistStatsTable_oid_len = OID_LENGTH(protocolDistStatsTable_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_table_registration_info *table_info;
 
-    reg = netsnmp_create_handler_registration(
-              "protocolDistStatsTable",     protocolDistStatsTable_handler,
-              protocolDistStatsTable_oid, protocolDistStatsTable_oid_len,
-              HANDLER_CAN_RONLY
-              );
+  reg = netsnmp_create_handler_registration(
+      "protocolDistStatsTable", protocolDistStatsTable_handler,
+      protocolDistStatsTable_oid, protocolDistStatsTable_oid_len,
+      HANDLER_CAN_RONLY);
 
-    pProtDistContainer  = netsnmp_container_find( "table_container" );
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: protocolDistControlIndex */
-                           ASN_INTEGER,  /* index: protocolDirLocalIndex */
-                           0);
-    table_info->min_column = COLUMN_PROTOCOLDISTSTATSPKTS;
-    table_info->max_column = COLUMN_PROTOCOLDISTSTATSOCTETS;
-    
-    netsnmp_container_table_register( reg, table_info, pProtDistContainer, 0 );
+  pProtDistContainer = netsnmp_container_find("table_container");
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER, /* index: protocolDistControlIndex */
+                                   ASN_INTEGER, /* index: protocolDirLocalIndex */
+                                   0);
+  table_info->min_column = COLUMN_PROTOCOLDISTSTATSPKTS;
+  table_info->max_column = COLUMN_PROTOCOLDISTSTATSOCTETS;
 
-    /* Initialise the contents of the table here */
+  netsnmp_container_table_register(reg, table_info, pProtDistContainer, 0);
+
+  /* Initialise the contents of the table here */
 }
 
-    /* Typical data structure for a row entry */
-struct protocolDistStatsTable_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct protocolDistStatsTable_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long protocolDistControlIndex;
-    long protocolDirLocalIndex;
+  /* Index values */
+  long protocolDistControlIndex;
+  long protocolDirLocalIndex;
 
-    /* Column values */
-    u_long protocolDistStatsPkts;
-    u_long protocolDistStatsOctets;
+  /* Column values */
+  u_long protocolDistStatsPkts;
+  u_long protocolDistStatsOctets;
 
-    int   valid;
+  int valid;
 };
 
 /* create a new row in the table */
 struct protocolDistStatsTable_entry *
-protocolDistStatsTable_createEntry(netsnmp_container *container
-                 , long  protocolDistControlIndex
-                 , long  protocolDirLocalIndex
-                ) {
-    struct protocolDistStatsTable_entry *entry;
+protocolDistStatsTable_createEntry(netsnmp_container *container, long protocolDistControlIndex, long protocolDirLocalIndex)
+{
+  struct protocolDistStatsTable_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct protocolDistStatsTable_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct protocolDistStatsTable_entry);
+  if (!entry)
+    return NULL;
 
-    entry->protocolDistControlIndex = protocolDistControlIndex;
-    entry->protocolDirLocalIndex = protocolDirLocalIndex;
-    entry->oid_index.len  = 2;
-    entry->oid_index.oids = (oid*)&entry->protocolDistControlIndex;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->protocolDistControlIndex = protocolDistControlIndex;
+  entry->protocolDirLocalIndex = protocolDirLocalIndex;
+  entry->oid_index.len = 2;
+  entry->oid_index.oids = (oid *)&entry->protocolDistControlIndex;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-protocolDistStatsTable_removeEntry(netsnmp_container *container, 
-                 struct protocolDistStatsTable_entry *entry) {
+void protocolDistStatsTable_removeEntry(netsnmp_container *container,
+                                        struct protocolDistStatsTable_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the protocolDistStatsTable table */
-int
-protocolDistStatsTable_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
+int protocolDistStatsTable_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
+{
 
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct protocolDistStatsTable_entry          *table_entry;
-    int                         ret;
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct protocolDistStatsTable_entry *table_entry;
+  int ret;
 
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct protocolDistStatsTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct protocolDistStatsTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
 
-            switch (table_info->colnum) {
-            case COLUMN_PROTOCOLDISTSTATSPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_GAUGE,
-                                            table_entry->protocolDistStatsPkts);
-                break;
-            case COLUMN_PROTOCOLDISTSTATSOCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_GAUGE,
-                                            table_entry->protocolDistStatsOctets);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
+      switch (table_info->colnum)
+      {
+      case COLUMN_PROTOCOLDISTSTATSPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_GAUGE,
+                                   table_entry->protocolDistStatsPkts);
         break;
-
+      case COLUMN_PROTOCOLDISTSTATSOCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_GAUGE,
+                                   table_entry->protocolDistStatsOctets);
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
     }
-    return SNMP_ERR_NOERROR;
+    break;
+  }
+  return SNMP_ERR_NOERROR;
 }
-
-
 
 /** Initialize the addressMapControlTable table by defining its contents and how it's structured */
-void
-initialize_table_addressMapControlTable(void)
+void initialize_table_addressMapControlTable(void)
 {
-    static oid addressMapControlTable_oid[] = {1,3,6,1,2,1,16,13,4};
-    size_t addressMapControlTable_oid_len   = OID_LENGTH(addressMapControlTable_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_container               *container;
-    netsnmp_table_registration_info *table_info;
+  static oid addressMapControlTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 13, 4};
+  size_t addressMapControlTable_oid_len = OID_LENGTH(addressMapControlTable_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_container *container;
+  netsnmp_table_registration_info *table_info;
 
-    reg = netsnmp_create_handler_registration(
-              "addressMapControlTable",     addressMapControlTable_handler,
-              addressMapControlTable_oid, addressMapControlTable_oid_len,
-              HANDLER_CAN_RWRITE
-              );
+  reg = netsnmp_create_handler_registration(
+      "addressMapControlTable", addressMapControlTable_handler,
+      addressMapControlTable_oid, addressMapControlTable_oid_len,
+      HANDLER_CAN_RWRITE);
 
-    container  = netsnmp_container_find( "table_container" );
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: addressMapControlIndex */
-                           0);
-    table_info->min_column = COLUMN_ADDRESSMAPCONTROLDATASOURCE;
-    table_info->max_column = COLUMN_ADDRESSMAPCONTROLSTATUS;
-    
-    netsnmp_container_table_register( reg, table_info, container, 0 );
+  container = netsnmp_container_find("table_container");
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER, /* index: addressMapControlIndex */
+                                   0);
+  table_info->min_column = COLUMN_ADDRESSMAPCONTROLDATASOURCE;
+  table_info->max_column = COLUMN_ADDRESSMAPCONTROLSTATUS;
 
-    /* Initialise the contents of the table here */
-    InitAddrMapContEnt(container);
+  netsnmp_container_table_register(reg, table_info, container, 0);
 
+  /* Initialise the contents of the table here */
+  InitAddrMapContEnt(container);
 }
 
-    /* Typical data structure for a row entry */
-struct addressMapControlTable_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct addressMapControlTable_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long addressMapControlIndex;
+  /* Index values */
+  long addressMapControlIndex;
 
-    /* Column values */
-    oid addressMapControlDataSource[16];
-    size_t addressMapControlDataSource_len;
-    oid old_addressMapControlDataSource[16];
-    size_t old_addressMapControlDataSource_len;
-    u_long addressMapControlDroppedFrames;
-    char addressMapControlOwner[256];
-    size_t addressMapControlOwner_len;
-    char old_addressMapControlOwner[256];
-    size_t old_addressMapControlOwner_len;
-    long addressMapControlStatus;
+  /* Column values */
+  oid addressMapControlDataSource[16];
+  size_t addressMapControlDataSource_len;
+  oid old_addressMapControlDataSource[16];
+  size_t old_addressMapControlDataSource_len;
+  u_long addressMapControlDroppedFrames;
+  char addressMapControlOwner[256];
+  size_t addressMapControlOwner_len;
+  char old_addressMapControlOwner[256];
+  size_t old_addressMapControlOwner_len;
+  long addressMapControlStatus;
 
-    int   valid;
+  int valid;
 };
 
 /* create a new row in the table */
 struct addressMapControlTable_entry *
-addressMapControlTable_createEntry(netsnmp_container *container
-                 , long  addressMapControlIndex
-                ) {
-    struct addressMapControlTable_entry *entry;
+addressMapControlTable_createEntry(netsnmp_container *container, long addressMapControlIndex)
+{
+  struct addressMapControlTable_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct addressMapControlTable_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct addressMapControlTable_entry);
+  if (!entry)
+    return NULL;
 
-    entry->addressMapControlIndex = addressMapControlIndex;
-    entry->oid_index.len  = 1;
-    entry->oid_index.oids = (oid*)&entry->addressMapControlIndex;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->addressMapControlIndex = addressMapControlIndex;
+  entry->oid_index.len = 1;
+  entry->oid_index.oids = (oid *)&entry->addressMapControlIndex;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-addressMapControlTable_removeEntry(netsnmp_container *container, 
-                 struct addressMapControlTable_entry *entry) {
+void addressMapControlTable_removeEntry(netsnmp_container *container,
+                                        struct addressMapControlTable_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the addressMapControlTable table */
-int
-addressMapControlTable_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
+int addressMapControlTable_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
+{
 
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct addressMapControlTable_entry          *table_entry;
-    int                         ret;
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct addressMapControlTable_entry *table_entry;
+  int ret;
 
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct addressMapControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct addressMapControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
 
-            switch (table_info->colnum) {
-            case COLUMN_ADDRESSMAPCONTROLDATASOURCE:
-                snmp_set_var_typed_value( request->requestvb, ASN_OBJECT_ID,
-                                 (u_char*)table_entry->addressMapControlDataSource,
-                                          table_entry->addressMapControlDataSource_len);
-                break;
-            case COLUMN_ADDRESSMAPCONTROLDROPPEDFRAMES:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->addressMapControlDroppedFrames);
-                break;
-            case COLUMN_ADDRESSMAPCONTROLOWNER:
-                snmp_set_var_typed_value( request->requestvb, ASN_OCTET_STR,
-                                 (u_char*)table_entry->addressMapControlOwner,
-                                          table_entry->addressMapControlOwner_len);
-                break;
-            case COLUMN_ADDRESSMAPCONTROLSTATUS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->addressMapControlStatus);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
+      switch (table_info->colnum)
+      {
+      case COLUMN_ADDRESSMAPCONTROLDATASOURCE:
+        snmp_set_var_typed_value(request->requestvb, ASN_OBJECT_ID,
+                                 (u_char *)table_entry->addressMapControlDataSource,
+                                 table_entry->addressMapControlDataSource_len);
         break;
+      case COLUMN_ADDRESSMAPCONTROLDROPPEDFRAMES:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->addressMapControlDroppedFrames);
+        break;
+      case COLUMN_ADDRESSMAPCONTROLOWNER:
+        snmp_set_var_typed_value(request->requestvb, ASN_OCTET_STR,
+                                 (u_char *)table_entry->addressMapControlOwner,
+                                 table_entry->addressMapControlOwner_len);
+        break;
+      case COLUMN_ADDRESSMAPCONTROLSTATUS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->addressMapControlStatus);
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
+    }
+    break;
 
-        /*
-         * Write-support
-         */
-    case MODE_SET_RESERVE1:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct addressMapControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
-    
-            switch (table_info->colnum) {
+    /*
+     * Write-support
+     */
+  case MODE_SET_RESERVE1:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct addressMapControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
+
+      switch (table_info->colnum)
+      {
 #if 0
             case COLUMN_ADDRESSMAPCONTROLDATASOURCE:
                 /* or possibly 'netsnmp_check_vb_type_and_max_size' */
@@ -5884,113 +6159,130 @@ addressMapControlTable_handler(
                 }
                 break;
 #endif
-            default:
-                netsnmp_set_request_error( reqinfo, request,
-                                           SNMP_ERR_NOTWRITABLE );
-                return SNMP_ERR_NOERROR;
-            }
+      default:
+        netsnmp_set_request_error(reqinfo, request,
+                                  SNMP_ERR_NOTWRITABLE);
+        return SNMP_ERR_NOERROR;
+      }
+    }
+    break;
+
+  case MODE_SET_RESERVE2:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct addressMapControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+
+      switch (table_info->colnum)
+      {
+      case COLUMN_ADDRESSMAPCONTROLSTATUS:
+        switch (*request->requestvb->val.integer)
+        {
+        case RS_CREATEANDGO:
+        case RS_CREATEANDWAIT:
+          table_entry = addressMapControlTable_createEntry(container, *table_info->indexes->val.integer);
+          if (table_entry)
+          {
+            netsnmp_container_table_row_insert(request, (netsnmp_index *)table_entry);
+          }
+          else
+          {
+            netsnmp_set_request_error(reqinfo, request,
+                                      SNMP_ERR_RESOURCEUNAVAILABLE);
+            return SNMP_ERR_NOERROR;
+          }
         }
+      }
+    }
+    break;
+
+  case MODE_SET_FREE:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct addressMapControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+
+      switch (table_info->colnum)
+      {
+      case COLUMN_ADDRESSMAPCONTROLSTATUS:
+        switch (*request->requestvb->val.integer)
+        {
+        case RS_CREATEANDGO:
+        case RS_CREATEANDWAIT:
+          if (table_entry && !table_entry->valid)
+          {
+            addressMapControlTable_removeEntry(container, table_entry);
+          }
+        }
+      }
+    }
+    break;
+
+  case MODE_SET_ACTION:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct addressMapControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+
+      switch (table_info->colnum)
+      {
+      case COLUMN_ADDRESSMAPCONTROLDATASOURCE:
+        memcpy(table_entry->old_addressMapControlDataSource,
+               table_entry->addressMapControlDataSource,
+               sizeof(table_entry->addressMapControlDataSource));
+        table_entry->old_addressMapControlDataSource_len =
+            table_entry->addressMapControlDataSource_len;
+        memset(table_entry->addressMapControlDataSource, 0,
+               sizeof(table_entry->addressMapControlDataSource));
+        memcpy(table_entry->addressMapControlDataSource,
+               request->requestvb->val.string,
+               request->requestvb->val_len);
+        table_entry->addressMapControlDataSource_len =
+            request->requestvb->val_len;
         break;
-
-    case MODE_SET_RESERVE2:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct addressMapControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-
-            switch (table_info->colnum) {
-            case COLUMN_ADDRESSMAPCONTROLSTATUS:
-                switch (*request->requestvb->val.integer) {
-                case RS_CREATEANDGO:
-                case RS_CREATEANDWAIT:
-                    table_entry = addressMapControlTable_createEntry(container
-                        , *table_info->indexes->val.integer
-                        );
-                    if (table_entry) {
-                        netsnmp_container_table_row_insert( request, (netsnmp_index*)table_entry );
-                    } else {
-                        netsnmp_set_request_error( reqinfo, request,
-                                                   SNMP_ERR_RESOURCEUNAVAILABLE );
-                        return SNMP_ERR_NOERROR;
-                    }
-                }
-            }
-        }
+      case COLUMN_ADDRESSMAPCONTROLOWNER:
+        memcpy(table_entry->old_addressMapControlOwner,
+               table_entry->addressMapControlOwner,
+               sizeof(table_entry->addressMapControlOwner));
+        table_entry->old_addressMapControlOwner_len =
+            table_entry->addressMapControlOwner_len;
+        memset(table_entry->addressMapControlOwner, 0,
+               sizeof(table_entry->addressMapControlOwner));
+        memcpy(table_entry->addressMapControlOwner,
+               request->requestvb->val.string,
+               request->requestvb->val_len);
+        table_entry->addressMapControlOwner_len =
+            request->requestvb->val_len;
         break;
+      }
+    }
+    /* Check the internal consistency of an active row */
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct addressMapControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
 
-    case MODE_SET_FREE:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct addressMapControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-    
-            switch (table_info->colnum) {
-            case COLUMN_ADDRESSMAPCONTROLSTATUS:
-                switch (*request->requestvb->val.integer) {
-                case RS_CREATEANDGO:
-                case RS_CREATEANDWAIT:
-                    if (table_entry && !table_entry->valid) {
-                        addressMapControlTable_removeEntry(container, table_entry );
-                    }
-                }
-            }
-        }
-        break;
-
-    case MODE_SET_ACTION:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct addressMapControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-
-            switch (table_info->colnum) {
-            case COLUMN_ADDRESSMAPCONTROLDATASOURCE:
-                memcpy( table_entry->old_addressMapControlDataSource,
-                        table_entry->addressMapControlDataSource,
-                        sizeof(table_entry->addressMapControlDataSource));
-                table_entry->old_addressMapControlDataSource_len =
-                        table_entry->addressMapControlDataSource_len;
-                memset( table_entry->addressMapControlDataSource, 0,
-                        sizeof(table_entry->addressMapControlDataSource));
-                memcpy( table_entry->addressMapControlDataSource,
-                        request->requestvb->val.string,
-                        request->requestvb->val_len);
-                table_entry->addressMapControlDataSource_len =
-                        request->requestvb->val_len;
-                break;
-            case COLUMN_ADDRESSMAPCONTROLOWNER:
-                memcpy( table_entry->old_addressMapControlOwner,
-                        table_entry->addressMapControlOwner,
-                        sizeof(table_entry->addressMapControlOwner));
-                table_entry->old_addressMapControlOwner_len =
-                        table_entry->addressMapControlOwner_len;
-                memset( table_entry->addressMapControlOwner, 0,
-                        sizeof(table_entry->addressMapControlOwner));
-                memcpy( table_entry->addressMapControlOwner,
-                        request->requestvb->val.string,
-                        request->requestvb->val_len);
-                table_entry->addressMapControlOwner_len =
-                        request->requestvb->val_len;
-                break;
-            }
-        }
-        /* Check the internal consistency of an active row */
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct addressMapControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-    
-            switch (table_info->colnum) {
-            case COLUMN_ADDRESSMAPCONTROLSTATUS:
-                switch (*request->requestvb->val.integer) {
-                case RS_ACTIVE:
-                case RS_CREATEANDGO:
+      switch (table_info->colnum)
+      {
+      case COLUMN_ADDRESSMAPCONTROLSTATUS:
+        switch (*request->requestvb->val.integer)
+        {
+        case RS_ACTIVE:
+        case RS_CREATEANDGO:
 #if 0
                     if (/* XXX */) {
                         netsnmp_set_request_error( reqinfo, request,
@@ -5998,400 +6290,433 @@ addressMapControlTable_handler(
                         return SNMP_ERR_NOERROR;
                     }
 #endif
-					break;
-                }
-            }
+          break;
         }
-        break;
-
-    case MODE_SET_UNDO:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct addressMapControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-    
-            switch (table_info->colnum) {
-            case COLUMN_ADDRESSMAPCONTROLDATASOURCE:
-                memcpy( table_entry->addressMapControlDataSource,
-                        table_entry->old_addressMapControlDataSource,
-                        sizeof(table_entry->addressMapControlDataSource));
-                memset( table_entry->old_addressMapControlDataSource, 0,
-                        sizeof(table_entry->addressMapControlDataSource));
-                table_entry->addressMapControlDataSource_len =
-                        table_entry->old_addressMapControlDataSource_len;
-                break;
-            case COLUMN_ADDRESSMAPCONTROLOWNER:
-                memcpy( table_entry->addressMapControlOwner,
-                        table_entry->old_addressMapControlOwner,
-                        sizeof(table_entry->addressMapControlOwner));
-                memset( table_entry->old_addressMapControlOwner, 0,
-                        sizeof(table_entry->addressMapControlOwner));
-                table_entry->addressMapControlOwner_len =
-                        table_entry->old_addressMapControlOwner_len;
-                break;
-            case COLUMN_ADDRESSMAPCONTROLSTATUS:
-                switch (*request->requestvb->val.integer) {
-                case RS_CREATEANDGO:
-                case RS_CREATEANDWAIT:
-                    if (table_entry && !table_entry->valid) {
-                        addressMapControlTable_removeEntry(container, table_entry );
-                    }
-                }
-                break;
-            }
-        }
-        break;
-
-    case MODE_SET_COMMIT:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct addressMapControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
- 			if( table_entry == NULL || table_info == NULL ) continue;
-
-            switch (table_info->colnum) {
-            case COLUMN_ADDRESSMAPCONTROLSTATUS:
-                switch (*request->requestvb->val.integer) {
-                case RS_CREATEANDGO:
-                    table_entry->valid = 1;
-                    /* Fall-through */
-                case RS_ACTIVE:
-                    table_entry->addressMapControlStatus = RS_ACTIVE;
-                    break;
-
-                case RS_CREATEANDWAIT:
-                    table_entry->valid = 1;
-                    /* Fall-through */
-                case RS_NOTINSERVICE:
-                    table_entry->addressMapControlStatus = RS_NOTINSERVICE;
-                    break;
-
-                case RS_DESTROY:
-                    addressMapControlTable_removeEntry(container, table_entry );
-                }
-            }
-        }
-        break;
+      }
     }
-    return SNMP_ERR_NOERROR;
+    break;
+
+  case MODE_SET_UNDO:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct addressMapControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+
+      switch (table_info->colnum)
+      {
+      case COLUMN_ADDRESSMAPCONTROLDATASOURCE:
+        memcpy(table_entry->addressMapControlDataSource,
+               table_entry->old_addressMapControlDataSource,
+               sizeof(table_entry->addressMapControlDataSource));
+        memset(table_entry->old_addressMapControlDataSource, 0,
+               sizeof(table_entry->addressMapControlDataSource));
+        table_entry->addressMapControlDataSource_len =
+            table_entry->old_addressMapControlDataSource_len;
+        break;
+      case COLUMN_ADDRESSMAPCONTROLOWNER:
+        memcpy(table_entry->addressMapControlOwner,
+               table_entry->old_addressMapControlOwner,
+               sizeof(table_entry->addressMapControlOwner));
+        memset(table_entry->old_addressMapControlOwner, 0,
+               sizeof(table_entry->addressMapControlOwner));
+        table_entry->addressMapControlOwner_len =
+            table_entry->old_addressMapControlOwner_len;
+        break;
+      case COLUMN_ADDRESSMAPCONTROLSTATUS:
+        switch (*request->requestvb->val.integer)
+        {
+        case RS_CREATEANDGO:
+        case RS_CREATEANDWAIT:
+          if (table_entry && !table_entry->valid)
+          {
+            addressMapControlTable_removeEntry(container, table_entry);
+          }
+        }
+        break;
+      }
+    }
+    break;
+
+  case MODE_SET_COMMIT:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct addressMapControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+
+      switch (table_info->colnum)
+      {
+      case COLUMN_ADDRESSMAPCONTROLSTATUS:
+        switch (*request->requestvb->val.integer)
+        {
+        case RS_CREATEANDGO:
+          table_entry->valid = 1;
+          /* Fall-through */
+        case RS_ACTIVE:
+          table_entry->addressMapControlStatus = RS_ACTIVE;
+          break;
+
+        case RS_CREATEANDWAIT:
+          table_entry->valid = 1;
+          /* Fall-through */
+        case RS_NOTINSERVICE:
+          table_entry->addressMapControlStatus = RS_NOTINSERVICE;
+          break;
+
+        case RS_DESTROY:
+          addressMapControlTable_removeEntry(container, table_entry);
+        }
+      }
+    }
+    break;
+  }
+  return SNMP_ERR_NOERROR;
 }
 
-// YMI Added 
+// YMI Added
 FindVarMethod var_addressMapTable;
 
-/* 
+/*
  * addressMapTable_variables_oid:
  *   this is the top level oid that we want to register under.  This
  *   is essentially a prefix, with the suffix appearing in the
  *   variable below.
  */
 
-oid addressMapTable_variables_oid[] = { 1,3,6,1,2,1,16,13,5 };
+oid addressMapTable_variables_oid[] = {1, 3, 6, 1, 2, 1, 16, 13, 5};
 
-/* 
+/*
  * variable4 addressMapTable_variables:
- *   this variable defines function callbacks and type return information 
- *   for the addressMapTable mib section 
+ *   this variable defines function callbacks and type return information
+ *   for the addressMapTable mib section
  */
 
 struct variable4 addressMapTable_variables[] = {
 /*  magic number        , variable type , ro/rw , callback fn  , L, oidsuffix */
 #if 0
-#define ADDRESSMAPTIMEMARK		1
+#define ADDRESSMAPTIMEMARK 1
 {ADDRESSMAPTIMEMARK,  ASN_TIMETICKS,  RONLY,   var_addressMapTable, 2,  { , 1, 1 }},
-#define ADDRESSMAPNETWORKADDRESS		2
+#define ADDRESSMAPNETWORKADDRESS 2
 {ADDRESSMAPNETWORKADDRESS,  ASN_OCTET_STR,  RONLY,   var_addressMapTable, 2,  { , 1, 2 }},
-#define ADDRESSMAPSOURCE		3
+#define ADDRESSMAPSOURCE 3
 {ADDRESSMAPSOURCE,  ASN_OBJECT_ID,  RONLY,   var_addressMapTable, 2,  { , 1, 3 }},
 #endif
 
-#define ADDRESSMAPPHYSICALADDRESS		4
-{ADDRESSMAPPHYSICALADDRESS,  ASN_OCTET_STR,  RONLY,   var_addressMapTable, 2,  {  1, 4 }},
-#define ADDRESSMAPLASTCHANGE		5
-{ADDRESSMAPLASTCHANGE,  ASN_TIMETICKS,  RONLY,   var_addressMapTable, 2,  {  1, 5 }}
-};
+#define ADDRESSMAPPHYSICALADDRESS 4
+    {ADDRESSMAPPHYSICALADDRESS, ASN_OCTET_STR, RONLY, var_addressMapTable, 2, {1, 4}},
+#define ADDRESSMAPLASTCHANGE 5
+    {ADDRESSMAPLASTCHANGE, ASN_TIMETICKS, RONLY, var_addressMapTable, 2, {1, 5}}};
 /*    (L = length of the oidsuffix) */
 
- 
 /** Initialize the addressMapTable table by defining its contents and how it's structured */
-void
-initialize_table_addressMapTable(void)
+void initialize_table_addressMapTable(void)
 {
-    static oid addressMapTable_oid[] = {1,3,6,1,2,1,16,13,5};
-    size_t addressMapTable_oid_len   = OID_LENGTH(addressMapTable_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_table_registration_info *table_info;
+  static oid addressMapTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 13, 5};
+  size_t addressMapTable_oid_len = OID_LENGTH(addressMapTable_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_table_registration_info *table_info;
 
-    pAddrMapContainer  = netsnmp_container_find( "table_container" );
-    pAddrMapMib  = netsnmp_container_find( "table_container" );
+  pAddrMapContainer = netsnmp_container_find("table_container");
+  pAddrMapMib = netsnmp_container_find("table_container");
 
-	if( nTimeMarkMode >= 2 ) {
-	   /* register ourselves with the agent to handle our mib tree */
-    	REGISTER_MIB("addressMapTable", addressMapTable_variables, variable4,
-               addressMapTable_variables_oid);
-        return;
-	}
+  if (nTimeMarkMode >= 2)
+  {
+    /* register ourselves with the agent to handle our mib tree */
+    REGISTER_MIB("addressMapTable", addressMapTable_variables, variable4,
+                 addressMapTable_variables_oid);
+    return;
+  }
 
-    reg = netsnmp_create_handler_registration(
-              "addressMapTable",     addressMapTable_handler,
-              addressMapTable_oid, addressMapTable_oid_len,
-              HANDLER_CAN_RONLY
-              );
+  reg = netsnmp_create_handler_registration(
+      "addressMapTable", addressMapTable_handler,
+      addressMapTable_oid, addressMapTable_oid_len,
+      HANDLER_CAN_RONLY);
 
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_TIMETICKS, /* index: addressMapTimeMark */
+                                   ASN_INTEGER,   /* index: protocolDirLocalIndex */
+                                   ASN_OCTET_STR, /* index: addressMapNetworkAddress */
+                                   ASN_OBJECT_ID, /* index: addressMapSource */
+                                   0);
+  table_info->min_column = COLUMN_ADDRESSMAPPHYSICALADDRESS;
+  table_info->max_column = COLUMN_ADDRESSMAPLASTCHANGE;
 
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_TIMETICKS,  /* index: addressMapTimeMark */
-                           ASN_INTEGER,  /* index: protocolDirLocalIndex */
-                           ASN_OCTET_STR,  /* index: addressMapNetworkAddress */
-                           ASN_OBJECT_ID,  /* index: addressMapSource */
-                           0);
-    table_info->min_column = COLUMN_ADDRESSMAPPHYSICALADDRESS;
-    table_info->max_column = COLUMN_ADDRESSMAPLASTCHANGE;
-    
-    netsnmp_container_table_register( reg, table_info, nTimeMarkMode== 0 ? pAddrMapMib : pAddrMapContainer, 0 );
+  netsnmp_container_table_register(reg, table_info, nTimeMarkMode == 0 ? pAddrMapMib : pAddrMapContainer, 0);
 
-    /* Initialise the contents of the table here */
+  /* Initialise the contents of the table here */
 }
 
-size_t MakeAddrMapIndex(u_long nTM,long nProtDirLI,long nNetAddrLen,char *pNetAddr,long nDSLen,oid *pDSOid,oid *pOid)
+size_t MakeAddrMapIndex(u_long nTM, long nProtDirLI, long nNetAddrLen, char *pNetAddr, long nDSLen, oid *pDSOid, oid *pOid)
 {
-	int i;
-	int j;
-	i =0;
-	pOid[i++] = nTM;
-	pOid[i++] = nProtDirLI;
-	pOid[i++] = nNetAddrLen;
-	for(j = 0;j < nNetAddrLen;j++ ) {
-		pOid[i++] = (long) pNetAddr[j] & 0x00ff;
-	}
-	pOid[i++] = nDSLen;
-	for( j=0; j < nDSLen;j++ ) {
-		pOid[i++] = pDSOid[j];
-	}
-	return((size_t)i);
+  int i;
+  int j;
+  i = 0;
+  pOid[i++] = nTM;
+  pOid[i++] = nProtDirLI;
+  pOid[i++] = nNetAddrLen;
+  for (j = 0; j < nNetAddrLen; j++)
+  {
+    pOid[i++] = (long)pNetAddr[j] & 0x00ff;
+  }
+  pOid[i++] = nDSLen;
+  for (j = 0; j < nDSLen; j++)
+  {
+    pOid[i++] = pDSOid[j];
+  }
+  return ((size_t)i);
 }
 
-    /* Typical data structure for a row entry */
-struct addressMapTable_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct addressMapTable_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    u_long addressMapTimeMark;
-    long protocolDirLocalIndex;
-    char addressMapNetworkAddress[16];
-    size_t addressMapNetworkAddress_len;
-    oid addressMapSource[16];
-    size_t addressMapSource_len;
+  /* Index values */
+  u_long addressMapTimeMark;
+  long protocolDirLocalIndex;
+  char addressMapNetworkAddress[16];
+  size_t addressMapNetworkAddress_len;
+  oid addressMapSource[16];
+  size_t addressMapSource_len;
 
-	oid IndexOid[32+4];
-    /* Column values */
-    char addressMapPhysicalAddress[6];
-    size_t addressMapPhysicalAddress_len;
-    u_long addressMapLastChange;
+  oid IndexOid[32 + 4];
+  /* Column values */
+  char addressMapPhysicalAddress[6];
+  size_t addressMapPhysicalAddress_len;
+  u_long addressMapLastChange;
 
-    int   valid;
-    u_long  nLastTM;
-    u_long  nNewTM;
-    void    *pAddrMap;
+  int valid;
+  u_long nLastTM;
+  u_long nNewTM;
+  void *pAddrMap;
 };
 
 /* create a new row in the table */
 struct addressMapTable_entry *
-addressMapTable_createEntry(netsnmp_container *container
-                 , u_long  addressMapTimeMark
-                 , long  protocolDirLocalIndex
-                 , char* addressMapNetworkAddress
-                 , size_t addressMapNetworkAddress_len
-                 , oid* addressMapSource
-                 , size_t addressMapSource_len
-                ) {
-    struct addressMapTable_entry *entry;
+addressMapTable_createEntry(netsnmp_container *container, u_long addressMapTimeMark, long protocolDirLocalIndex, char *addressMapNetworkAddress, size_t addressMapNetworkAddress_len, oid *addressMapSource, size_t addressMapSource_len)
+{
+  struct addressMapTable_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct addressMapTable_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct addressMapTable_entry);
+  if (!entry)
+    return NULL;
 
-    entry->addressMapTimeMark = addressMapTimeMark;
-    entry->protocolDirLocalIndex = protocolDirLocalIndex;
-    memcpy(entry->addressMapNetworkAddress, addressMapNetworkAddress, addressMapNetworkAddress_len);
-    entry->addressMapNetworkAddress_len = addressMapNetworkAddress_len;
-    memcpy(entry->addressMapSource, addressMapSource, addressMapSource_len*sizeof(oid));
-    entry->addressMapSource_len = addressMapSource_len;
-    entry->oid_index.len  = MakeAddrMapIndex(addressMapTimeMark,protocolDirLocalIndex,addressMapNetworkAddress_len,addressMapNetworkAddress,
-    addressMapSource_len,addressMapSource,entry->IndexOid);
-    entry->oid_index.oids = entry->IndexOid;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->addressMapTimeMark = addressMapTimeMark;
+  entry->protocolDirLocalIndex = protocolDirLocalIndex;
+  memcpy(entry->addressMapNetworkAddress, addressMapNetworkAddress, addressMapNetworkAddress_len);
+  entry->addressMapNetworkAddress_len = addressMapNetworkAddress_len;
+  memcpy(entry->addressMapSource, addressMapSource, addressMapSource_len * sizeof(oid));
+  entry->addressMapSource_len = addressMapSource_len;
+  entry->oid_index.len = MakeAddrMapIndex(addressMapTimeMark, protocolDirLocalIndex, addressMapNetworkAddress_len, addressMapNetworkAddress,
+                                          addressMapSource_len, addressMapSource, entry->IndexOid);
+  entry->oid_index.oids = entry->IndexOid;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-addressMapTable_removeEntry(netsnmp_container *container, 
-                 struct addressMapTable_entry *entry) {
+void addressMapTable_removeEntry(netsnmp_container *container,
+                                 struct addressMapTable_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the addressMapTable table */
-int
-addressMapTable_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
+int addressMapTable_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
+{
 
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct addressMapTable_entry          *table_entry;
-    int                         ret;
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct addressMapTable_entry *table_entry;
+  int ret;
 
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct addressMapTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
-    
-            switch (table_info->colnum) {
-            case COLUMN_ADDRESSMAPPHYSICALADDRESS:
-                snmp_set_var_typed_value( request->requestvb, ASN_OCTET_STR,
-                                 (u_char*)table_entry->addressMapPhysicalAddress,
-                                          table_entry->addressMapPhysicalAddress_len);
-                break;
-            case COLUMN_ADDRESSMAPLASTCHANGE:
-                snmp_set_var_typed_integer( request->requestvb, ASN_TIMETICKS,
-                                            table_entry->addressMapLastChange);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct addressMapTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
+
+      switch (table_info->colnum)
+      {
+      case COLUMN_ADDRESSMAPPHYSICALADDRESS:
+        snmp_set_var_typed_value(request->requestvb, ASN_OCTET_STR,
+                                 (u_char *)table_entry->addressMapPhysicalAddress,
+                                 table_entry->addressMapPhysicalAddress_len);
         break;
-
+      case COLUMN_ADDRESSMAPLASTCHANGE:
+        snmp_set_var_typed_integer(request->requestvb, ASN_TIMETICKS,
+                                   table_entry->addressMapLastChange);
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
     }
-    return SNMP_ERR_NOERROR;
+    break;
+  }
+  return SNMP_ERR_NOERROR;
 }
 
-struct addressMapTable_entry  * FindAddrMapEntry(struct variable *vp,
-    	    oid     *name,
-    	    size_t  *length,
-    	    int     exact)
+struct addressMapTable_entry *FindAddrMapEntry(struct variable *vp,
+                                               oid *name,
+                                               size_t *length,
+                                               int exact)
 {
-    oid             newname[MAX_OID_LEN];
-    struct addressMapTable_entry *p;
-    netsnmp_index oid_index;
-    oid IndexOid[MAX_OID_LEN];
-    unsigned long nReqTM;
-    int i,rtest;
-    for (i = 0, rtest = 0;
-         i < (int) vp->namelen && i < (int) (*length) && !rtest; i++) {
-        if (name[i] != vp->name[i]) {
-            if (name[i] < vp->name[i])
-                rtest = -1;
-            else
-                rtest = 1;
-        }
+  oid newname[MAX_OID_LEN];
+  struct addressMapTable_entry *p;
+  netsnmp_index oid_index;
+  oid IndexOid[MAX_OID_LEN];
+  unsigned long nReqTM;
+  int i, rtest;
+  for (i = 0, rtest = 0;
+       i < (int)vp->namelen && i < (int)(*length) && !rtest; i++)
+  {
+    if (name[i] != vp->name[i])
+    {
+      if (name[i] < vp->name[i])
+        rtest = -1;
+      else
+        rtest = 1;
     }
-    if( rtest > 0 ) {
-		return(NULL);
-	}
-    if( exact ) {
-		// GETÇÃèÍçá
-		if( 4+4+IfDataSource_oid_len != (*length - vp->namelen) ) return(NULL);
-		nReqTM = (unsigned long) name[vp->namelen];
-		name[vp->namelen] = 0;
-	    oid_index.len  = (*length - vp->namelen);
-    	oid_index.oids = &name[vp->namelen];
-		p = CONTAINER_FIND(pAddrMapContainer, &oid_index);
-		if( p->nLastTM < nReqTM )  return(NULL);
-		name[vp->namelen] = nReqTM;
-		return(p);
-	}
-	// GET NEXTÇÃèÍçá
-	if( (*length - vp->namelen) >0 ) {
-		nReqTM = (unsigned long) name[vp->namelen];
-	} else {
-		nReqTM = (unsigned long) 0;
-	}
-    memset(IndexOid, 0, sizeof(IndexOid));
-	for( i =0; i < (int)(*length - vp->namelen);i++ ) {
-		if( i == 0 )     IndexOid[i] =0;
-		else IndexOid[i] = name[vp->namelen+i];
+  }
+  if (rtest > 0)
+  {
+    return (NULL);
+  }
+  if (exact)
+  {
+    // GETÔøΩÃèÍçá
+    if (4 + 4 + IfDataSource_oid_len != (*length - vp->namelen))
+      return (NULL);
+    nReqTM = (unsigned long)name[vp->namelen];
+    name[vp->namelen] = 0;
+    oid_index.len = (*length - vp->namelen);
+    oid_index.oids = &name[vp->namelen];
+    p = CONTAINER_FIND(pAddrMapContainer, &oid_index);
+    if (p->nLastTM < nReqTM)
+      return (NULL);
+    name[vp->namelen] = nReqTM;
+    return (p);
+  }
+  // GET NEXTÔøΩÃèÍçá
+  if ((*length - vp->namelen) > 0)
+  {
+    nReqTM = (unsigned long)name[vp->namelen];
+  }
+  else
+  {
+    nReqTM = (unsigned long)0;
+  }
+  memset(IndexOid, 0, sizeof(IndexOid));
+  for (i = 0; i < (int)(*length - vp->namelen); i++)
+  {
+    if (i == 0)
+      IndexOid[i] = 0;
+    else
+      IndexOid[i] = name[vp->namelen + i];
+  }
+  oid_index.len = 4 + 4 + IfDataSource_oid_len;
+  oid_index.oids = IndexOid;
+  p = CONTAINER_NEXT(pAddrMapContainer, &oid_index);
+  while (p)
+  {
+    if (p->nLastTM >= nReqTM)
+      break;
+    p = CONTAINER_NEXT(pAddrMapContainer, &p->oid_index);
+  }
+  // ÔøΩÔøΩÔøΩÔøΩÔøΩCÔøΩÔøΩÔøΩfÔøΩbÔøΩNÔøΩXÔøΩ»èÔøΩ≈ÅAÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÍçáÔøΩB
+  if (p)
+  {
+    *length = p->oid_index.len + vp->namelen;
+    memcpy(name, vp->name, vp->namelen * sizeof(oid));
+    for (i = 0; i < (int)p->oid_index.len; i++)
+    {
+      if (i == 0)
+        name[vp->namelen + i] = nReqTM;
+      else
+        name[vp->namelen + i] = p->oid_index.oids[i];
     }
-    oid_index.len  = 4+4+IfDataSource_oid_len;
-    oid_index.oids = IndexOid;
-	p = CONTAINER_NEXT(pAddrMapContainer, &oid_index);
-	while( p ) {
-		if( p->nLastTM >= nReqTM) break;
-		p = CONTAINER_NEXT(pAddrMapContainer, &p->oid_index);
-	}
-	// ìØÇ∂ÉCÉìÉfÉbÉNÉXà»è„Ç≈ÅAî≠å©ÇµÇΩèÍçáÅB
-	if( p ) {
-		*length = p->oid_index.len +vp->namelen;
-		memcpy(name,vp->name,vp->namelen*sizeof(oid));
-		for( i =0; i < (int)p->oid_index.len;i++ ) {
-			if( i == 0 )     name[vp->namelen+i] =nReqTM;
-			else name[vp->namelen+i] = p->oid_index.oids[i];
-    	}
-		return(p);
-	}
-	//Ç≈Ç´Ç»Ç©Ç¡ÇΩèÍçáÇÕÅAÉ^ÉCÉÄÉ}Å[ÉNÇçXêVÇµÇƒç≈èâÇ©ÇÁíTÇ∑ÅB
-	nReqTM++;
-	if( nTimeMarkMode == 3  ) {
-		p = CONTAINER_FIRST(pAddrMapMib);
-		while( p ) {
-			if( p->nLastTM >= nReqTM){
-				nReqTM = p->nLastTM;
-				break;
-			}
-			p = CONTAINER_NEXT(pAddrMapMib, &p->oid_index);
-		}
-	}
-	p = CONTAINER_FIRST(pAddrMapContainer);
-	while( p ) {
-		if( p->nLastTM >= nReqTM) break;
-		p = CONTAINER_NEXT(pAddrMapContainer, &p->oid_index);
-	}
-	if( p ) {
-		*length = p->oid_index.len +vp->namelen;
-		memcpy(name,vp->name,vp->namelen*sizeof(oid));
-		for( i =0; i < (int)p->oid_index.len;i++ ) {
-			if( i == 0 )     name[vp->namelen+i] =nReqTM;
-			else name[vp->namelen+i] = p->oid_index.oids[i];
-    	}
-		return(p);
-	}
-	//ç≈å„ÇÕÅAÉIÉuÉWÉFÉNÉgÇïœÇ¶ÇƒÅAêÊì™Çï‘Ç∑ÅB
-	p = CONTAINER_FIRST(pAddrMapContainer);
-	if( p ) {
-		*length = p->oid_index.len +vp->namelen;
-		memcpy(name,vp->name,vp->namelen*sizeof(oid));
-		name[vp->namelen-1]++;
-		for( i =0; i < (int)p->oid_index.len;i++ ) {
-			name[vp->namelen+i] = p->oid_index.oids[i];
-    	}
-	}
-	vp->magic++;
-	return(p);
+    return (p);
+  }
+  //ÔøΩ≈ÇÔøΩÔøΩ»ÇÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÍçáÔøΩÕÅAÔøΩ^ÔøΩCÔøΩÔøΩÔøΩ}ÔøΩ[ÔøΩNÔøΩÔøΩÔøΩXÔøΩVÔøΩÔøΩÔøΩƒç≈èÔøΩÔøΩÔøΩÔøΩÔøΩTÔøΩÔøΩÔøΩB
+  nReqTM++;
+  if (nTimeMarkMode == 3)
+  {
+    p = CONTAINER_FIRST(pAddrMapMib);
+    while (p)
+    {
+      if (p->nLastTM >= nReqTM)
+      {
+        nReqTM = p->nLastTM;
+        break;
+      }
+      p = CONTAINER_NEXT(pAddrMapMib, &p->oid_index);
+    }
+  }
+  p = CONTAINER_FIRST(pAddrMapContainer);
+  while (p)
+  {
+    if (p->nLastTM >= nReqTM)
+      break;
+    p = CONTAINER_NEXT(pAddrMapContainer, &p->oid_index);
+  }
+  if (p)
+  {
+    *length = p->oid_index.len + vp->namelen;
+    memcpy(name, vp->name, vp->namelen * sizeof(oid));
+    for (i = 0; i < (int)p->oid_index.len; i++)
+    {
+      if (i == 0)
+        name[vp->namelen + i] = nReqTM;
+      else
+        name[vp->namelen + i] = p->oid_index.oids[i];
+    }
+    return (p);
+  }
+  //ÔøΩ≈åÔøΩÕÅAÔøΩIÔøΩuÔøΩWÔøΩFÔøΩNÔøΩgÔøΩÔøΩœÇÔøΩÔøΩƒÅAÔøΩÊì™ÔøΩÔøΩ‘ÇÔøΩÔøΩB
+  p = CONTAINER_FIRST(pAddrMapContainer);
+  if (p)
+  {
+    *length = p->oid_index.len + vp->namelen;
+    memcpy(name, vp->name, vp->namelen * sizeof(oid));
+    name[vp->namelen - 1]++;
+    for (i = 0; i < (int)p->oid_index.len; i++)
+    {
+      name[vp->namelen + i] = p->oid_index.oids[i];
+    }
+  }
+  vp->magic++;
+  return (p);
 }
 
 /*
@@ -6401,22 +6726,23 @@ struct addressMapTable_entry  * FindAddrMapEntry(struct variable *vp,
  */
 unsigned char *
 var_addressMapTable(struct variable *vp,
-    	    oid     *name,
-    	    size_t  *length,
-    	    int     exact,
-    	    size_t  *var_len,
-    	    WriteMethod **write_method)
+                    oid *name,
+                    size_t *length,
+                    int exact,
+                    size_t *var_len,
+                    WriteMethod **write_method)
 {
-    struct addressMapTable_entry          *table_entry;
-    
-    
-    table_entry = FindAddrMapEntry(vp,name,length,exact);
-    if( table_entry == NULL ) return(NULL);
+  struct addressMapTable_entry *table_entry;
 
-    /* 
+  table_entry = FindAddrMapEntry(vp, name, length, exact);
+  if (table_entry == NULL)
+    return (NULL);
+
+  /*
    * this is where we do the value assignments for the mib results.
    */
-    switch(vp->magic) {
+  switch (vp->magic)
+  {
 #if 0		
     case ADDRESSMAPTIMEMARK:
         VAR = VALUE;	/* XXX */
@@ -6428,228 +6754,233 @@ var_addressMapTable(struct variable *vp,
         VAR = VALUE;	/* XXX */
         return (u_char*) &VAR;
 #endif
-    case ADDRESSMAPPHYSICALADDRESS:
-        *var_len = table_entry->addressMapPhysicalAddress_len;
-        return (u_char*) table_entry->addressMapPhysicalAddress;
-    case ADDRESSMAPLASTCHANGE:
-    	*var_len = sizeof(long);
-        return (u_char*) &table_entry->addressMapLastChange;
-    default:
-      ERROR_MSG("");
-    }
-    return NULL;
+  case ADDRESSMAPPHYSICALADDRESS:
+    *var_len = table_entry->addressMapPhysicalAddress_len;
+    return (u_char *)table_entry->addressMapPhysicalAddress;
+  case ADDRESSMAPLASTCHANGE:
+    *var_len = sizeof(long);
+    return (u_char *)&table_entry->addressMapLastChange;
+  default:
+    ERROR_MSG("");
+  }
+  return NULL;
 }
-
 
 /** Initialize the hlHostControlTable table by defining its contents and how it's structured */
-void
-initialize_table_hlHostControlTable(void)
+void initialize_table_hlHostControlTable(void)
 {
-    static oid hlHostControlTable_oid[] = {1,3,6,1,2,1,16,14,1};
-    size_t hlHostControlTable_oid_len   = OID_LENGTH(hlHostControlTable_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_container               *container;
-    netsnmp_table_registration_info *table_info;
+  static oid hlHostControlTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 14, 1};
+  size_t hlHostControlTable_oid_len = OID_LENGTH(hlHostControlTable_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_container *container;
+  netsnmp_table_registration_info *table_info;
 
-    reg = netsnmp_create_handler_registration(
-              "hlHostControlTable",     hlHostControlTable_handler,
-              hlHostControlTable_oid, hlHostControlTable_oid_len,
-              HANDLER_CAN_RWRITE
-              );
+  reg = netsnmp_create_handler_registration(
+      "hlHostControlTable", hlHostControlTable_handler,
+      hlHostControlTable_oid, hlHostControlTable_oid_len,
+      HANDLER_CAN_RWRITE);
 
-    container  = netsnmp_container_find( "table_container" );
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: hlHostControlIndex */
-                           0);
-    table_info->min_column = COLUMN_HLHOSTCONTROLDATASOURCE;
-    table_info->max_column = COLUMN_HLHOSTCONTROLSTATUS;
-    
-    netsnmp_container_table_register( reg, table_info, container, 0 );
+  container = netsnmp_container_find("table_container");
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER, /* index: hlHostControlIndex */
+                                   0);
+  table_info->min_column = COLUMN_HLHOSTCONTROLDATASOURCE;
+  table_info->max_column = COLUMN_HLHOSTCONTROLSTATUS;
 
-    /* Initialise the contents of the table here */
-    InitHlHostContEnt(container);
+  netsnmp_container_table_register(reg, table_info, container, 0);
+
+  /* Initialise the contents of the table here */
+  InitHlHostContEnt(container);
 }
 
-    /* Typical data structure for a row entry */
-struct hlHostControlTable_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct hlHostControlTable_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long hlHostControlIndex;
+  /* Index values */
+  long hlHostControlIndex;
 
-    /* Column values */
-    oid hlHostControlDataSource[16];
-    size_t hlHostControlDataSource_len;
-    oid old_hlHostControlDataSource[16];
-    size_t old_hlHostControlDataSource_len;
-    u_long hlHostControlNlDroppedFrames;
-    u_long hlHostControlNlInserts;
-    u_long hlHostControlNlDeletes;
-    long hlHostControlNlMaxDesiredEntries;
-    long old_hlHostControlNlMaxDesiredEntries;
-    u_long hlHostControlAlDroppedFrames;
-    u_long hlHostControlAlInserts;
-    u_long hlHostControlAlDeletes;
-    long hlHostControlAlMaxDesiredEntries;
-    long old_hlHostControlAlMaxDesiredEntries;
-    char hlHostControlOwner[256];
-    size_t hlHostControlOwner_len;
-    char old_hlHostControlOwner[256];
-    size_t old_hlHostControlOwner_len;
-    long hlHostControlStatus;
+  /* Column values */
+  oid hlHostControlDataSource[16];
+  size_t hlHostControlDataSource_len;
+  oid old_hlHostControlDataSource[16];
+  size_t old_hlHostControlDataSource_len;
+  u_long hlHostControlNlDroppedFrames;
+  u_long hlHostControlNlInserts;
+  u_long hlHostControlNlDeletes;
+  long hlHostControlNlMaxDesiredEntries;
+  long old_hlHostControlNlMaxDesiredEntries;
+  u_long hlHostControlAlDroppedFrames;
+  u_long hlHostControlAlInserts;
+  u_long hlHostControlAlDeletes;
+  long hlHostControlAlMaxDesiredEntries;
+  long old_hlHostControlAlMaxDesiredEntries;
+  char hlHostControlOwner[256];
+  size_t hlHostControlOwner_len;
+  char old_hlHostControlOwner[256];
+  size_t old_hlHostControlOwner_len;
+  long hlHostControlStatus;
 
-    int   valid;
+  int valid;
 };
 
 /* create a new row in the table */
 struct hlHostControlTable_entry *
-hlHostControlTable_createEntry(netsnmp_container *container
-                 , long  hlHostControlIndex
-                ) {
-    struct hlHostControlTable_entry *entry;
+hlHostControlTable_createEntry(netsnmp_container *container, long hlHostControlIndex)
+{
+  struct hlHostControlTable_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct hlHostControlTable_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct hlHostControlTable_entry);
+  if (!entry)
+    return NULL;
 
-    entry->hlHostControlIndex = hlHostControlIndex;
-    entry->oid_index.len  = 1;
-    entry->oid_index.oids = (oid*)&entry->hlHostControlIndex;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->hlHostControlIndex = hlHostControlIndex;
+  entry->oid_index.len = 1;
+  entry->oid_index.oids = (oid *)&entry->hlHostControlIndex;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-hlHostControlTable_removeEntry(netsnmp_container *container, 
-                 struct hlHostControlTable_entry *entry) {
+void hlHostControlTable_removeEntry(netsnmp_container *container,
+                                    struct hlHostControlTable_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the hlHostControlTable table */
-int
-hlHostControlTable_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
+int hlHostControlTable_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
+{
 
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct hlHostControlTable_entry          *table_entry;
-    int                         ret;
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct hlHostControlTable_entry *table_entry;
+  int ret;
 
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct hlHostControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct hlHostControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
 
-            switch (table_info->colnum) {
-            case COLUMN_HLHOSTCONTROLDATASOURCE:
-                snmp_set_var_typed_value( request->requestvb, ASN_OBJECT_ID,
-                                 (u_char*)table_entry->hlHostControlDataSource,
-                                          table_entry->hlHostControlDataSource_len);
-                break;
-            case COLUMN_HLHOSTCONTROLNLDROPPEDFRAMES:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->hlHostControlNlDroppedFrames);
-                break;
-            case COLUMN_HLHOSTCONTROLNLINSERTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->hlHostControlNlInserts);
-                break;
-            case COLUMN_HLHOSTCONTROLNLDELETES:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->hlHostControlNlDeletes);
-                break;
-            case COLUMN_HLHOSTCONTROLNLMAXDESIREDENTRIES:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->hlHostControlNlMaxDesiredEntries);
-                break;
-            case COLUMN_HLHOSTCONTROLALDROPPEDFRAMES:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->hlHostControlAlDroppedFrames);
-                break;
-            case COLUMN_HLHOSTCONTROLALINSERTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->hlHostControlAlInserts);
-                break;
-            case COLUMN_HLHOSTCONTROLALDELETES:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->hlHostControlAlDeletes);
-                break;
-            case COLUMN_HLHOSTCONTROLALMAXDESIREDENTRIES:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->hlHostControlAlMaxDesiredEntries);
-                break;
-            case COLUMN_HLHOSTCONTROLOWNER:
-                snmp_set_var_typed_value( request->requestvb, ASN_OCTET_STR,
-                                 (u_char*)table_entry->hlHostControlOwner,
-                                          table_entry->hlHostControlOwner_len);
-                break;
-            case COLUMN_HLHOSTCONTROLSTATUS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->hlHostControlStatus);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
+      switch (table_info->colnum)
+      {
+      case COLUMN_HLHOSTCONTROLDATASOURCE:
+        snmp_set_var_typed_value(request->requestvb, ASN_OBJECT_ID,
+                                 (u_char *)table_entry->hlHostControlDataSource,
+                                 table_entry->hlHostControlDataSource_len);
+        break;
+      case COLUMN_HLHOSTCONTROLNLDROPPEDFRAMES:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->hlHostControlNlDroppedFrames);
+        break;
+      case COLUMN_HLHOSTCONTROLNLINSERTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->hlHostControlNlInserts);
+        break;
+      case COLUMN_HLHOSTCONTROLNLDELETES:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->hlHostControlNlDeletes);
+        break;
+      case COLUMN_HLHOSTCONTROLNLMAXDESIREDENTRIES:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->hlHostControlNlMaxDesiredEntries);
+        break;
+      case COLUMN_HLHOSTCONTROLALDROPPEDFRAMES:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->hlHostControlAlDroppedFrames);
+        break;
+      case COLUMN_HLHOSTCONTROLALINSERTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->hlHostControlAlInserts);
+        break;
+      case COLUMN_HLHOSTCONTROLALDELETES:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->hlHostControlAlDeletes);
+        break;
+      case COLUMN_HLHOSTCONTROLALMAXDESIREDENTRIES:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->hlHostControlAlMaxDesiredEntries);
+        break;
+      case COLUMN_HLHOSTCONTROLOWNER:
+        snmp_set_var_typed_value(request->requestvb, ASN_OCTET_STR,
+                                 (u_char *)table_entry->hlHostControlOwner,
+                                 table_entry->hlHostControlOwner_len);
+        break;
+      case COLUMN_HLHOSTCONTROLSTATUS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->hlHostControlStatus);
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
+    }
+    break;
+
+    /*
+     * Write-support
+     */
+  case MODE_SET_RESERVE1:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct hlHostControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
+
+      switch (table_info->colnum)
+      {
+
+      case COLUMN_HLHOSTCONTROLNLMAXDESIREDENTRIES:
+        /* or possibly 'netsnmp_check_vb_int_range' */
+        ret = netsnmp_check_vb_int_range(request->requestvb, 100, 20000);
+        if (ret != SNMP_ERR_NOERROR)
+        {
+          netsnmp_set_request_error(reqinfo, request, ret);
+          return SNMP_ERR_NOERROR;
         }
         break;
-
-        /*
-         * Write-support
-         */
-    case MODE_SET_RESERVE1:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct hlHostControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
-
-
-            switch (table_info->colnum) {
-
-            case COLUMN_HLHOSTCONTROLNLMAXDESIREDENTRIES:
-                /* or possibly 'netsnmp_check_vb_int_range' */
-                ret = netsnmp_check_vb_int_range( request->requestvb,100,20000 );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_HLHOSTCONTROLALMAXDESIREDENTRIES:
-                /* or possibly 'netsnmp_check_vb_int_range' */
-                ret = netsnmp_check_vb_int_range( request->requestvb,100,20000 );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
+      case COLUMN_HLHOSTCONTROLALMAXDESIREDENTRIES:
+        /* or possibly 'netsnmp_check_vb_int_range' */
+        ret = netsnmp_check_vb_int_range(request->requestvb, 100, 20000);
+        if (ret != SNMP_ERR_NOERROR)
+        {
+          netsnmp_set_request_error(reqinfo, request, ret);
+          return SNMP_ERR_NOERROR;
+        }
+        break;
 
 #if 0
             case COLUMN_HLHOSTCONTROLDATASOURCE:
@@ -6679,121 +7010,138 @@ hlHostControlTable_handler(
                 }
                 break;
 #endif
-            default:
-                netsnmp_set_request_error( reqinfo, request,
-                                           SNMP_ERR_NOTWRITABLE );
-                return SNMP_ERR_NOERROR;
-            }
+      default:
+        netsnmp_set_request_error(reqinfo, request,
+                                  SNMP_ERR_NOTWRITABLE);
+        return SNMP_ERR_NOERROR;
+      }
+    }
+    break;
+
+  case MODE_SET_RESERVE2:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct hlHostControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+
+      switch (table_info->colnum)
+      {
+      case COLUMN_HLHOSTCONTROLSTATUS:
+        switch (*request->requestvb->val.integer)
+        {
+        case RS_CREATEANDGO:
+        case RS_CREATEANDWAIT:
+          table_entry = hlHostControlTable_createEntry(container, *table_info->indexes->val.integer);
+          if (table_entry)
+          {
+            netsnmp_container_table_row_insert(request, (netsnmp_index *)table_entry);
+          }
+          else
+          {
+            netsnmp_set_request_error(reqinfo, request,
+                                      SNMP_ERR_RESOURCEUNAVAILABLE);
+            return SNMP_ERR_NOERROR;
+          }
         }
+      }
+    }
+    break;
+
+  case MODE_SET_FREE:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct hlHostControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+
+      switch (table_info->colnum)
+      {
+      case COLUMN_HLHOSTCONTROLSTATUS:
+        switch (*request->requestvb->val.integer)
+        {
+        case RS_CREATEANDGO:
+        case RS_CREATEANDWAIT:
+          if (table_entry && !table_entry->valid)
+          {
+            hlHostControlTable_removeEntry(container, table_entry);
+          }
+        }
+      }
+    }
+    break;
+
+  case MODE_SET_ACTION:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct hlHostControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+
+      switch (table_info->colnum)
+      {
+      case COLUMN_HLHOSTCONTROLDATASOURCE:
+        memcpy(table_entry->old_hlHostControlDataSource,
+               table_entry->hlHostControlDataSource,
+               sizeof(table_entry->hlHostControlDataSource));
+        table_entry->old_hlHostControlDataSource_len =
+            table_entry->hlHostControlDataSource_len;
+        memset(table_entry->hlHostControlDataSource, 0,
+               sizeof(table_entry->hlHostControlDataSource));
+        memcpy(table_entry->hlHostControlDataSource,
+               request->requestvb->val.string,
+               request->requestvb->val_len);
+        table_entry->hlHostControlDataSource_len =
+            request->requestvb->val_len;
         break;
-
-    case MODE_SET_RESERVE2:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct hlHostControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-    
-            switch (table_info->colnum) {
-            case COLUMN_HLHOSTCONTROLSTATUS:
-                switch (*request->requestvb->val.integer) {
-                case RS_CREATEANDGO:
-                case RS_CREATEANDWAIT:
-                    table_entry = hlHostControlTable_createEntry(container
-                        , *table_info->indexes->val.integer
-                        );
-                    if (table_entry) {
-                        netsnmp_container_table_row_insert( request, (netsnmp_index*)table_entry );
-                    } else {
-                        netsnmp_set_request_error( reqinfo, request,
-                                                   SNMP_ERR_RESOURCEUNAVAILABLE );
-                        return SNMP_ERR_NOERROR;
-                    }
-                }
-            }
-        }
+      case COLUMN_HLHOSTCONTROLNLMAXDESIREDENTRIES:
+        table_entry->old_hlHostControlNlMaxDesiredEntries = table_entry->hlHostControlNlMaxDesiredEntries;
+        table_entry->hlHostControlNlMaxDesiredEntries = *request->requestvb->val.integer;
         break;
-
-    case MODE_SET_FREE:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct hlHostControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-
-            switch (table_info->colnum) {
-            case COLUMN_HLHOSTCONTROLSTATUS:
-                switch (*request->requestvb->val.integer) {
-                case RS_CREATEANDGO:
-                case RS_CREATEANDWAIT:
-                    if (table_entry && !table_entry->valid) {
-                        hlHostControlTable_removeEntry(container, table_entry );
-                    }
-                }
-            }
-        }
+      case COLUMN_HLHOSTCONTROLALMAXDESIREDENTRIES:
+        table_entry->old_hlHostControlAlMaxDesiredEntries = table_entry->hlHostControlAlMaxDesiredEntries;
+        table_entry->hlHostControlAlMaxDesiredEntries = *request->requestvb->val.integer;
         break;
+      case COLUMN_HLHOSTCONTROLOWNER:
+        memcpy(table_entry->old_hlHostControlOwner,
+               table_entry->hlHostControlOwner,
+               sizeof(table_entry->hlHostControlOwner));
+        table_entry->old_hlHostControlOwner_len =
+            table_entry->hlHostControlOwner_len;
+        memset(table_entry->hlHostControlOwner, 0,
+               sizeof(table_entry->hlHostControlOwner));
+        memcpy(table_entry->hlHostControlOwner,
+               request->requestvb->val.string,
+               request->requestvb->val_len);
+        table_entry->hlHostControlOwner_len =
+            request->requestvb->val_len;
+        break;
+      }
+    }
+    /* Check the internal consistency of an active row */
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct hlHostControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
 
-    case MODE_SET_ACTION:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct hlHostControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-
-            switch (table_info->colnum) {
-            case COLUMN_HLHOSTCONTROLDATASOURCE:
-                memcpy( table_entry->old_hlHostControlDataSource,
-                        table_entry->hlHostControlDataSource,
-                        sizeof(table_entry->hlHostControlDataSource));
-                table_entry->old_hlHostControlDataSource_len =
-                        table_entry->hlHostControlDataSource_len;
-                memset( table_entry->hlHostControlDataSource, 0,
-                        sizeof(table_entry->hlHostControlDataSource));
-                memcpy( table_entry->hlHostControlDataSource,
-                        request->requestvb->val.string,
-                        request->requestvb->val_len);
-                table_entry->hlHostControlDataSource_len =
-                        request->requestvb->val_len;
-                break;
-            case COLUMN_HLHOSTCONTROLNLMAXDESIREDENTRIES:
-                table_entry->old_hlHostControlNlMaxDesiredEntries = table_entry->hlHostControlNlMaxDesiredEntries;
-                table_entry->hlHostControlNlMaxDesiredEntries     = *request->requestvb->val.integer;
-                break;
-            case COLUMN_HLHOSTCONTROLALMAXDESIREDENTRIES:
-                table_entry->old_hlHostControlAlMaxDesiredEntries = table_entry->hlHostControlAlMaxDesiredEntries;
-                table_entry->hlHostControlAlMaxDesiredEntries     = *request->requestvb->val.integer;
-                break;
-            case COLUMN_HLHOSTCONTROLOWNER:
-                memcpy( table_entry->old_hlHostControlOwner,
-                        table_entry->hlHostControlOwner,
-                        sizeof(table_entry->hlHostControlOwner));
-                table_entry->old_hlHostControlOwner_len =
-                        table_entry->hlHostControlOwner_len;
-                memset( table_entry->hlHostControlOwner, 0,
-                        sizeof(table_entry->hlHostControlOwner));
-                memcpy( table_entry->hlHostControlOwner,
-                        request->requestvb->val.string,
-                        request->requestvb->val_len);
-                table_entry->hlHostControlOwner_len =
-                        request->requestvb->val_len;
-                break;
-            }
-        }
-        /* Check the internal consistency of an active row */
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct hlHostControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-
-            switch (table_info->colnum) {
-            case COLUMN_HLHOSTCONTROLSTATUS:
-                switch (*request->requestvb->val.integer) {
-                case RS_ACTIVE:
-                case RS_CREATEANDGO:
+      switch (table_info->colnum)
+      {
+      case COLUMN_HLHOSTCONTROLSTATUS:
+        switch (*request->requestvb->val.integer)
+        {
+        case RS_ACTIVE:
+        case RS_CREATEANDGO:
 #if 0
                     if (/* XXX */) {
                         netsnmp_set_request_error( reqinfo, request,
@@ -6801,423 +7149,456 @@ hlHostControlTable_handler(
                         return SNMP_ERR_NOERROR;
                     }
 #endif
-					break;
-                }
-            }
+          break;
         }
-        break;
-
-    case MODE_SET_UNDO:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct hlHostControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-            switch (table_info->colnum) {
-            case COLUMN_HLHOSTCONTROLDATASOURCE:
-                memcpy( table_entry->hlHostControlDataSource,
-                        table_entry->old_hlHostControlDataSource,
-                        sizeof(table_entry->hlHostControlDataSource));
-                memset( table_entry->old_hlHostControlDataSource, 0,
-                        sizeof(table_entry->hlHostControlDataSource));
-                table_entry->hlHostControlDataSource_len =
-                        table_entry->old_hlHostControlDataSource_len;
-                break;
-            case COLUMN_HLHOSTCONTROLNLMAXDESIREDENTRIES:
-                table_entry->hlHostControlNlMaxDesiredEntries     = table_entry->old_hlHostControlNlMaxDesiredEntries;
-                table_entry->old_hlHostControlNlMaxDesiredEntries = 0;
-                break;
-            case COLUMN_HLHOSTCONTROLALMAXDESIREDENTRIES:
-                table_entry->hlHostControlAlMaxDesiredEntries     = table_entry->old_hlHostControlAlMaxDesiredEntries;
-                table_entry->old_hlHostControlAlMaxDesiredEntries = 0;
-                break;
-            case COLUMN_HLHOSTCONTROLOWNER:
-                memcpy( table_entry->hlHostControlOwner,
-                        table_entry->old_hlHostControlOwner,
-                        sizeof(table_entry->hlHostControlOwner));
-                memset( table_entry->old_hlHostControlOwner, 0,
-                        sizeof(table_entry->hlHostControlOwner));
-                table_entry->hlHostControlOwner_len =
-                        table_entry->old_hlHostControlOwner_len;
-                break;
-            case COLUMN_HLHOSTCONTROLSTATUS:
-                switch (*request->requestvb->val.integer) {
-                case RS_CREATEANDGO:
-                case RS_CREATEANDWAIT:
-                    if (table_entry && !table_entry->valid) {
-                        hlHostControlTable_removeEntry(container, table_entry );
-                    }
-                }
-                break;
-            }
-        }
-        break;
-
-    case MODE_SET_COMMIT:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct hlHostControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-            switch (table_info->colnum) {
-            case COLUMN_HLHOSTCONTROLSTATUS:
-                switch (*request->requestvb->val.integer) {
-                case RS_CREATEANDGO:
-                    table_entry->valid = 1;
-                    /* Fall-through */
-                case RS_ACTIVE:
-                    table_entry->hlHostControlStatus = RS_ACTIVE;
-                    break;
-
-                case RS_CREATEANDWAIT:
-                    table_entry->valid = 1;
-                    /* Fall-through */
-                case RS_NOTINSERVICE:
-                    table_entry->hlHostControlStatus = RS_NOTINSERVICE;
-                    break;
-
-                case RS_DESTROY:
-                    hlHostControlTable_removeEntry(container, table_entry );
-                }
-            }
-        }
-        break;
+      }
     }
-    return SNMP_ERR_NOERROR;
-}
+    break;
 
+  case MODE_SET_UNDO:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct hlHostControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+      switch (table_info->colnum)
+      {
+      case COLUMN_HLHOSTCONTROLDATASOURCE:
+        memcpy(table_entry->hlHostControlDataSource,
+               table_entry->old_hlHostControlDataSource,
+               sizeof(table_entry->hlHostControlDataSource));
+        memset(table_entry->old_hlHostControlDataSource, 0,
+               sizeof(table_entry->hlHostControlDataSource));
+        table_entry->hlHostControlDataSource_len =
+            table_entry->old_hlHostControlDataSource_len;
+        break;
+      case COLUMN_HLHOSTCONTROLNLMAXDESIREDENTRIES:
+        table_entry->hlHostControlNlMaxDesiredEntries = table_entry->old_hlHostControlNlMaxDesiredEntries;
+        table_entry->old_hlHostControlNlMaxDesiredEntries = 0;
+        break;
+      case COLUMN_HLHOSTCONTROLALMAXDESIREDENTRIES:
+        table_entry->hlHostControlAlMaxDesiredEntries = table_entry->old_hlHostControlAlMaxDesiredEntries;
+        table_entry->old_hlHostControlAlMaxDesiredEntries = 0;
+        break;
+      case COLUMN_HLHOSTCONTROLOWNER:
+        memcpy(table_entry->hlHostControlOwner,
+               table_entry->old_hlHostControlOwner,
+               sizeof(table_entry->hlHostControlOwner));
+        memset(table_entry->old_hlHostControlOwner, 0,
+               sizeof(table_entry->hlHostControlOwner));
+        table_entry->hlHostControlOwner_len =
+            table_entry->old_hlHostControlOwner_len;
+        break;
+      case COLUMN_HLHOSTCONTROLSTATUS:
+        switch (*request->requestvb->val.integer)
+        {
+        case RS_CREATEANDGO:
+        case RS_CREATEANDWAIT:
+          if (table_entry && !table_entry->valid)
+          {
+            hlHostControlTable_removeEntry(container, table_entry);
+          }
+        }
+        break;
+      }
+    }
+    break;
+
+  case MODE_SET_COMMIT:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct hlHostControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+      switch (table_info->colnum)
+      {
+      case COLUMN_HLHOSTCONTROLSTATUS:
+        switch (*request->requestvb->val.integer)
+        {
+        case RS_CREATEANDGO:
+          table_entry->valid = 1;
+          /* Fall-through */
+        case RS_ACTIVE:
+          table_entry->hlHostControlStatus = RS_ACTIVE;
+          break;
+
+        case RS_CREATEANDWAIT:
+          table_entry->valid = 1;
+          /* Fall-through */
+        case RS_NOTINSERVICE:
+          table_entry->hlHostControlStatus = RS_NOTINSERVICE;
+          break;
+
+        case RS_DESTROY:
+          hlHostControlTable_removeEntry(container, table_entry);
+        }
+      }
+    }
+    break;
+  }
+  return SNMP_ERR_NOERROR;
+}
 
 FindVarMethod var_nlHostTable;
 
-/* 
+/*
  * nlHostTable_variables_oid:
  *   this is the top level oid that we want to register under.  This
  *   is essentially a prefix, with the suffix appearing in the
  *   variable below.
  */
 
-oid nlHostTable_variables_oid[] = { 1,3,6,1,2,1,16,14,2 };
+oid nlHostTable_variables_oid[] = {1, 3, 6, 1, 2, 1, 16, 14, 2};
 
-/* 
+/*
  * variable4 nlHostTable_variables:
- *   this variable defines function callbacks and type return information 
- *   for the nlHostTable mib section 
+ *   this variable defines function callbacks and type return information
+ *   for the nlHostTable mib section
  */
 
 struct variable4 nlHostTable_variables[] = {
 /*  magic number        , variable type , ro/rw , callback fn  , L, oidsuffix */
 
 #if 0
-#define NLHOSTTIMEMARK		1
+#define NLHOSTTIMEMARK 1
 {NLHOSTTIMEMARK,  ASN_TIMETICKS,  RONLY,   var_nlHostTable, 2,  { , 1, 1 }},
-#define NLHOSTADDRESS		2
+#define NLHOSTADDRESS 2
 {NLHOSTADDRESS,  ASN_OCTET_STR,  RONLY,   var_nlHostTable, 2,  { , 1, 2 }},
 #endif
 
-#define NLHOSTINPKTS		3
-{NLHOSTINPKTS,  ASN_GAUGE,  RONLY,   var_nlHostTable, 2,  {  1, 3 }},
-#define NLHOSTOUTPKTS		4
-{NLHOSTOUTPKTS,  ASN_GAUGE,  RONLY,   var_nlHostTable, 2,  {  1, 4 }},
-#define NLHOSTINOCTETS		5
-{NLHOSTINOCTETS,  ASN_GAUGE,  RONLY,   var_nlHostTable, 2,  { 1, 5 }},
-#define NLHOSTOUTOCTETS		6
-{NLHOSTOUTOCTETS,  ASN_GAUGE,  RONLY,   var_nlHostTable, 2,  {  1, 6 }},
-#define NLHOSTOUTMACNONUNICASTPKTS		7
-{NLHOSTOUTMACNONUNICASTPKTS,  ASN_GAUGE,  RONLY,   var_nlHostTable, 2,  {  1, 7 }},
-#define NLHOSTCREATETIME		8
-{NLHOSTCREATETIME,  ASN_TIMETICKS,  RONLY,   var_nlHostTable, 2,  {  1, 8 }}
-};
+#define NLHOSTINPKTS 3
+    {NLHOSTINPKTS, ASN_GAUGE, RONLY, var_nlHostTable, 2, {1, 3}},
+#define NLHOSTOUTPKTS 4
+    {NLHOSTOUTPKTS, ASN_GAUGE, RONLY, var_nlHostTable, 2, {1, 4}},
+#define NLHOSTINOCTETS 5
+    {NLHOSTINOCTETS, ASN_GAUGE, RONLY, var_nlHostTable, 2, {1, 5}},
+#define NLHOSTOUTOCTETS 6
+    {NLHOSTOUTOCTETS, ASN_GAUGE, RONLY, var_nlHostTable, 2, {1, 6}},
+#define NLHOSTOUTMACNONUNICASTPKTS 7
+    {NLHOSTOUTMACNONUNICASTPKTS, ASN_GAUGE, RONLY, var_nlHostTable, 2, {1, 7}},
+#define NLHOSTCREATETIME 8
+    {NLHOSTCREATETIME, ASN_TIMETICKS, RONLY, var_nlHostTable, 2, {1, 8}}};
 /*    (L = length of the oidsuffix) */
 
-
 /** Initialize the nlHostTable table by defining its contents and how it's structured */
-void
-initialize_table_nlHostTable(void)
+void initialize_table_nlHostTable(void)
 {
-    static oid nlHostTable_oid[] = {1,3,6,1,2,1,16,14,2};
-    size_t nlHostTable_oid_len   = OID_LENGTH(nlHostTable_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_table_registration_info *table_info;
+  static oid nlHostTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 14, 2};
+  size_t nlHostTable_oid_len = OID_LENGTH(nlHostTable_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_table_registration_info *table_info;
 
-    pNlHostContainer  = netsnmp_container_find( "table_container" );
-    pNlHostMib  = netsnmp_container_find( "table_container" );
-	if( nTimeMarkMode >= 2 ) {
-	   /* register ourselves with the agent to handle our mib tree */
-    	REGISTER_MIB("nlHostTable", nlHostTable_variables, variable4,
-               nlHostTable_variables_oid);
-        return;
-	}
-    reg = netsnmp_create_handler_registration(
-              "nlHostTable",     nlHostTable_handler,
-              nlHostTable_oid, nlHostTable_oid_len,
-              HANDLER_CAN_RONLY
-              );
+  pNlHostContainer = netsnmp_container_find("table_container");
+  pNlHostMib = netsnmp_container_find("table_container");
+  if (nTimeMarkMode >= 2)
+  {
+    /* register ourselves with the agent to handle our mib tree */
+    REGISTER_MIB("nlHostTable", nlHostTable_variables, variable4,
+                 nlHostTable_variables_oid);
+    return;
+  }
+  reg = netsnmp_create_handler_registration(
+      "nlHostTable", nlHostTable_handler,
+      nlHostTable_oid, nlHostTable_oid_len,
+      HANDLER_CAN_RONLY);
 
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: hlHostControlIndex */
-                           ASN_TIMETICKS,  /* index: nlHostTimeMark */
-                           ASN_INTEGER,  /* index: protocolDirLocalIndex */
-                           ASN_OCTET_STR,  /* index: nlHostAddress */
-                           0);
-    table_info->min_column = COLUMN_NLHOSTINPKTS;
-    table_info->max_column = COLUMN_NLHOSTCREATETIME;
-    
-    netsnmp_container_table_register( reg, table_info, nTimeMarkMode == 0 ? pNlHostMib : pNlHostContainer, 0 );
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER,   /* index: hlHostControlIndex */
+                                   ASN_TIMETICKS, /* index: nlHostTimeMark */
+                                   ASN_INTEGER,   /* index: protocolDirLocalIndex */
+                                   ASN_OCTET_STR, /* index: nlHostAddress */
+                                   0);
+  table_info->min_column = COLUMN_NLHOSTINPKTS;
+  table_info->max_column = COLUMN_NLHOSTCREATETIME;
 
-    /* Initialise the contents of the table here */
+  netsnmp_container_table_register(reg, table_info, nTimeMarkMode == 0 ? pNlHostMib : pNlHostContainer, 0);
+
+  /* Initialise the contents of the table here */
 }
 
-size_t MakeNlHostIndex(long nCI,u_long nTM,long nPDirLI,long nALen,char *pNetAddr,oid *pOid)
+size_t MakeNlHostIndex(long nCI, u_long nTM, long nPDirLI, long nALen, char *pNetAddr, oid *pOid)
 {
-	int i;
-	int j;
-	i = 0;
-	pOid[i++] = nCI;
-	pOid[i++] = nTM;
-	pOid[i++] = nPDirLI;
-	pOid[i++] = nALen;
-	for(j = 0; j < nALen;j++ ) {
-		pOid[i++] =(long) pNetAddr[j] & 0x00ff;
-	}
-	return((size_t)i);
+  int i;
+  int j;
+  i = 0;
+  pOid[i++] = nCI;
+  pOid[i++] = nTM;
+  pOid[i++] = nPDirLI;
+  pOid[i++] = nALen;
+  for (j = 0; j < nALen; j++)
+  {
+    pOid[i++] = (long)pNetAddr[j] & 0x00ff;
+  }
+  return ((size_t)i);
 }
-    /* Typical data structure for a row entry */
-struct nlHostTable_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct nlHostTable_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long hlHostControlIndex;
-    u_long nlHostTimeMark;
-    long protocolDirLocalIndex;
-    char nlHostAddress[16]; // àÍâûÅAIPv6ëŒâû
-    size_t nlHostAddress_len;
+  /* Index values */
+  long hlHostControlIndex;
+  u_long nlHostTimeMark;
+  long protocolDirLocalIndex;
+  char nlHostAddress[16]; // ÔøΩÍâûÔøΩAIPv6ÔøΩŒâÔøΩ
+  size_t nlHostAddress_len;
 
-	oid IndexOid[22];
+  oid IndexOid[22];
 
-    /* Column values */
-    u_long nlHostInPkts;
-    u_long nlHostOutPkts;
-    u_long nlHostInOctets;
-    u_long nlHostOutOctets;
-    u_long nlHostOutMacNonUnicastPkts;
-    u_long nlHostCreateTime;
+  /* Column values */
+  u_long nlHostInPkts;
+  u_long nlHostOutPkts;
+  u_long nlHostInOctets;
+  u_long nlHostOutOctets;
+  u_long nlHostOutMacNonUnicastPkts;
+  u_long nlHostCreateTime;
 
-    int   valid;
-    u_long nLastTM;
-    u_long nNewTM;
-    void  *pNlHost;
+  int valid;
+  u_long nLastTM;
+  u_long nNewTM;
+  void *pNlHost;
 };
 
 /* create a new row in the table */
 struct nlHostTable_entry *
-nlHostTable_createEntry(netsnmp_container *container
-                 , long  hlHostControlIndex
-                 , u_long  nlHostTimeMark
-                 , long  protocolDirLocalIndex
-                 , char* nlHostAddress
-                 , size_t nlHostAddress_len
-                ) {
-    struct nlHostTable_entry *entry;
+nlHostTable_createEntry(netsnmp_container *container, long hlHostControlIndex, u_long nlHostTimeMark, long protocolDirLocalIndex, char *nlHostAddress, size_t nlHostAddress_len)
+{
+  struct nlHostTable_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct nlHostTable_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct nlHostTable_entry);
+  if (!entry)
+    return NULL;
 
-    entry->hlHostControlIndex = hlHostControlIndex;
-    entry->nlHostTimeMark = nlHostTimeMark;
-    entry->protocolDirLocalIndex = protocolDirLocalIndex;
-    memcpy(entry->nlHostAddress, nlHostAddress, nlHostAddress_len);
-    entry->nlHostAddress_len = nlHostAddress_len;
-    entry->oid_index.len  = MakeNlHostIndex(hlHostControlIndex,nlHostTimeMark,protocolDirLocalIndex,nlHostAddress_len,nlHostAddress,entry->IndexOid);
-    entry->oid_index.oids = entry->IndexOid;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->hlHostControlIndex = hlHostControlIndex;
+  entry->nlHostTimeMark = nlHostTimeMark;
+  entry->protocolDirLocalIndex = protocolDirLocalIndex;
+  memcpy(entry->nlHostAddress, nlHostAddress, nlHostAddress_len);
+  entry->nlHostAddress_len = nlHostAddress_len;
+  entry->oid_index.len = MakeNlHostIndex(hlHostControlIndex, nlHostTimeMark, protocolDirLocalIndex, nlHostAddress_len, nlHostAddress, entry->IndexOid);
+  entry->oid_index.oids = entry->IndexOid;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-nlHostTable_removeEntry(netsnmp_container *container, 
-                 struct nlHostTable_entry *entry) {
+void nlHostTable_removeEntry(netsnmp_container *container,
+                             struct nlHostTable_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the nlHostTable table */
-int
-nlHostTable_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
-
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct nlHostTable_entry          *table_entry;
-    int                         ret;
-
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct nlHostTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
-
-            switch (table_info->colnum) {
-            case COLUMN_NLHOSTINPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_GAUGE,
-                                            table_entry->nlHostInPkts);
-                break;
-            case COLUMN_NLHOSTOUTPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_GAUGE,
-                                            table_entry->nlHostOutPkts);
-                break;
-            case COLUMN_NLHOSTINOCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_GAUGE,
-                                            table_entry->nlHostInOctets);
-                break;
-            case COLUMN_NLHOSTOUTOCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_GAUGE,
-                                            table_entry->nlHostOutOctets);
-                break;
-            case COLUMN_NLHOSTOUTMACNONUNICASTPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_GAUGE,
-                                            table_entry->nlHostOutMacNonUnicastPkts);
-                break;
-            case COLUMN_NLHOSTCREATETIME:
-                snmp_set_var_typed_integer( request->requestvb, ASN_TIMETICKS,
-                                            table_entry->nlHostCreateTime);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
-        break;
-
-    }
-    return SNMP_ERR_NOERROR;
-}
-
-struct nlHostTable_entry  * FindNlHostEntry(struct variable *vp,
-    	    oid     *name,
-    	    size_t  *length,
-    	    int     exact)
+int nlHostTable_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
 {
-    struct nlHostTable_entry *p;
-    netsnmp_index oid_index;
-    oid IndexOid[MAX_OID_LEN];
-    unsigned long nReqTM;
-    int i,rtest;
-    for (i = 0, rtest = 0;
-         i < (int) vp->namelen && i < (int) (*length) && !rtest; i++) {
-        if (name[i] != vp->name[i]) {
-            if (name[i] < vp->name[i])
-                rtest = -1;
-            else
-                rtest = 1;
-        }
+
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct nlHostTable_entry *table_entry;
+  int ret;
+
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct nlHostTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
+
+      switch (table_info->colnum)
+      {
+      case COLUMN_NLHOSTINPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_GAUGE,
+                                   table_entry->nlHostInPkts);
+        break;
+      case COLUMN_NLHOSTOUTPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_GAUGE,
+                                   table_entry->nlHostOutPkts);
+        break;
+      case COLUMN_NLHOSTINOCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_GAUGE,
+                                   table_entry->nlHostInOctets);
+        break;
+      case COLUMN_NLHOSTOUTOCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_GAUGE,
+                                   table_entry->nlHostOutOctets);
+        break;
+      case COLUMN_NLHOSTOUTMACNONUNICASTPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_GAUGE,
+                                   table_entry->nlHostOutMacNonUnicastPkts);
+        break;
+      case COLUMN_NLHOSTCREATETIME:
+        snmp_set_var_typed_integer(request->requestvb, ASN_TIMETICKS,
+                                   table_entry->nlHostCreateTime);
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
     }
-    if( rtest > 0 ) {
-		return(NULL);
-	}
-    if( exact ) {
-		// GETÇÃèÍçá
-		if( 4+4 != (*length - vp->namelen) ) return(NULL);
-		nReqTM = (unsigned long) name[vp->namelen+1];
-		name[vp->namelen+1] = 0;
-	    oid_index.len  = (*length - vp->namelen);
-    	oid_index.oids = &name[vp->namelen];
-		p = CONTAINER_FIND(pNlHostContainer, &oid_index);
-		if( p->nLastTM < nReqTM )  return(NULL);
-		name[vp->namelen+1] = nReqTM;
-		return(p);
-	}
-	// GET NEXTÇÃèÍçá
-	if( (*length - vp->namelen) > 1 ) {
-		nReqTM = (unsigned long) name[vp->namelen+1];
-	} else {
-		nReqTM = (unsigned long) 0;
-	}
-    memset(IndexOid, 0, sizeof(IndexOid));
-	for( i =0; i < (int)(*length - vp->namelen);i++ ) {
-		if( i == 1 )     IndexOid[i] =0;
-		else IndexOid[i] = name[vp->namelen+i];
-    }
-    oid_index.len  = 4+4;
-    oid_index.oids = IndexOid;
-	p = CONTAINER_NEXT(pNlHostContainer, &oid_index);
-	while( p ) {
-		if( p->nLastTM >= nReqTM) break;
-		p = CONTAINER_NEXT(pNlHostContainer, &p->oid_index);
-	}
-	// ìØÇ∂ÉCÉìÉfÉbÉNÉXà»è„Ç≈ÅAî≠å©ÇµÇΩèÍçáÅB
-	if( p ) {
-		*length = p->oid_index.len +vp->namelen;
-		memcpy(name,vp->name,vp->namelen*sizeof(oid));
-		for( i =0; i < (int)p->oid_index.len;i++ ) {
-			if( i == 1 )     name[vp->namelen+i] =nReqTM;
-			else name[vp->namelen+i] = p->oid_index.oids[i];
-    	}
-		return(p);
-	}
-	//Ç≈Ç´Ç»Ç©Ç¡ÇΩèÍçáÇÕÅAÉ^ÉCÉÄÉ}Å[ÉNÇçXêVÇµÇƒç≈èâÇ©ÇÁíTÇ∑ÅB
-	nReqTM++;
-	if( nTimeMarkMode == 3  ) {
-		p = CONTAINER_FIRST(pNlHostMib);
-		while( p ) {
-			if( p->nLastTM >= nReqTM){
-				nReqTM = p->nLastTM;
-				break;
-			}
-			p = CONTAINER_NEXT(pNlHostMib, &p->oid_index);
-		}
-	}
-	p = CONTAINER_FIRST(pNlHostContainer);
-	while( p ) {
-		if( p->nLastTM >= nReqTM) break;
-		p = CONTAINER_NEXT(pNlHostContainer, &p->oid_index);
-	}
-	if( p ) {
-		*length = p->oid_index.len +vp->namelen;
-		memcpy(name,vp->name,vp->namelen*sizeof(oid));
-		for( i =0; i < (int)p->oid_index.len;i++ ) {
-			if( i == 1 )     name[vp->namelen+i] =nReqTM;
-			else name[vp->namelen+i] = p->oid_index.oids[i];
-    	}
-		return(p);
-	}
-	//ç≈å„ÇÕÅAÉIÉuÉWÉFÉNÉgÇïœÇ¶ÇƒÅAêÊì™Çï‘Ç∑ÅB
-	p = CONTAINER_FIRST(pNlHostContainer);
-	if( p ) {
-		*length = p->oid_index.len +vp->namelen;
-		memcpy(name,vp->name,vp->namelen*sizeof(oid));
-		name[vp->namelen-1]++;
-		for( i =0; i < (int)p->oid_index.len;i++ ) {
-			name[vp->namelen+i] = p->oid_index.oids[i];
-    	}
-	}
-	vp->magic++;
-	return(p);
+    break;
+  }
+  return SNMP_ERR_NOERROR;
 }
 
+struct nlHostTable_entry *FindNlHostEntry(struct variable *vp,
+                                          oid *name,
+                                          size_t *length,
+                                          int exact)
+{
+  struct nlHostTable_entry *p;
+  netsnmp_index oid_index;
+  oid IndexOid[MAX_OID_LEN];
+  unsigned long nReqTM;
+  int i, rtest;
+  for (i = 0, rtest = 0;
+       i < (int)vp->namelen && i < (int)(*length) && !rtest; i++)
+  {
+    if (name[i] != vp->name[i])
+    {
+      if (name[i] < vp->name[i])
+        rtest = -1;
+      else
+        rtest = 1;
+    }
+  }
+  if (rtest > 0)
+  {
+    return (NULL);
+  }
+  if (exact)
+  {
+    // GETÔøΩÃèÍçá
+    if (4 + 4 != (*length - vp->namelen))
+      return (NULL);
+    nReqTM = (unsigned long)name[vp->namelen + 1];
+    name[vp->namelen + 1] = 0;
+    oid_index.len = (*length - vp->namelen);
+    oid_index.oids = &name[vp->namelen];
+    p = CONTAINER_FIND(pNlHostContainer, &oid_index);
+    if (p->nLastTM < nReqTM)
+      return (NULL);
+    name[vp->namelen + 1] = nReqTM;
+    return (p);
+  }
+  // GET NEXTÔøΩÃèÍçá
+  if ((*length - vp->namelen) > 1)
+  {
+    nReqTM = (unsigned long)name[vp->namelen + 1];
+  }
+  else
+  {
+    nReqTM = (unsigned long)0;
+  }
+  memset(IndexOid, 0, sizeof(IndexOid));
+  for (i = 0; i < (int)(*length - vp->namelen); i++)
+  {
+    if (i == 1)
+      IndexOid[i] = 0;
+    else
+      IndexOid[i] = name[vp->namelen + i];
+  }
+  oid_index.len = 4 + 4;
+  oid_index.oids = IndexOid;
+  p = CONTAINER_NEXT(pNlHostContainer, &oid_index);
+  while (p)
+  {
+    if (p->nLastTM >= nReqTM)
+      break;
+    p = CONTAINER_NEXT(pNlHostContainer, &p->oid_index);
+  }
+  // ÔøΩÔøΩÔøΩÔøΩÔøΩCÔøΩÔøΩÔøΩfÔøΩbÔøΩNÔøΩXÔøΩ»èÔøΩ≈ÅAÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÍçáÔøΩB
+  if (p)
+  {
+    *length = p->oid_index.len + vp->namelen;
+    memcpy(name, vp->name, vp->namelen * sizeof(oid));
+    for (i = 0; i < (int)p->oid_index.len; i++)
+    {
+      if (i == 1)
+        name[vp->namelen + i] = nReqTM;
+      else
+        name[vp->namelen + i] = p->oid_index.oids[i];
+    }
+    return (p);
+  }
+  //ÔøΩ≈ÇÔøΩÔøΩ»ÇÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÍçáÔøΩÕÅAÔøΩ^ÔøΩCÔøΩÔøΩÔøΩ}ÔøΩ[ÔøΩNÔøΩÔøΩÔøΩXÔøΩVÔøΩÔøΩÔøΩƒç≈èÔøΩÔøΩÔøΩÔøΩÔøΩTÔøΩÔøΩÔøΩB
+  nReqTM++;
+  if (nTimeMarkMode == 3)
+  {
+    p = CONTAINER_FIRST(pNlHostMib);
+    while (p)
+    {
+      if (p->nLastTM >= nReqTM)
+      {
+        nReqTM = p->nLastTM;
+        break;
+      }
+      p = CONTAINER_NEXT(pNlHostMib, &p->oid_index);
+    }
+  }
+  p = CONTAINER_FIRST(pNlHostContainer);
+  while (p)
+  {
+    if (p->nLastTM >= nReqTM)
+      break;
+    p = CONTAINER_NEXT(pNlHostContainer, &p->oid_index);
+  }
+  if (p)
+  {
+    *length = p->oid_index.len + vp->namelen;
+    memcpy(name, vp->name, vp->namelen * sizeof(oid));
+    for (i = 0; i < (int)p->oid_index.len; i++)
+    {
+      if (i == 1)
+        name[vp->namelen + i] = nReqTM;
+      else
+        name[vp->namelen + i] = p->oid_index.oids[i];
+    }
+    return (p);
+  }
+  //ÔøΩ≈åÔøΩÕÅAÔøΩIÔøΩuÔøΩWÔøΩFÔøΩNÔøΩgÔøΩÔøΩœÇÔøΩÔøΩƒÅAÔøΩÊì™ÔøΩÔøΩ‘ÇÔøΩÔøΩB
+  p = CONTAINER_FIRST(pNlHostContainer);
+  if (p)
+  {
+    *length = p->oid_index.len + vp->namelen;
+    memcpy(name, vp->name, vp->namelen * sizeof(oid));
+    name[vp->namelen - 1]++;
+    for (i = 0; i < (int)p->oid_index.len; i++)
+    {
+      name[vp->namelen + i] = p->oid_index.oids[i];
+    }
+  }
+  vp->magic++;
+  return (p);
+}
 
 /*
  * var_nlHostTable():
@@ -7226,22 +7607,23 @@ struct nlHostTable_entry  * FindNlHostEntry(struct variable *vp,
  */
 unsigned char *
 var_nlHostTable(struct variable *vp,
-    	    oid     *name,
-    	    size_t  *length,
-    	    int     exact,
-    	    size_t  *var_len,
-    	    WriteMethod **write_method)
+                oid *name,
+                size_t *length,
+                int exact,
+                size_t *var_len,
+                WriteMethod **write_method)
 {
-    struct nlHostTable_entry          *table_entry;
+  struct nlHostTable_entry *table_entry;
 
-    table_entry = FindNlHostEntry(vp,name,length,exact);
-    if( table_entry == NULL ) return(NULL);
-	
+  table_entry = FindNlHostEntry(vp, name, length, exact);
+  if (table_entry == NULL)
+    return (NULL);
 
-    /* 
+  /*
    * this is where we do the value assignments for the mib results.
    */
-    switch(vp->magic) {
+  switch (vp->magic)
+  {
 #if 0
     case NLHOSTTIMEMARK:
         VAR = VALUE;	/* XXX */
@@ -7250,235 +7632,239 @@ var_nlHostTable(struct variable *vp,
         VAR = VALUE;	/* XXX */
         return (u_char*) &VAR;
 #endif
-    case NLHOSTINPKTS:
-        *var_len = sizeof(long);
-        return (u_char*) &table_entry->nlHostInPkts;
-    case NLHOSTOUTPKTS:
-        *var_len = sizeof(long);
-        return (u_char*) &table_entry->nlHostOutPkts;
-    case NLHOSTINOCTETS:
-        *var_len = sizeof(long);
-        return (u_char*) &table_entry->nlHostInOctets;
-    case NLHOSTOUTOCTETS:
-        *var_len = sizeof(long);
-        return (u_char*) &table_entry->nlHostOutOctets;
-    case NLHOSTOUTMACNONUNICASTPKTS:
-        *var_len = sizeof(long);
-        return (u_char*) &table_entry->nlHostOutMacNonUnicastPkts;
-    case NLHOSTCREATETIME:
-        *var_len = sizeof(long);
-        return (u_char*) &table_entry->nlHostCreateTime;
-    default:
-      ERROR_MSG("");
-    }
-    return NULL;
+  case NLHOSTINPKTS:
+    *var_len = sizeof(long);
+    return (u_char *)&table_entry->nlHostInPkts;
+  case NLHOSTOUTPKTS:
+    *var_len = sizeof(long);
+    return (u_char *)&table_entry->nlHostOutPkts;
+  case NLHOSTINOCTETS:
+    *var_len = sizeof(long);
+    return (u_char *)&table_entry->nlHostInOctets;
+  case NLHOSTOUTOCTETS:
+    *var_len = sizeof(long);
+    return (u_char *)&table_entry->nlHostOutOctets;
+  case NLHOSTOUTMACNONUNICASTPKTS:
+    *var_len = sizeof(long);
+    return (u_char *)&table_entry->nlHostOutMacNonUnicastPkts;
+  case NLHOSTCREATETIME:
+    *var_len = sizeof(long);
+    return (u_char *)&table_entry->nlHostCreateTime;
+  default:
+    ERROR_MSG("");
+  }
+  return NULL;
 }
-
-
-
 
 /** Initialize the hlMatrixControlTable table by defining its contents and how it's structured */
-void
-initialize_table_hlMatrixControlTable(void)
+void initialize_table_hlMatrixControlTable(void)
 {
-    static oid hlMatrixControlTable_oid[] = {1,3,6,1,2,1,16,15,1};
-    size_t hlMatrixControlTable_oid_len   = OID_LENGTH(hlMatrixControlTable_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_container               *container;
-    netsnmp_table_registration_info *table_info;
+  static oid hlMatrixControlTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 15, 1};
+  size_t hlMatrixControlTable_oid_len = OID_LENGTH(hlMatrixControlTable_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_container *container;
+  netsnmp_table_registration_info *table_info;
 
-    reg = netsnmp_create_handler_registration(
-              "hlMatrixControlTable",     hlMatrixControlTable_handler,
-              hlMatrixControlTable_oid, hlMatrixControlTable_oid_len,
-              HANDLER_CAN_RWRITE
-              );
+  reg = netsnmp_create_handler_registration(
+      "hlMatrixControlTable", hlMatrixControlTable_handler,
+      hlMatrixControlTable_oid, hlMatrixControlTable_oid_len,
+      HANDLER_CAN_RWRITE);
 
-    container  = netsnmp_container_find( "table_container" );
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: hlMatrixControlIndex */
-                           0);
-    table_info->min_column = COLUMN_HLMATRIXCONTROLDATASOURCE;
-    table_info->max_column = COLUMN_HLMATRIXCONTROLSTATUS;
-    
-    netsnmp_container_table_register( reg, table_info, container, 0 );
+  container = netsnmp_container_find("table_container");
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER, /* index: hlMatrixControlIndex */
+                                   0);
+  table_info->min_column = COLUMN_HLMATRIXCONTROLDATASOURCE;
+  table_info->max_column = COLUMN_HLMATRIXCONTROLSTATUS;
 
-    /* Initialise the contents of the table here */
-    InitHlMtxContEnt(container);
+  netsnmp_container_table_register(reg, table_info, container, 0);
+
+  /* Initialise the contents of the table here */
+  InitHlMtxContEnt(container);
 }
 
-    /* Typical data structure for a row entry */
-struct hlMatrixControlTable_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct hlMatrixControlTable_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long hlMatrixControlIndex;
+  /* Index values */
+  long hlMatrixControlIndex;
 
-    /* Column values */
-    oid hlMatrixControlDataSource[16];
-    size_t hlMatrixControlDataSource_len;
-    oid old_hlMatrixControlDataSource[16];
-    size_t old_hlMatrixControlDataSource_len;
-    u_long hlMatrixControlNlDroppedFrames;
-    u_long hlMatrixControlNlInserts;
-    u_long hlMatrixControlNlDeletes;
-    long hlMatrixControlNlMaxDesiredEntries;
-    long old_hlMatrixControlNlMaxDesiredEntries;
-    u_long hlMatrixControlAlDroppedFrames;
-    u_long hlMatrixControlAlInserts;
-    u_long hlMatrixControlAlDeletes;
-    long hlMatrixControlAlMaxDesiredEntries;
-    long old_hlMatrixControlAlMaxDesiredEntries;
-    char hlMatrixControlOwner[256];
-    size_t hlMatrixControlOwner_len;
-    char old_hlMatrixControlOwner[256];
-    size_t old_hlMatrixControlOwner_len;
-    long hlMatrixControlStatus;
+  /* Column values */
+  oid hlMatrixControlDataSource[16];
+  size_t hlMatrixControlDataSource_len;
+  oid old_hlMatrixControlDataSource[16];
+  size_t old_hlMatrixControlDataSource_len;
+  u_long hlMatrixControlNlDroppedFrames;
+  u_long hlMatrixControlNlInserts;
+  u_long hlMatrixControlNlDeletes;
+  long hlMatrixControlNlMaxDesiredEntries;
+  long old_hlMatrixControlNlMaxDesiredEntries;
+  u_long hlMatrixControlAlDroppedFrames;
+  u_long hlMatrixControlAlInserts;
+  u_long hlMatrixControlAlDeletes;
+  long hlMatrixControlAlMaxDesiredEntries;
+  long old_hlMatrixControlAlMaxDesiredEntries;
+  char hlMatrixControlOwner[256];
+  size_t hlMatrixControlOwner_len;
+  char old_hlMatrixControlOwner[256];
+  size_t old_hlMatrixControlOwner_len;
+  long hlMatrixControlStatus;
 
-    int   valid;
+  int valid;
 };
 
 /* create a new row in the table */
 struct hlMatrixControlTable_entry *
-hlMatrixControlTable_createEntry(netsnmp_container *container
-                 , long  hlMatrixControlIndex
-                ) {
-    struct hlMatrixControlTable_entry *entry;
+hlMatrixControlTable_createEntry(netsnmp_container *container, long hlMatrixControlIndex)
+{
+  struct hlMatrixControlTable_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct hlMatrixControlTable_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct hlMatrixControlTable_entry);
+  if (!entry)
+    return NULL;
 
-    entry->hlMatrixControlIndex = hlMatrixControlIndex;
-    entry->oid_index.len  = 1;
-    entry->oid_index.oids = (oid*)&entry->hlMatrixControlIndex;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->hlMatrixControlIndex = hlMatrixControlIndex;
+  entry->oid_index.len = 1;
+  entry->oid_index.oids = (oid *)&entry->hlMatrixControlIndex;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-hlMatrixControlTable_removeEntry(netsnmp_container *container, 
-                 struct hlMatrixControlTable_entry *entry) {
+void hlMatrixControlTable_removeEntry(netsnmp_container *container,
+                                      struct hlMatrixControlTable_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the hlMatrixControlTable table */
-int
-hlMatrixControlTable_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
+int hlMatrixControlTable_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
+{
 
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct hlMatrixControlTable_entry          *table_entry;
-    int                         ret;
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct hlMatrixControlTable_entry *table_entry;
+  int ret;
 
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct hlMatrixControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct hlMatrixControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
 
-            switch (table_info->colnum) {
-            case COLUMN_HLMATRIXCONTROLDATASOURCE:
-                snmp_set_var_typed_value( request->requestvb, ASN_OBJECT_ID,
-                                 (u_char*)table_entry->hlMatrixControlDataSource,
-                                          table_entry->hlMatrixControlDataSource_len);
-                break;
-            case COLUMN_HLMATRIXCONTROLNLDROPPEDFRAMES:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->hlMatrixControlNlDroppedFrames);
-                break;
-            case COLUMN_HLMATRIXCONTROLNLINSERTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->hlMatrixControlNlInserts);
-                break;
-            case COLUMN_HLMATRIXCONTROLNLDELETES:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->hlMatrixControlNlDeletes);
-                break;
-            case COLUMN_HLMATRIXCONTROLNLMAXDESIREDENTRIES:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->hlMatrixControlNlMaxDesiredEntries);
-                break;
-            case COLUMN_HLMATRIXCONTROLALDROPPEDFRAMES:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->hlMatrixControlAlDroppedFrames);
-                break;
-            case COLUMN_HLMATRIXCONTROLALINSERTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->hlMatrixControlAlInserts);
-                break;
-            case COLUMN_HLMATRIXCONTROLALDELETES:
-                snmp_set_var_typed_integer( request->requestvb, ASN_COUNTER,
-                                            table_entry->hlMatrixControlAlDeletes);
-                break;
-            case COLUMN_HLMATRIXCONTROLALMAXDESIREDENTRIES:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->hlMatrixControlAlMaxDesiredEntries);
-                break;
-            case COLUMN_HLMATRIXCONTROLOWNER:
-                snmp_set_var_typed_value( request->requestvb, ASN_OCTET_STR,
-                                 (u_char*)table_entry->hlMatrixControlOwner,
-                                          table_entry->hlMatrixControlOwner_len);
-                break;
-            case COLUMN_HLMATRIXCONTROLSTATUS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_INTEGER,
-                                            table_entry->hlMatrixControlStatus);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
+      switch (table_info->colnum)
+      {
+      case COLUMN_HLMATRIXCONTROLDATASOURCE:
+        snmp_set_var_typed_value(request->requestvb, ASN_OBJECT_ID,
+                                 (u_char *)table_entry->hlMatrixControlDataSource,
+                                 table_entry->hlMatrixControlDataSource_len);
+        break;
+      case COLUMN_HLMATRIXCONTROLNLDROPPEDFRAMES:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->hlMatrixControlNlDroppedFrames);
+        break;
+      case COLUMN_HLMATRIXCONTROLNLINSERTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->hlMatrixControlNlInserts);
+        break;
+      case COLUMN_HLMATRIXCONTROLNLDELETES:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->hlMatrixControlNlDeletes);
+        break;
+      case COLUMN_HLMATRIXCONTROLNLMAXDESIREDENTRIES:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->hlMatrixControlNlMaxDesiredEntries);
+        break;
+      case COLUMN_HLMATRIXCONTROLALDROPPEDFRAMES:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->hlMatrixControlAlDroppedFrames);
+        break;
+      case COLUMN_HLMATRIXCONTROLALINSERTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->hlMatrixControlAlInserts);
+        break;
+      case COLUMN_HLMATRIXCONTROLALDELETES:
+        snmp_set_var_typed_integer(request->requestvb, ASN_COUNTER,
+                                   table_entry->hlMatrixControlAlDeletes);
+        break;
+      case COLUMN_HLMATRIXCONTROLALMAXDESIREDENTRIES:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->hlMatrixControlAlMaxDesiredEntries);
+        break;
+      case COLUMN_HLMATRIXCONTROLOWNER:
+        snmp_set_var_typed_value(request->requestvb, ASN_OCTET_STR,
+                                 (u_char *)table_entry->hlMatrixControlOwner,
+                                 table_entry->hlMatrixControlOwner_len);
+        break;
+      case COLUMN_HLMATRIXCONTROLSTATUS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_INTEGER,
+                                   table_entry->hlMatrixControlStatus);
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
+    }
+    break;
+
+    /*
+     * Write-support
+     */
+  case MODE_SET_RESERVE1:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct hlMatrixControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+      switch (table_info->colnum)
+      {
+      case COLUMN_HLMATRIXCONTROLNLMAXDESIREDENTRIES:
+        /* or possibly 'netsnmp_check_vb_int_range' */
+        ret = netsnmp_check_vb_int_range(request->requestvb, 100, 20000);
+        if (ret != SNMP_ERR_NOERROR)
+        {
+          netsnmp_set_request_error(reqinfo, request, ret);
+          return SNMP_ERR_NOERROR;
         }
         break;
-
-        /*
-         * Write-support
-         */
-    case MODE_SET_RESERVE1:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct hlMatrixControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-            switch (table_info->colnum) {
-            case COLUMN_HLMATRIXCONTROLNLMAXDESIREDENTRIES:
-                /* or possibly 'netsnmp_check_vb_int_range' */
-                ret = netsnmp_check_vb_int_range( request->requestvb,100,20000 );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_HLMATRIXCONTROLALMAXDESIREDENTRIES:
-                /* or possibly 'netsnmp_check_vb_int_range' */
-                ret = netsnmp_check_vb_int_range( request->requestvb,100,20000);
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
+      case COLUMN_HLMATRIXCONTROLALMAXDESIREDENTRIES:
+        /* or possibly 'netsnmp_check_vb_int_range' */
+        ret = netsnmp_check_vb_int_range(request->requestvb, 100, 20000);
+        if (ret != SNMP_ERR_NOERROR)
+        {
+          netsnmp_set_request_error(reqinfo, request, ret);
+          return SNMP_ERR_NOERROR;
+        }
+        break;
 #if 0
             case COLUMN_HLMATRIXCONTROLDATASOURCE:
                 /* or possibly 'netsnmp_check_vb_type_and_max_size' */
@@ -7507,536 +7893,583 @@ hlMatrixControlTable_handler(
                 }
                 break;
 #endif
-            default:
-                netsnmp_set_request_error( reqinfo, request,
-                                           SNMP_ERR_NOTWRITABLE );
-                return SNMP_ERR_NOERROR;
-            }
-        }
-        break;
+      default:
+        netsnmp_set_request_error(reqinfo, request,
+                                  SNMP_ERR_NOTWRITABLE);
+        return SNMP_ERR_NOERROR;
+      }
+    }
+    break;
 
-    case MODE_SET_RESERVE2:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct hlMatrixControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-    
-            switch (table_info->colnum) {
-            case COLUMN_HLMATRIXCONTROLSTATUS:
-                switch (*request->requestvb->val.integer) {
-                case RS_CREATEANDGO:
-                case RS_CREATEANDWAIT:
-                    table_entry = hlMatrixControlTable_createEntry(container
-                        , *table_info->indexes->val.integer
-                        );
-                    if (table_entry) {
-                        netsnmp_container_table_row_insert( request,(netsnmp_index*) table_entry );
-                    } else {
-                        netsnmp_set_request_error( reqinfo, request,
-                                                   SNMP_ERR_RESOURCEUNAVAILABLE );
-                        return SNMP_ERR_NOERROR;
-                    }
-                }
-            }
-        }
-        break;
+  case MODE_SET_RESERVE2:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct hlMatrixControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
 
-    case MODE_SET_FREE:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct hlMatrixControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-    
-            switch (table_info->colnum) {
-            case COLUMN_HLMATRIXCONTROLSTATUS:
-                switch (*request->requestvb->val.integer) {
-                case RS_CREATEANDGO:
-                case RS_CREATEANDWAIT:
-                    if (table_entry && !table_entry->valid) {
-                        hlMatrixControlTable_removeEntry(container, table_entry );
-                    }
-                }
-            }
+      switch (table_info->colnum)
+      {
+      case COLUMN_HLMATRIXCONTROLSTATUS:
+        switch (*request->requestvb->val.integer)
+        {
+        case RS_CREATEANDGO:
+        case RS_CREATEANDWAIT:
+          table_entry = hlMatrixControlTable_createEntry(container, *table_info->indexes->val.integer);
+          if (table_entry)
+          {
+            netsnmp_container_table_row_insert(request, (netsnmp_index *)table_entry);
+          }
+          else
+          {
+            netsnmp_set_request_error(reqinfo, request,
+                                      SNMP_ERR_RESOURCEUNAVAILABLE);
+            return SNMP_ERR_NOERROR;
+          }
         }
-        break;
+      }
+    }
+    break;
 
-    case MODE_SET_ACTION:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct hlMatrixControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-    
-            switch (table_info->colnum) {
-            case COLUMN_HLMATRIXCONTROLDATASOURCE:
-                memcpy( table_entry->old_hlMatrixControlDataSource,
-                        table_entry->hlMatrixControlDataSource,
-                        sizeof(table_entry->hlMatrixControlDataSource));
-                table_entry->old_hlMatrixControlDataSource_len =
-                        table_entry->hlMatrixControlDataSource_len;
-                memset( table_entry->hlMatrixControlDataSource, 0,
-                        sizeof(table_entry->hlMatrixControlDataSource));
-                memcpy( table_entry->hlMatrixControlDataSource,
-                        request->requestvb->val.string,
-                        request->requestvb->val_len);
-                table_entry->hlMatrixControlDataSource_len =
-                        request->requestvb->val_len;
-                break;
-            case COLUMN_HLMATRIXCONTROLNLMAXDESIREDENTRIES:
-                table_entry->old_hlMatrixControlNlMaxDesiredEntries = table_entry->hlMatrixControlNlMaxDesiredEntries;
-                table_entry->hlMatrixControlNlMaxDesiredEntries     = *request->requestvb->val.integer;
-                break;
-            case COLUMN_HLMATRIXCONTROLALMAXDESIREDENTRIES:
-                table_entry->old_hlMatrixControlAlMaxDesiredEntries = table_entry->hlMatrixControlAlMaxDesiredEntries;
-                table_entry->hlMatrixControlAlMaxDesiredEntries     = *request->requestvb->val.integer;
-                break;
-            case COLUMN_HLMATRIXCONTROLOWNER:
-                memcpy( table_entry->old_hlMatrixControlOwner,
-                        table_entry->hlMatrixControlOwner,
-                        sizeof(table_entry->hlMatrixControlOwner));
-                table_entry->old_hlMatrixControlOwner_len =
-                        table_entry->hlMatrixControlOwner_len;
-                memset( table_entry->hlMatrixControlOwner, 0,
-                        sizeof(table_entry->hlMatrixControlOwner));
-                memcpy( table_entry->hlMatrixControlOwner,
-                        request->requestvb->val.string,
-                        request->requestvb->val_len);
-                table_entry->hlMatrixControlOwner_len =
-                        request->requestvb->val_len;
-                break;
-            }
+  case MODE_SET_FREE:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct hlMatrixControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+
+      switch (table_info->colnum)
+      {
+      case COLUMN_HLMATRIXCONTROLSTATUS:
+        switch (*request->requestvb->val.integer)
+        {
+        case RS_CREATEANDGO:
+        case RS_CREATEANDWAIT:
+          if (table_entry && !table_entry->valid)
+          {
+            hlMatrixControlTable_removeEntry(container, table_entry);
+          }
         }
-        /* Check the internal consistency of an active row */
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct hlMatrixControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-    
-            switch (table_info->colnum) {
-            case COLUMN_HLMATRIXCONTROLSTATUS:
-                switch (*request->requestvb->val.integer) {
-                case RS_ACTIVE:
-                case RS_CREATEANDGO:
+      }
+    }
+    break;
+
+  case MODE_SET_ACTION:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct hlMatrixControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+
+      switch (table_info->colnum)
+      {
+      case COLUMN_HLMATRIXCONTROLDATASOURCE:
+        memcpy(table_entry->old_hlMatrixControlDataSource,
+               table_entry->hlMatrixControlDataSource,
+               sizeof(table_entry->hlMatrixControlDataSource));
+        table_entry->old_hlMatrixControlDataSource_len =
+            table_entry->hlMatrixControlDataSource_len;
+        memset(table_entry->hlMatrixControlDataSource, 0,
+               sizeof(table_entry->hlMatrixControlDataSource));
+        memcpy(table_entry->hlMatrixControlDataSource,
+               request->requestvb->val.string,
+               request->requestvb->val_len);
+        table_entry->hlMatrixControlDataSource_len =
+            request->requestvb->val_len;
+        break;
+      case COLUMN_HLMATRIXCONTROLNLMAXDESIREDENTRIES:
+        table_entry->old_hlMatrixControlNlMaxDesiredEntries = table_entry->hlMatrixControlNlMaxDesiredEntries;
+        table_entry->hlMatrixControlNlMaxDesiredEntries = *request->requestvb->val.integer;
+        break;
+      case COLUMN_HLMATRIXCONTROLALMAXDESIREDENTRIES:
+        table_entry->old_hlMatrixControlAlMaxDesiredEntries = table_entry->hlMatrixControlAlMaxDesiredEntries;
+        table_entry->hlMatrixControlAlMaxDesiredEntries = *request->requestvb->val.integer;
+        break;
+      case COLUMN_HLMATRIXCONTROLOWNER:
+        memcpy(table_entry->old_hlMatrixControlOwner,
+               table_entry->hlMatrixControlOwner,
+               sizeof(table_entry->hlMatrixControlOwner));
+        table_entry->old_hlMatrixControlOwner_len =
+            table_entry->hlMatrixControlOwner_len;
+        memset(table_entry->hlMatrixControlOwner, 0,
+               sizeof(table_entry->hlMatrixControlOwner));
+        memcpy(table_entry->hlMatrixControlOwner,
+               request->requestvb->val.string,
+               request->requestvb->val_len);
+        table_entry->hlMatrixControlOwner_len =
+            request->requestvb->val_len;
+        break;
+      }
+    }
+    /* Check the internal consistency of an active row */
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct hlMatrixControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+
+      switch (table_info->colnum)
+      {
+      case COLUMN_HLMATRIXCONTROLSTATUS:
+        switch (*request->requestvb->val.integer)
+        {
+        case RS_ACTIVE:
+        case RS_CREATEANDGO:
 #if 0                
                     if (/* XXX */) {
                         netsnmp_set_request_error( reqinfo, request,
                                                    SNMP_ERR_INCONSISTENTVALUE );
                         return SNMP_ERR_NOERROR;
                     }
-#endif                 
-					break;
-                }
-            }
+#endif
+          break;
         }
-        break;
-
-    case MODE_SET_UNDO:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct hlMatrixControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-            switch (table_info->colnum) {
-            case COLUMN_HLMATRIXCONTROLDATASOURCE:
-                memcpy( table_entry->hlMatrixControlDataSource,
-                        table_entry->old_hlMatrixControlDataSource,
-                        sizeof(table_entry->hlMatrixControlDataSource));
-                memset( table_entry->old_hlMatrixControlDataSource, 0,
-                        sizeof(table_entry->hlMatrixControlDataSource));
-                table_entry->hlMatrixControlDataSource_len =
-                        table_entry->old_hlMatrixControlDataSource_len;
-                break;
-            case COLUMN_HLMATRIXCONTROLNLMAXDESIREDENTRIES:
-                table_entry->hlMatrixControlNlMaxDesiredEntries     = table_entry->old_hlMatrixControlNlMaxDesiredEntries;
-                table_entry->old_hlMatrixControlNlMaxDesiredEntries = 0;
-                break;
-            case COLUMN_HLMATRIXCONTROLALMAXDESIREDENTRIES:
-                table_entry->hlMatrixControlAlMaxDesiredEntries     = table_entry->old_hlMatrixControlAlMaxDesiredEntries;
-                table_entry->old_hlMatrixControlAlMaxDesiredEntries = 0;
-                break;
-            case COLUMN_HLMATRIXCONTROLOWNER:
-                memcpy( table_entry->hlMatrixControlOwner,
-                        table_entry->old_hlMatrixControlOwner,
-                        sizeof(table_entry->hlMatrixControlOwner));
-                memset( table_entry->old_hlMatrixControlOwner, 0,
-                        sizeof(table_entry->hlMatrixControlOwner));
-                table_entry->hlMatrixControlOwner_len =
-                        table_entry->old_hlMatrixControlOwner_len;
-                break;
-            case COLUMN_HLMATRIXCONTROLSTATUS:
-                switch (*request->requestvb->val.integer) {
-                case RS_CREATEANDGO:
-                case RS_CREATEANDWAIT:
-                    if (table_entry && !table_entry->valid) {
-                        hlMatrixControlTable_removeEntry(container, table_entry );
-                    }
-                }
-                break;
-            }
-        }
-        break;
-
-    case MODE_SET_COMMIT:
-        for (request=requests; request; request=request->next) {
-            container   =     netsnmp_container_table_container_extract(request);
-            table_entry = (struct hlMatrixControlTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) continue;
-            switch (table_info->colnum) {
-            case COLUMN_HLMATRIXCONTROLSTATUS:
-                switch (*request->requestvb->val.integer) {
-                case RS_CREATEANDGO:
-                    table_entry->valid = 1;
-                    /* Fall-through */
-                case RS_ACTIVE:
-                    table_entry->hlMatrixControlStatus = RS_ACTIVE;
-                    break;
-
-                case RS_CREATEANDWAIT:
-                    table_entry->valid = 1;
-                    /* Fall-through */
-                case RS_NOTINSERVICE:
-                    table_entry->hlMatrixControlStatus = RS_NOTINSERVICE;
-                    break;
-
-                case RS_DESTROY:
-                    hlMatrixControlTable_removeEntry(container, table_entry );
-                }
-            }
-        }
-        break;
+      }
     }
-    return SNMP_ERR_NOERROR;
+    break;
+
+  case MODE_SET_UNDO:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct hlMatrixControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+      switch (table_info->colnum)
+      {
+      case COLUMN_HLMATRIXCONTROLDATASOURCE:
+        memcpy(table_entry->hlMatrixControlDataSource,
+               table_entry->old_hlMatrixControlDataSource,
+               sizeof(table_entry->hlMatrixControlDataSource));
+        memset(table_entry->old_hlMatrixControlDataSource, 0,
+               sizeof(table_entry->hlMatrixControlDataSource));
+        table_entry->hlMatrixControlDataSource_len =
+            table_entry->old_hlMatrixControlDataSource_len;
+        break;
+      case COLUMN_HLMATRIXCONTROLNLMAXDESIREDENTRIES:
+        table_entry->hlMatrixControlNlMaxDesiredEntries = table_entry->old_hlMatrixControlNlMaxDesiredEntries;
+        table_entry->old_hlMatrixControlNlMaxDesiredEntries = 0;
+        break;
+      case COLUMN_HLMATRIXCONTROLALMAXDESIREDENTRIES:
+        table_entry->hlMatrixControlAlMaxDesiredEntries = table_entry->old_hlMatrixControlAlMaxDesiredEntries;
+        table_entry->old_hlMatrixControlAlMaxDesiredEntries = 0;
+        break;
+      case COLUMN_HLMATRIXCONTROLOWNER:
+        memcpy(table_entry->hlMatrixControlOwner,
+               table_entry->old_hlMatrixControlOwner,
+               sizeof(table_entry->hlMatrixControlOwner));
+        memset(table_entry->old_hlMatrixControlOwner, 0,
+               sizeof(table_entry->hlMatrixControlOwner));
+        table_entry->hlMatrixControlOwner_len =
+            table_entry->old_hlMatrixControlOwner_len;
+        break;
+      case COLUMN_HLMATRIXCONTROLSTATUS:
+        switch (*request->requestvb->val.integer)
+        {
+        case RS_CREATEANDGO:
+        case RS_CREATEANDWAIT:
+          if (table_entry && !table_entry->valid)
+          {
+            hlMatrixControlTable_removeEntry(container, table_entry);
+          }
+        }
+        break;
+      }
+    }
+    break;
+
+  case MODE_SET_COMMIT:
+    for (request = requests; request; request = request->next)
+    {
+      container = netsnmp_container_table_container_extract(request);
+      table_entry = (struct hlMatrixControlTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+        continue;
+      switch (table_info->colnum)
+      {
+      case COLUMN_HLMATRIXCONTROLSTATUS:
+        switch (*request->requestvb->val.integer)
+        {
+        case RS_CREATEANDGO:
+          table_entry->valid = 1;
+          /* Fall-through */
+        case RS_ACTIVE:
+          table_entry->hlMatrixControlStatus = RS_ACTIVE;
+          break;
+
+        case RS_CREATEANDWAIT:
+          table_entry->valid = 1;
+          /* Fall-through */
+        case RS_NOTINSERVICE:
+          table_entry->hlMatrixControlStatus = RS_NOTINSERVICE;
+          break;
+
+        case RS_DESTROY:
+          hlMatrixControlTable_removeEntry(container, table_entry);
+        }
+      }
+    }
+    break;
+  }
+  return SNMP_ERR_NOERROR;
 }
 
 FindVarMethod var_nlMatrixSDTable;
 
-/* 
+/*
  * nlMatrixSDTable_variables_oid:
  *   this is the top level oid that we want to register under.  This
  *   is essentially a prefix, with the suffix appearing in the
  *   variable below.
  */
 
-oid nlMatrixSDTable_variables_oid[] = { 1,3,6,1,2,1,16,15,2 };
+oid nlMatrixSDTable_variables_oid[] = {1, 3, 6, 1, 2, 1, 16, 15, 2};
 
-/* 
+/*
  * variable4 nlMatrixSDTable_variables:
- *   this variable defines function callbacks and type return information 
- *   for the nlMatrixSDTable mib section 
+ *   this variable defines function callbacks and type return information
+ *   for the nlMatrixSDTable mib section
  */
 
 struct variable4 nlMatrixSDTable_variables[] = {
 /*  magic number        , variable type , ro/rw , callback fn  , L, oidsuffix */
 #if 0
-#define NLMATRIXSDTIMEMARK		1
+#define NLMATRIXSDTIMEMARK 1
 {NLMATRIXSDTIMEMARK,  ASN_TIMETICKS,  RONLY,   var_nlMatrixSDTable, 2,  { , 1, 1 }},
-#define NLMATRIXSDSOURCEADDRESS		2
+#define NLMATRIXSDSOURCEADDRESS 2
 {NLMATRIXSDSOURCEADDRESS,  ASN_OCTET_STR,  RONLY,   var_nlMatrixSDTable, 2,  { , 1, 2 }},
-#define NLMATRIXSDDESTADDRESS		3
+#define NLMATRIXSDDESTADDRESS 3
 {NLMATRIXSDDESTADDRESS,  ASN_OCTET_STR,  RONLY,   var_nlMatrixSDTable, 2,  { , 1, 3 }},
 #endif
 
-#define NLMATRIXSDPKTS		4
-{NLMATRIXSDPKTS,  ASN_GAUGE,  RONLY,   var_nlMatrixSDTable, 2,  {  1, 4 }},
-#define NLMATRIXSDOCTETS		5
-{NLMATRIXSDOCTETS,  ASN_GAUGE,  RONLY,   var_nlMatrixSDTable, 2,  {  1, 5 }},
-#define NLMATRIXSDCREATETIME		6
-{NLMATRIXSDCREATETIME,  ASN_TIMETICKS,  RONLY,   var_nlMatrixSDTable, 2,  {  1, 6 }}
-};
+#define NLMATRIXSDPKTS 4
+    {NLMATRIXSDPKTS, ASN_GAUGE, RONLY, var_nlMatrixSDTable, 2, {1, 4}},
+#define NLMATRIXSDOCTETS 5
+    {NLMATRIXSDOCTETS, ASN_GAUGE, RONLY, var_nlMatrixSDTable, 2, {1, 5}},
+#define NLMATRIXSDCREATETIME 6
+    {NLMATRIXSDCREATETIME, ASN_TIMETICKS, RONLY, var_nlMatrixSDTable, 2, {1, 6}}};
 /*    (L = length of the oidsuffix) */
 
-
 /** Initialize the nlMatrixSDTable table by defining its contents and how it's structured */
-void
-initialize_table_nlMatrixSDTable(void)
+void initialize_table_nlMatrixSDTable(void)
 {
-    static oid nlMatrixSDTable_oid[] = {1,3,6,1,2,1,16,15,2};
-    size_t nlMatrixSDTable_oid_len   = OID_LENGTH(nlMatrixSDTable_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_table_registration_info *table_info;
+  static oid nlMatrixSDTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 15, 2};
+  size_t nlMatrixSDTable_oid_len = OID_LENGTH(nlMatrixSDTable_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_table_registration_info *table_info;
 
-    pNlMtxSDContainer  = netsnmp_container_find( "table_container" );
-    pNlMtxSDMib  = netsnmp_container_find( "table_container" );
-	if( nTimeMarkMode >= 2 ) {
-	    /* register ourselves with the agent to handle our mib tree */
-    	REGISTER_MIB("nlMatrixSDTable", nlMatrixSDTable_variables, variable4,
-               nlMatrixSDTable_variables_oid);
-        return;
-	}
-    reg = netsnmp_create_handler_registration(
-              "nlMatrixSDTable",     nlMatrixSDTable_handler,
-              nlMatrixSDTable_oid, nlMatrixSDTable_oid_len,
-              HANDLER_CAN_RONLY
-              );
+  pNlMtxSDContainer = netsnmp_container_find("table_container");
+  pNlMtxSDMib = netsnmp_container_find("table_container");
+  if (nTimeMarkMode >= 2)
+  {
+    /* register ourselves with the agent to handle our mib tree */
+    REGISTER_MIB("nlMatrixSDTable", nlMatrixSDTable_variables, variable4,
+                 nlMatrixSDTable_variables_oid);
+    return;
+  }
+  reg = netsnmp_create_handler_registration(
+      "nlMatrixSDTable", nlMatrixSDTable_handler,
+      nlMatrixSDTable_oid, nlMatrixSDTable_oid_len,
+      HANDLER_CAN_RONLY);
 
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: hlMatrixControlIndex */
-                           ASN_TIMETICKS,  /* index: nlMatrixSDTimeMark */
-                           ASN_INTEGER,  /* index: protocolDirLocalIndex */
-                           ASN_OCTET_STR,  /* index: nlMatrixSDSourceAddress */
-                           ASN_OCTET_STR,  /* index: nlMatrixSDDestAddress */
-                           0);
-    table_info->min_column = COLUMN_NLMATRIXSDPKTS;
-    table_info->max_column = COLUMN_NLMATRIXSDCREATETIME;
-    
-    netsnmp_container_table_register( reg, table_info,nTimeMarkMode == 0 ? pNlMtxSDMib :pNlMtxSDContainer , 0 );
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER,   /* index: hlMatrixControlIndex */
+                                   ASN_TIMETICKS, /* index: nlMatrixSDTimeMark */
+                                   ASN_INTEGER,   /* index: protocolDirLocalIndex */
+                                   ASN_OCTET_STR, /* index: nlMatrixSDSourceAddress */
+                                   ASN_OCTET_STR, /* index: nlMatrixSDDestAddress */
+                                   0);
+  table_info->min_column = COLUMN_NLMATRIXSDPKTS;
+  table_info->max_column = COLUMN_NLMATRIXSDCREATETIME;
 
-    /* Initialise the contents of the table here */
+  netsnmp_container_table_register(reg, table_info, nTimeMarkMode == 0 ? pNlMtxSDMib : pNlMtxSDContainer, 0);
+
+  /* Initialise the contents of the table here */
 }
 
-size_t MakeNlMtxIndex(long nCI,u_long nTM,long nPDirLI,long nALen,char *pAddr1,char *pAddr2,oid *pOid)
+size_t MakeNlMtxIndex(long nCI, u_long nTM, long nPDirLI, long nALen, char *pAddr1, char *pAddr2, oid *pOid)
 {
-	int i;
-	int j;
-	i =0;
-	pOid[i++] = nCI;
-	pOid[i++] = nTM;
-	pOid[i++] = nPDirLI;
-	pOid[i++] = nALen;
-	for( j = 0;j < nALen;j++ ) {
-		pOid[i++] = (long) pAddr1[j] & 0x00ff;
-	}
-	pOid[i++] = nALen;
-	for( j = 0;j < nALen;j++ ) {
-		pOid[i++] = (long) pAddr2[j] & 0x00ff;
-	}
-	return( (size_t) i );
+  int i;
+  int j;
+  i = 0;
+  pOid[i++] = nCI;
+  pOid[i++] = nTM;
+  pOid[i++] = nPDirLI;
+  pOid[i++] = nALen;
+  for (j = 0; j < nALen; j++)
+  {
+    pOid[i++] = (long)pAddr1[j] & 0x00ff;
+  }
+  pOid[i++] = nALen;
+  for (j = 0; j < nALen; j++)
+  {
+    pOid[i++] = (long)pAddr2[j] & 0x00ff;
+  }
+  return ((size_t)i);
 }
 
-    /* Typical data structure for a row entry */
-struct nlMatrixSDTable_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct nlMatrixSDTable_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long hlMatrixControlIndex;
-    u_long nlMatrixSDTimeMark;
-    long protocolDirLocalIndex;
-    char nlMatrixSDSourceAddress[16];
-    size_t nlMatrixSDSourceAddress_len;
-    char nlMatrixSDDestAddress[16];
-    size_t nlMatrixSDDestAddress_len;
+  /* Index values */
+  long hlMatrixControlIndex;
+  u_long nlMatrixSDTimeMark;
+  long protocolDirLocalIndex;
+  char nlMatrixSDSourceAddress[16];
+  size_t nlMatrixSDSourceAddress_len;
+  char nlMatrixSDDestAddress[16];
+  size_t nlMatrixSDDestAddress_len;
 
-	oid IndexOid[34+3];
-    /* Column values */
-    u_long nlMatrixSDPkts;
-    u_long nlMatrixSDOctets;
-    u_long nlMatrixSDCreateTime;
+  oid IndexOid[34 + 3];
+  /* Column values */
+  u_long nlMatrixSDPkts;
+  u_long nlMatrixSDOctets;
+  u_long nlMatrixSDCreateTime;
 
-    int   valid;
-    u_long nLastTM;
-    u_long nNewTM;
-    void   *pNlMtxSD;
+  int valid;
+  u_long nLastTM;
+  u_long nNewTM;
+  void *pNlMtxSD;
 };
 
 /* create a new row in the table */
 struct nlMatrixSDTable_entry *
-nlMatrixSDTable_createEntry(netsnmp_container *container
-                 , long  hlMatrixControlIndex
-                 , u_long  nlMatrixSDTimeMark
-                 , long  protocolDirLocalIndex
-                 , char* nlMatrixSDSourceAddress
-                 , size_t nlMatrixSDSourceAddress_len
-                 , char* nlMatrixSDDestAddress
-                 , size_t nlMatrixSDDestAddress_len
-                ) {
-    struct nlMatrixSDTable_entry *entry;
+nlMatrixSDTable_createEntry(netsnmp_container *container, long hlMatrixControlIndex, u_long nlMatrixSDTimeMark, long protocolDirLocalIndex, char *nlMatrixSDSourceAddress, size_t nlMatrixSDSourceAddress_len, char *nlMatrixSDDestAddress, size_t nlMatrixSDDestAddress_len)
+{
+  struct nlMatrixSDTable_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct nlMatrixSDTable_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct nlMatrixSDTable_entry);
+  if (!entry)
+    return NULL;
 
-    entry->hlMatrixControlIndex = hlMatrixControlIndex;
-    entry->nlMatrixSDTimeMark = nlMatrixSDTimeMark;
-    entry->protocolDirLocalIndex = protocolDirLocalIndex;
-    memcpy(entry->nlMatrixSDSourceAddress, nlMatrixSDSourceAddress, nlMatrixSDSourceAddress_len);
-    entry->nlMatrixSDSourceAddress_len = nlMatrixSDSourceAddress_len;
-    memcpy(entry->nlMatrixSDDestAddress, nlMatrixSDDestAddress, nlMatrixSDDestAddress_len);
-    entry->nlMatrixSDDestAddress_len = nlMatrixSDDestAddress_len;
-    entry->oid_index.len  = MakeNlMtxIndex(hlMatrixControlIndex,nlMatrixSDTimeMark,protocolDirLocalIndex,nlMatrixSDSourceAddress_len
-     ,nlMatrixSDSourceAddress,nlMatrixSDDestAddress,entry->IndexOid);
-    entry->oid_index.oids = entry->IndexOid;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->hlMatrixControlIndex = hlMatrixControlIndex;
+  entry->nlMatrixSDTimeMark = nlMatrixSDTimeMark;
+  entry->protocolDirLocalIndex = protocolDirLocalIndex;
+  memcpy(entry->nlMatrixSDSourceAddress, nlMatrixSDSourceAddress, nlMatrixSDSourceAddress_len);
+  entry->nlMatrixSDSourceAddress_len = nlMatrixSDSourceAddress_len;
+  memcpy(entry->nlMatrixSDDestAddress, nlMatrixSDDestAddress, nlMatrixSDDestAddress_len);
+  entry->nlMatrixSDDestAddress_len = nlMatrixSDDestAddress_len;
+  entry->oid_index.len = MakeNlMtxIndex(hlMatrixControlIndex, nlMatrixSDTimeMark, protocolDirLocalIndex, nlMatrixSDSourceAddress_len, nlMatrixSDSourceAddress, nlMatrixSDDestAddress, entry->IndexOid);
+  entry->oid_index.oids = entry->IndexOid;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-nlMatrixSDTable_removeEntry(netsnmp_container *container, 
-                 struct nlMatrixSDTable_entry *entry) {
+void nlMatrixSDTable_removeEntry(netsnmp_container *container,
+                                 struct nlMatrixSDTable_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the nlMatrixSDTable table */
-int
-nlMatrixSDTable_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
-
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct nlMatrixSDTable_entry          *table_entry;
-    int                         ret;
-
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct nlMatrixSDTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
-
-            switch (table_info->colnum) {
-            case COLUMN_NLMATRIXSDPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_GAUGE,
-                                            table_entry->nlMatrixSDPkts);
-                break;
-            case COLUMN_NLMATRIXSDOCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_GAUGE,
-                                            table_entry->nlMatrixSDOctets);
-                break;
-            case COLUMN_NLMATRIXSDCREATETIME:
-                snmp_set_var_typed_integer( request->requestvb, ASN_TIMETICKS,
-                                            table_entry->nlMatrixSDCreateTime);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
-        break;
-
-    }
-    return SNMP_ERR_NOERROR;
-}
-
-
-struct nlMatrixSDTable_entry  * FindNlMtxSDEntry(struct variable *vp,
-    	    oid     *name,
-    	    size_t  *length,
-    	    int     exact)
+int nlMatrixSDTable_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
 {
-    struct nlMatrixSDTable_entry *p;
-    netsnmp_index oid_index;
-    oid IndexOid[MAX_OID_LEN];
-    unsigned long nReqTM;
-    int i,rtest;
-    for (i = 0, rtest = 0;
-         i < (int) vp->namelen && i < (int) (*length) && !rtest; i++) {
-        if (name[i] != vp->name[i]) {
-            if (name[i] < vp->name[i])
-                rtest = -1;
-            else
-                rtest = 1;
-        }
+
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct nlMatrixSDTable_entry *table_entry;
+  int ret;
+
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct nlMatrixSDTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
+
+      switch (table_info->colnum)
+      {
+      case COLUMN_NLMATRIXSDPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_GAUGE,
+                                   table_entry->nlMatrixSDPkts);
+        break;
+      case COLUMN_NLMATRIXSDOCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_GAUGE,
+                                   table_entry->nlMatrixSDOctets);
+        break;
+      case COLUMN_NLMATRIXSDCREATETIME:
+        snmp_set_var_typed_integer(request->requestvb, ASN_TIMETICKS,
+                                   table_entry->nlMatrixSDCreateTime);
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
     }
-    if( rtest > 0 ) {
-		return(NULL);
-	}
-    if( exact ) {
-		// GETÇÃèÍçá
-		if( 5+8 != (*length - vp->namelen) ) return(NULL);
-		nReqTM = (unsigned long) name[vp->namelen+1];
-		name[vp->namelen+1] = 0;
-	    oid_index.len  = (*length - vp->namelen);
-    	oid_index.oids = &name[vp->namelen];
-		p = CONTAINER_FIND(pNlMtxSDContainer, &oid_index);
-		if( p->nLastTM < nReqTM )  return(NULL);
-		name[vp->namelen+1] = nReqTM;
-		return(p);
-	}
-	// GET NEXTÇÃèÍçá
-	if( (*length - vp->namelen) > 1 ) {
-		nReqTM = (unsigned long) name[vp->namelen+1];
-	} else {
-		nReqTM = (unsigned long) 0;
-	}
-    memset(IndexOid, 0, sizeof(IndexOid));
-	for( i =0; i < (int)(*length - vp->namelen);i++ ) {
-		if( i == 1 )     IndexOid[i] =0;
-		else IndexOid[i] = name[vp->namelen+i];
-    }
-    oid_index.len  = 5+8;
-    oid_index.oids = IndexOid;
-	p = CONTAINER_NEXT(pNlMtxSDContainer, &oid_index);
-	while( p ) {
-		if( p->nLastTM >= nReqTM) break;
-		p = CONTAINER_NEXT(pNlMtxSDContainer, &p->oid_index);
-	}
-	// ìØÇ∂ÉCÉìÉfÉbÉNÉXà»è„Ç≈ÅAî≠å©ÇµÇΩèÍçáÅB
-	if( p ) {
-		*length = p->oid_index.len +vp->namelen;
-		memcpy(name,vp->name,vp->namelen*sizeof(oid));
-		for( i =0; i < (int)p->oid_index.len;i++ ) {
-			if( i == 1 )     name[vp->namelen+i] =nReqTM;
-			else name[vp->namelen+i] = p->oid_index.oids[i];
-    	}
-		return(p);
-	}
-	//Ç≈Ç´Ç»Ç©Ç¡ÇΩèÍçáÇÕÅAÉ^ÉCÉÄÉ}Å[ÉNÇçXêVÇµÇƒç≈èâÇ©ÇÁíTÇ∑ÅB
-	nReqTM++;			
-	if( nTimeMarkMode == 3  ) {
-		p = CONTAINER_FIRST(pNlMtxSDMib);
-		while( p ) {
-			if( p->nLastTM >= nReqTM){
-				nReqTM = p->nLastTM;
-				break;
-			}
-			p = CONTAINER_NEXT(pNlMtxSDMib, &p->oid_index);
-		}
-	}
-	p = CONTAINER_FIRST(pNlMtxSDContainer);
-	while( p ) {
-		if( p->nLastTM >= nReqTM) break;
-		p = CONTAINER_NEXT(pNlMtxSDContainer, &p->oid_index);
-	}
-	if( p ) {
-		*length = p->oid_index.len +vp->namelen;
-		memcpy(name,vp->name,vp->namelen*sizeof(oid));
-		for( i =0; i < (int)p->oid_index.len;i++ ) {
-			if( i == 1 )     name[vp->namelen+i] =nReqTM;
-			else name[vp->namelen+i] = p->oid_index.oids[i];
-    	}
-		return(p);
-	}
-	//ç≈å„ÇÕÅAÉIÉuÉWÉFÉNÉgÇïœÇ¶ÇƒÅAêÊì™Çï‘Ç∑ÅB
-	p = CONTAINER_FIRST(pNlMtxSDContainer);
-	if( p ) {
-		*length = p->oid_index.len +vp->namelen;
-		memcpy(name,vp->name,vp->namelen*sizeof(oid));
-		name[vp->namelen-1]++;
-		for( i =0; i < (int)p->oid_index.len;i++ ) {
-			name[vp->namelen+i] = p->oid_index.oids[i];
-    	}
-	}
-	vp->magic++;
-	return(p);
+    break;
+  }
+  return SNMP_ERR_NOERROR;
 }
 
+struct nlMatrixSDTable_entry *FindNlMtxSDEntry(struct variable *vp,
+                                               oid *name,
+                                               size_t *length,
+                                               int exact)
+{
+  struct nlMatrixSDTable_entry *p;
+  netsnmp_index oid_index;
+  oid IndexOid[MAX_OID_LEN];
+  unsigned long nReqTM;
+  int i, rtest;
+  for (i = 0, rtest = 0;
+       i < (int)vp->namelen && i < (int)(*length) && !rtest; i++)
+  {
+    if (name[i] != vp->name[i])
+    {
+      if (name[i] < vp->name[i])
+        rtest = -1;
+      else
+        rtest = 1;
+    }
+  }
+  if (rtest > 0)
+  {
+    return (NULL);
+  }
+  if (exact)
+  {
+    // GETÔøΩÃèÍçá
+    if (5 + 8 != (*length - vp->namelen))
+      return (NULL);
+    nReqTM = (unsigned long)name[vp->namelen + 1];
+    name[vp->namelen + 1] = 0;
+    oid_index.len = (*length - vp->namelen);
+    oid_index.oids = &name[vp->namelen];
+    p = CONTAINER_FIND(pNlMtxSDContainer, &oid_index);
+    if (p->nLastTM < nReqTM)
+      return (NULL);
+    name[vp->namelen + 1] = nReqTM;
+    return (p);
+  }
+  // GET NEXTÔøΩÃèÍçá
+  if ((*length - vp->namelen) > 1)
+  {
+    nReqTM = (unsigned long)name[vp->namelen + 1];
+  }
+  else
+  {
+    nReqTM = (unsigned long)0;
+  }
+  memset(IndexOid, 0, sizeof(IndexOid));
+  for (i = 0; i < (int)(*length - vp->namelen); i++)
+  {
+    if (i == 1)
+      IndexOid[i] = 0;
+    else
+      IndexOid[i] = name[vp->namelen + i];
+  }
+  oid_index.len = 5 + 8;
+  oid_index.oids = IndexOid;
+  p = CONTAINER_NEXT(pNlMtxSDContainer, &oid_index);
+  while (p)
+  {
+    if (p->nLastTM >= nReqTM)
+      break;
+    p = CONTAINER_NEXT(pNlMtxSDContainer, &p->oid_index);
+  }
+  // ÔøΩÔøΩÔøΩÔøΩÔøΩCÔøΩÔøΩÔøΩfÔøΩbÔøΩNÔøΩXÔøΩ»èÔøΩ≈ÅAÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÍçáÔøΩB
+  if (p)
+  {
+    *length = p->oid_index.len + vp->namelen;
+    memcpy(name, vp->name, vp->namelen * sizeof(oid));
+    for (i = 0; i < (int)p->oid_index.len; i++)
+    {
+      if (i == 1)
+        name[vp->namelen + i] = nReqTM;
+      else
+        name[vp->namelen + i] = p->oid_index.oids[i];
+    }
+    return (p);
+  }
+  //ÔøΩ≈ÇÔøΩÔøΩ»ÇÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÍçáÔøΩÕÅAÔøΩ^ÔøΩCÔøΩÔøΩÔøΩ}ÔøΩ[ÔøΩNÔøΩÔøΩÔøΩXÔøΩVÔøΩÔøΩÔøΩƒç≈èÔøΩÔøΩÔøΩÔøΩÔøΩTÔøΩÔøΩÔøΩB
+  nReqTM++;
+  if (nTimeMarkMode == 3)
+  {
+    p = CONTAINER_FIRST(pNlMtxSDMib);
+    while (p)
+    {
+      if (p->nLastTM >= nReqTM)
+      {
+        nReqTM = p->nLastTM;
+        break;
+      }
+      p = CONTAINER_NEXT(pNlMtxSDMib, &p->oid_index);
+    }
+  }
+  p = CONTAINER_FIRST(pNlMtxSDContainer);
+  while (p)
+  {
+    if (p->nLastTM >= nReqTM)
+      break;
+    p = CONTAINER_NEXT(pNlMtxSDContainer, &p->oid_index);
+  }
+  if (p)
+  {
+    *length = p->oid_index.len + vp->namelen;
+    memcpy(name, vp->name, vp->namelen * sizeof(oid));
+    for (i = 0; i < (int)p->oid_index.len; i++)
+    {
+      if (i == 1)
+        name[vp->namelen + i] = nReqTM;
+      else
+        name[vp->namelen + i] = p->oid_index.oids[i];
+    }
+    return (p);
+  }
+  //ÔøΩ≈åÔøΩÕÅAÔøΩIÔøΩuÔøΩWÔøΩFÔøΩNÔøΩgÔøΩÔøΩœÇÔøΩÔøΩƒÅAÔøΩÊì™ÔøΩÔøΩ‘ÇÔøΩÔøΩB
+  p = CONTAINER_FIRST(pNlMtxSDContainer);
+  if (p)
+  {
+    *length = p->oid_index.len + vp->namelen;
+    memcpy(name, vp->name, vp->namelen * sizeof(oid));
+    name[vp->namelen - 1]++;
+    for (i = 0; i < (int)p->oid_index.len; i++)
+    {
+      name[vp->namelen + i] = p->oid_index.oids[i];
+    }
+  }
+  vp->magic++;
+  return (p);
+}
 
 /*
  * var_nlMatrixSDTable():
@@ -8045,21 +8478,23 @@ struct nlMatrixSDTable_entry  * FindNlMtxSDEntry(struct variable *vp,
  */
 unsigned char *
 var_nlMatrixSDTable(struct variable *vp,
-    	    oid     *name,
-    	    size_t  *length,
-    	    int     exact,
-    	    size_t  *var_len,
-    	    WriteMethod **write_method)
+                    oid *name,
+                    size_t *length,
+                    int exact,
+                    size_t *var_len,
+                    WriteMethod **write_method)
 {
-    struct nlMatrixSDTable_entry          *table_entry;
+  struct nlMatrixSDTable_entry *table_entry;
 
-    table_entry = FindNlMtxSDEntry(vp,name,length,exact);
-    if( table_entry == NULL ) return(NULL);
+  table_entry = FindNlMtxSDEntry(vp, name, length, exact);
+  if (table_entry == NULL)
+    return (NULL);
 
-    /* 
+  /*
    * this is where we do the value assignments for the mib results.
    */
-    switch(vp->magic) {
+  switch (vp->magic)
+  {
 #if 0		
     case NLMATRIXSDTIMEMARK:
         VAR = VALUE;	/* XXX */
@@ -8071,327 +8506,345 @@ var_nlMatrixSDTable(struct variable *vp,
         VAR = VALUE;	/* XXX */
         return (u_char*) &VAR;
 #endif
-    case NLMATRIXSDPKTS:
-        *var_len = sizeof(long);
-        return (u_char*) &table_entry->nlMatrixSDPkts;
-    case NLMATRIXSDOCTETS:
-        *var_len = sizeof(long);
-        return (u_char*) &table_entry->nlMatrixSDOctets;
-    case NLMATRIXSDCREATETIME:
-        *var_len = sizeof(long);
-        return (u_char*) &table_entry->nlMatrixSDCreateTime;
-    default:
-      ERROR_MSG("");
-    }
-    return NULL;
+  case NLMATRIXSDPKTS:
+    *var_len = sizeof(long);
+    return (u_char *)&table_entry->nlMatrixSDPkts;
+  case NLMATRIXSDOCTETS:
+    *var_len = sizeof(long);
+    return (u_char *)&table_entry->nlMatrixSDOctets;
+  case NLMATRIXSDCREATETIME:
+    *var_len = sizeof(long);
+    return (u_char *)&table_entry->nlMatrixSDCreateTime;
+  default:
+    ERROR_MSG("");
+  }
+  return NULL;
 }
 
 FindVarMethod var_nlMatrixDSTable;
-/* 
+/*
  * nlMatrixDSTable_variables_oid:
  *   this is the top level oid that we want to register under.  This
  *   is essentially a prefix, with the suffix appearing in the
  *   variable below.
  */
 
-oid nlMatrixDSTable_variables_oid[] = { 1,3,6,1,2,1,16,15,3 };
+oid nlMatrixDSTable_variables_oid[] = {1, 3, 6, 1, 2, 1, 16, 15, 3};
 
-/* 
+/*
  * variable4 nlMatrixDSTable_variables:
- *   this variable defines function callbacks and type return information 
- *   for the nlMatrixDSTable mib section 
+ *   this variable defines function callbacks and type return information
+ *   for the nlMatrixDSTable mib section
  */
 
 struct variable4 nlMatrixDSTable_variables[] = {
 /*  magic number        , variable type , ro/rw , callback fn  , L, oidsuffix */
 #if 0
-#define NLMATRIXDSTIMEMARK		1
+#define NLMATRIXDSTIMEMARK 1
 {NLMATRIXDSTIMEMARK,  ASN_TIMETICKS,  RONLY,   var_nlMatrixDSTable, 2,  { , 1, 1 }},
-#define NLMATRIXDSSOURCEADDRESS		2
+#define NLMATRIXDSSOURCEADDRESS 2
 {NLMATRIXDSSOURCEADDRESS,  ASN_OCTET_STR,  RONLY,   var_nlMatrixDSTable, 2,  { , 1, 2 }},
-#define NLMATRIXDSDESTADDRESS		3
+#define NLMATRIXDSDESTADDRESS 3
 {NLMATRIXDSDESTADDRESS,  ASN_OCTET_STR,  RONLY,   var_nlMatrixDSTable, 2,  { , 1, 3 }},
 #endif
 
-#define NLMATRIXDSPKTS		4
-{NLMATRIXDSPKTS,  ASN_GAUGE,  RONLY,   var_nlMatrixDSTable, 2,  {  1, 4 }},
-#define NLMATRIXDSOCTETS		5
-{NLMATRIXDSOCTETS,  ASN_GAUGE,  RONLY,   var_nlMatrixDSTable, 2,  {  1, 5 }},
-#define NLMATRIXDSCREATETIME		6
-{NLMATRIXDSCREATETIME,  ASN_TIMETICKS,  RONLY,   var_nlMatrixDSTable, 2,  {  1, 6 }}
-};
+#define NLMATRIXDSPKTS 4
+    {NLMATRIXDSPKTS, ASN_GAUGE, RONLY, var_nlMatrixDSTable, 2, {1, 4}},
+#define NLMATRIXDSOCTETS 5
+    {NLMATRIXDSOCTETS, ASN_GAUGE, RONLY, var_nlMatrixDSTable, 2, {1, 5}},
+#define NLMATRIXDSCREATETIME 6
+    {NLMATRIXDSCREATETIME, ASN_TIMETICKS, RONLY, var_nlMatrixDSTable, 2, {1, 6}}};
 /*    (L = length of the oidsuffix) */
 
-
-
-
 /** Initialize the nlMatrixDSTable table by defining its contents and how it's structured */
-void
-initialize_table_nlMatrixDSTable(void)
+void initialize_table_nlMatrixDSTable(void)
 {
-    static oid nlMatrixDSTable_oid[] = {1,3,6,1,2,1,16,15,3};
-    size_t nlMatrixDSTable_oid_len   = OID_LENGTH(nlMatrixDSTable_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_table_registration_info *table_info;
+  static oid nlMatrixDSTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 15, 3};
+  size_t nlMatrixDSTable_oid_len = OID_LENGTH(nlMatrixDSTable_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_table_registration_info *table_info;
 
-    pNlMtxDSContainer  = netsnmp_container_find( "table_container" );
-    pNlMtxDSMib  = netsnmp_container_find( "table_container" );
-	if( nTimeMarkMode >= 2 ) {
-	    /* register ourselves with the agent to handle our mib tree */
-    	REGISTER_MIB("nlMatrixDSTable", nlMatrixDSTable_variables, variable4,
-               nlMatrixDSTable_variables_oid);
-        return;
-	}
+  pNlMtxDSContainer = netsnmp_container_find("table_container");
+  pNlMtxDSMib = netsnmp_container_find("table_container");
+  if (nTimeMarkMode >= 2)
+  {
+    /* register ourselves with the agent to handle our mib tree */
+    REGISTER_MIB("nlMatrixDSTable", nlMatrixDSTable_variables, variable4,
+                 nlMatrixDSTable_variables_oid);
+    return;
+  }
 
-    reg = netsnmp_create_handler_registration(
-              "nlMatrixDSTable",     nlMatrixDSTable_handler,
-              nlMatrixDSTable_oid, nlMatrixDSTable_oid_len,
-              HANDLER_CAN_RONLY
-              );
+  reg = netsnmp_create_handler_registration(
+      "nlMatrixDSTable", nlMatrixDSTable_handler,
+      nlMatrixDSTable_oid, nlMatrixDSTable_oid_len,
+      HANDLER_CAN_RONLY);
 
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: hlMatrixControlIndex */
-                           ASN_TIMETICKS,  /* index: nlMatrixDSTimeMark */
-                           ASN_INTEGER,  /* index: protocolDirLocalIndex */
-                           ASN_OCTET_STR,  /* index: nlMatrixDSDestAddress */
-                           ASN_OCTET_STR,  /* index: nlMatrixDSSourceAddress */
-                           0);
-    table_info->min_column = COLUMN_NLMATRIXDSPKTS;
-    table_info->max_column = COLUMN_NLMATRIXDSCREATETIME;
-    
-    netsnmp_container_table_register( reg, table_info, nTimeMarkMode == 0 ? pNlMtxDSMib : pNlMtxDSContainer , 0 );
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER,   /* index: hlMatrixControlIndex */
+                                   ASN_TIMETICKS, /* index: nlMatrixDSTimeMark */
+                                   ASN_INTEGER,   /* index: protocolDirLocalIndex */
+                                   ASN_OCTET_STR, /* index: nlMatrixDSDestAddress */
+                                   ASN_OCTET_STR, /* index: nlMatrixDSSourceAddress */
+                                   0);
+  table_info->min_column = COLUMN_NLMATRIXDSPKTS;
+  table_info->max_column = COLUMN_NLMATRIXDSCREATETIME;
 
-    /* Initialise the contents of the table here */
+  netsnmp_container_table_register(reg, table_info, nTimeMarkMode == 0 ? pNlMtxDSMib : pNlMtxDSContainer, 0);
+
+  /* Initialise the contents of the table here */
 }
 
-    /* Typical data structure for a row entry */
-struct nlMatrixDSTable_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct nlMatrixDSTable_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long hlMatrixControlIndex;
-    u_long nlMatrixDSTimeMark;
-    long protocolDirLocalIndex;
-    char nlMatrixDSDestAddress[16];
-    size_t nlMatrixDSDestAddress_len;
-    char nlMatrixDSSourceAddress[16];
-    size_t nlMatrixDSSourceAddress_len;
+  /* Index values */
+  long hlMatrixControlIndex;
+  u_long nlMatrixDSTimeMark;
+  long protocolDirLocalIndex;
+  char nlMatrixDSDestAddress[16];
+  size_t nlMatrixDSDestAddress_len;
+  char nlMatrixDSSourceAddress[16];
+  size_t nlMatrixDSSourceAddress_len;
 
-	oid 	IndexOid[34+3];
+  oid IndexOid[34 + 3];
 
-    /* Column values */
-    u_long nlMatrixDSPkts;
-    u_long nlMatrixDSOctets;
-    u_long nlMatrixDSCreateTime;
+  /* Column values */
+  u_long nlMatrixDSPkts;
+  u_long nlMatrixDSOctets;
+  u_long nlMatrixDSCreateTime;
 
-    int   valid;
-    u_long  nLastTM;
-    u_long  nNewTM;
-    void    *pNlMtxDS;
+  int valid;
+  u_long nLastTM;
+  u_long nNewTM;
+  void *pNlMtxDS;
 };
 
 /* create a new row in the table */
 struct nlMatrixDSTable_entry *
-nlMatrixDSTable_createEntry(netsnmp_container *container
-                 , long  hlMatrixControlIndex
-                 , u_long  nlMatrixDSTimeMark
-                 , long  protocolDirLocalIndex
-                 , char* nlMatrixDSDestAddress
-                 , size_t nlMatrixDSDestAddress_len
-                 , char* nlMatrixDSSourceAddress
-                 , size_t nlMatrixDSSourceAddress_len
-                ) {
-    struct nlMatrixDSTable_entry *entry;
+nlMatrixDSTable_createEntry(netsnmp_container *container, long hlMatrixControlIndex, u_long nlMatrixDSTimeMark, long protocolDirLocalIndex, char *nlMatrixDSDestAddress, size_t nlMatrixDSDestAddress_len, char *nlMatrixDSSourceAddress, size_t nlMatrixDSSourceAddress_len)
+{
+  struct nlMatrixDSTable_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct nlMatrixDSTable_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct nlMatrixDSTable_entry);
+  if (!entry)
+    return NULL;
 
-    entry->hlMatrixControlIndex = hlMatrixControlIndex;
-    entry->nlMatrixDSTimeMark = nlMatrixDSTimeMark;
-    entry->protocolDirLocalIndex = protocolDirLocalIndex;
-    memcpy(entry->nlMatrixDSDestAddress, nlMatrixDSDestAddress, nlMatrixDSDestAddress_len);
-    entry->nlMatrixDSDestAddress_len = nlMatrixDSDestAddress_len;
-    memcpy(entry->nlMatrixDSSourceAddress, nlMatrixDSSourceAddress, nlMatrixDSSourceAddress_len);
-    entry->nlMatrixDSSourceAddress_len = nlMatrixDSSourceAddress_len;
-    entry->nlMatrixDSDestAddress_len = nlMatrixDSDestAddress_len;
-    entry->oid_index.len  = MakeNlMtxIndex(hlMatrixControlIndex,nlMatrixDSTimeMark,protocolDirLocalIndex,nlMatrixDSDestAddress_len
-     ,nlMatrixDSDestAddress,nlMatrixDSSourceAddress,entry->IndexOid);
-    entry->oid_index.oids = entry->IndexOid;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->hlMatrixControlIndex = hlMatrixControlIndex;
+  entry->nlMatrixDSTimeMark = nlMatrixDSTimeMark;
+  entry->protocolDirLocalIndex = protocolDirLocalIndex;
+  memcpy(entry->nlMatrixDSDestAddress, nlMatrixDSDestAddress, nlMatrixDSDestAddress_len);
+  entry->nlMatrixDSDestAddress_len = nlMatrixDSDestAddress_len;
+  memcpy(entry->nlMatrixDSSourceAddress, nlMatrixDSSourceAddress, nlMatrixDSSourceAddress_len);
+  entry->nlMatrixDSSourceAddress_len = nlMatrixDSSourceAddress_len;
+  entry->nlMatrixDSDestAddress_len = nlMatrixDSDestAddress_len;
+  entry->oid_index.len = MakeNlMtxIndex(hlMatrixControlIndex, nlMatrixDSTimeMark, protocolDirLocalIndex, nlMatrixDSDestAddress_len, nlMatrixDSDestAddress, nlMatrixDSSourceAddress, entry->IndexOid);
+  entry->oid_index.oids = entry->IndexOid;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-nlMatrixDSTable_removeEntry(netsnmp_container *container, 
-                 struct nlMatrixDSTable_entry *entry) {
+void nlMatrixDSTable_removeEntry(netsnmp_container *container,
+                                 struct nlMatrixDSTable_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the nlMatrixDSTable table */
-int
-nlMatrixDSTable_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
-
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct nlMatrixDSTable_entry          *table_entry;
-    int                         ret;
-
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct nlMatrixDSTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_NLMATRIXDSPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_GAUGE,
-                                            table_entry->nlMatrixDSPkts);
-                break;
-            case COLUMN_NLMATRIXDSOCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_GAUGE,
-                                            table_entry->nlMatrixDSOctets);
-                break;
-            case COLUMN_NLMATRIXDSCREATETIME:
-                snmp_set_var_typed_integer( request->requestvb, ASN_TIMETICKS,
-                                            table_entry->nlMatrixDSCreateTime);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
-        break;
-
-    }
-    return SNMP_ERR_NOERROR;
-}
-
-
-struct nlMatrixDSTable_entry  * FindNlMtxDSEntry(struct variable *vp,
-    	    oid     *name,
-    	    size_t  *length,
-    	    int     exact)
+int nlMatrixDSTable_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
 {
-    struct nlMatrixDSTable_entry *p;
-    netsnmp_index oid_index;
-    oid IndexOid[MAX_OID_LEN];
-    unsigned long nReqTM;
-    int i,rtest;
-    for (i = 0, rtest = 0;
-         i < (int) vp->namelen && i < (int) (*length) && !rtest; i++) {
-        if (name[i] != vp->name[i]) {
-            if (name[i] < vp->name[i])
-                rtest = -1;
-            else
-                rtest = 1;
-        }
+
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct nlMatrixDSTable_entry *table_entry;
+  int ret;
+
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct nlMatrixDSTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_NLMATRIXDSPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_GAUGE,
+                                   table_entry->nlMatrixDSPkts);
+        break;
+      case COLUMN_NLMATRIXDSOCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_GAUGE,
+                                   table_entry->nlMatrixDSOctets);
+        break;
+      case COLUMN_NLMATRIXDSCREATETIME:
+        snmp_set_var_typed_integer(request->requestvb, ASN_TIMETICKS,
+                                   table_entry->nlMatrixDSCreateTime);
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
     }
-    if( rtest > 0 ) {
-		return(NULL);
-	}
-    if( exact ) {
-		// GETÇÃèÍçá
-		if( 5+8 != (*length - vp->namelen) ) return(NULL);
-		nReqTM = (unsigned long) name[vp->namelen+1];
-		name[vp->namelen+1] = 0;
-	    oid_index.len  = (*length - vp->namelen);
-    	oid_index.oids = &name[vp->namelen];
-		p = CONTAINER_FIND(pNlMtxDSContainer, &oid_index);
-		if( p->nLastTM < nReqTM )  return(NULL);
-		name[vp->namelen+1] = nReqTM;
-		return(p);
-	}
-	// GET NEXTÇÃèÍçá
-	if( (*length - vp->namelen) > 1 ) {
-		nReqTM = (unsigned long) name[vp->namelen+1];
-	} else {
-		nReqTM = (unsigned long) 0;
-	}
-    memset(IndexOid, 0, sizeof(IndexOid));
-	for( i =0; i < (int)(*length - vp->namelen);i++ ) {
-		if( i == 1 )     IndexOid[i] =0;
-		else IndexOid[i] = name[vp->namelen+i];
-    }
-    oid_index.len  = 5+8;
-    oid_index.oids = IndexOid;
-	p = CONTAINER_NEXT(pNlMtxDSContainer, &oid_index);
-	while( p ) {
-		if( p->nLastTM >= nReqTM) break;
-		p = CONTAINER_NEXT(pNlMtxDSContainer, &p->oid_index);
-	}
-	// ìØÇ∂ÉCÉìÉfÉbÉNÉXà»è„Ç≈ÅAî≠å©ÇµÇΩèÍçáÅB
-	if( p ) {
-		*length = p->oid_index.len +vp->namelen;
-		memcpy(name,vp->name,vp->namelen*sizeof(oid));
-		for( i =0; i < (int)p->oid_index.len;i++ ) {
-			if( i == 1 )     name[vp->namelen+i] =nReqTM;
-			else name[vp->namelen+i] = p->oid_index.oids[i];
-    	}
-		return(p);
-	}
-	//Ç≈Ç´Ç»Ç©Ç¡ÇΩèÍçáÇÕÅAÉ^ÉCÉÄÉ}Å[ÉNÇçXêVÇµÇƒç≈èâÇ©ÇÁíTÇ∑ÅB
-	nReqTM++;			
-	if( nTimeMarkMode == 3  ) {
-		p = CONTAINER_FIRST(pNlMtxDSMib);
-		while( p ) {
-			if( p->nLastTM >= nReqTM){
-				nReqTM = p->nLastTM;
-				break;
-			}
-			p = CONTAINER_NEXT(pNlMtxDSMib, &p->oid_index);
-		}
-	}
-	p = CONTAINER_FIRST(pNlMtxDSContainer);
-	while( p ) {
-		if( p->nLastTM >= nReqTM) break;
-		p = CONTAINER_NEXT(pNlMtxDSContainer, &p->oid_index);
-	}
-	if( p ) {
-		*length = p->oid_index.len +vp->namelen;
-		memcpy(name,vp->name,vp->namelen*sizeof(oid));
-		for( i =0; i < (int)p->oid_index.len;i++ ) {
-			if( i == 1 )     name[vp->namelen+i] =nReqTM;
-			else name[vp->namelen+i] = p->oid_index.oids[i];
-    	}
-		return(p);
-	}
-	//ç≈å„ÇÕÅAÉIÉuÉWÉFÉNÉgÇïœÇ¶ÇƒÅAêÊì™Çï‘Ç∑ÅB
-	p = CONTAINER_FIRST(pNlMtxDSContainer);
-	if( p ) {
-		*length = p->oid_index.len +vp->namelen;
-		memcpy(name,vp->name,vp->namelen*sizeof(oid));
-		name[vp->namelen-1]++;
-		for( i =0; i < (int)p->oid_index.len;i++ ) {
-			name[vp->namelen+i] = p->oid_index.oids[i];
-    	}
-	}
-	vp->magic++;
-	return(p);
+    break;
+  }
+  return SNMP_ERR_NOERROR;
 }
 
+struct nlMatrixDSTable_entry *FindNlMtxDSEntry(struct variable *vp,
+                                               oid *name,
+                                               size_t *length,
+                                               int exact)
+{
+  struct nlMatrixDSTable_entry *p;
+  netsnmp_index oid_index;
+  oid IndexOid[MAX_OID_LEN];
+  unsigned long nReqTM;
+  int i, rtest;
+  for (i = 0, rtest = 0;
+       i < (int)vp->namelen && i < (int)(*length) && !rtest; i++)
+  {
+    if (name[i] != vp->name[i])
+    {
+      if (name[i] < vp->name[i])
+        rtest = -1;
+      else
+        rtest = 1;
+    }
+  }
+  if (rtest > 0)
+  {
+    return (NULL);
+  }
+  if (exact)
+  {
+    // GETÔøΩÃèÍçá
+    if (5 + 8 != (*length - vp->namelen))
+      return (NULL);
+    nReqTM = (unsigned long)name[vp->namelen + 1];
+    name[vp->namelen + 1] = 0;
+    oid_index.len = (*length - vp->namelen);
+    oid_index.oids = &name[vp->namelen];
+    p = CONTAINER_FIND(pNlMtxDSContainer, &oid_index);
+    if (p->nLastTM < nReqTM)
+      return (NULL);
+    name[vp->namelen + 1] = nReqTM;
+    return (p);
+  }
+  // GET NEXTÔøΩÃèÍçá
+  if ((*length - vp->namelen) > 1)
+  {
+    nReqTM = (unsigned long)name[vp->namelen + 1];
+  }
+  else
+  {
+    nReqTM = (unsigned long)0;
+  }
+  memset(IndexOid, 0, sizeof(IndexOid));
+  for (i = 0; i < (int)(*length - vp->namelen); i++)
+  {
+    if (i == 1)
+      IndexOid[i] = 0;
+    else
+      IndexOid[i] = name[vp->namelen + i];
+  }
+  oid_index.len = 5 + 8;
+  oid_index.oids = IndexOid;
+  p = CONTAINER_NEXT(pNlMtxDSContainer, &oid_index);
+  while (p)
+  {
+    if (p->nLastTM >= nReqTM)
+      break;
+    p = CONTAINER_NEXT(pNlMtxDSContainer, &p->oid_index);
+  }
+  // ÔøΩÔøΩÔøΩÔøΩÔøΩCÔøΩÔøΩÔøΩfÔøΩbÔøΩNÔøΩXÔøΩ»èÔøΩ≈ÅAÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÍçáÔøΩB
+  if (p)
+  {
+    *length = p->oid_index.len + vp->namelen;
+    memcpy(name, vp->name, vp->namelen * sizeof(oid));
+    for (i = 0; i < (int)p->oid_index.len; i++)
+    {
+      if (i == 1)
+        name[vp->namelen + i] = nReqTM;
+      else
+        name[vp->namelen + i] = p->oid_index.oids[i];
+    }
+    return (p);
+  }
+  //ÔøΩ≈ÇÔøΩÔøΩ»ÇÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÍçáÔøΩÕÅAÔøΩ^ÔøΩCÔøΩÔøΩÔøΩ}ÔøΩ[ÔøΩNÔøΩÔøΩÔøΩXÔøΩVÔøΩÔøΩÔøΩƒç≈èÔøΩÔøΩÔøΩÔøΩÔøΩTÔøΩÔøΩÔøΩB
+  nReqTM++;
+  if (nTimeMarkMode == 3)
+  {
+    p = CONTAINER_FIRST(pNlMtxDSMib);
+    while (p)
+    {
+      if (p->nLastTM >= nReqTM)
+      {
+        nReqTM = p->nLastTM;
+        break;
+      }
+      p = CONTAINER_NEXT(pNlMtxDSMib, &p->oid_index);
+    }
+  }
+  p = CONTAINER_FIRST(pNlMtxDSContainer);
+  while (p)
+  {
+    if (p->nLastTM >= nReqTM)
+      break;
+    p = CONTAINER_NEXT(pNlMtxDSContainer, &p->oid_index);
+  }
+  if (p)
+  {
+    *length = p->oid_index.len + vp->namelen;
+    memcpy(name, vp->name, vp->namelen * sizeof(oid));
+    for (i = 0; i < (int)p->oid_index.len; i++)
+    {
+      if (i == 1)
+        name[vp->namelen + i] = nReqTM;
+      else
+        name[vp->namelen + i] = p->oid_index.oids[i];
+    }
+    return (p);
+  }
+  //ÔøΩ≈åÔøΩÕÅAÔøΩIÔøΩuÔøΩWÔøΩFÔøΩNÔøΩgÔøΩÔøΩœÇÔøΩÔøΩƒÅAÔøΩÊì™ÔøΩÔøΩ‘ÇÔøΩÔøΩB
+  p = CONTAINER_FIRST(pNlMtxDSContainer);
+  if (p)
+  {
+    *length = p->oid_index.len + vp->namelen;
+    memcpy(name, vp->name, vp->namelen * sizeof(oid));
+    name[vp->namelen - 1]++;
+    for (i = 0; i < (int)p->oid_index.len; i++)
+    {
+      name[vp->namelen + i] = p->oid_index.oids[i];
+    }
+  }
+  vp->magic++;
+  return (p);
+}
 
 /*
  * var_nlMatrixDSTable():
@@ -8400,21 +8853,23 @@ struct nlMatrixDSTable_entry  * FindNlMtxDSEntry(struct variable *vp,
  */
 unsigned char *
 var_nlMatrixDSTable(struct variable *vp,
-    	    oid     *name,
-    	    size_t  *length,
-    	    int     exact,
-    	    size_t  *var_len,
-    	    WriteMethod **write_method)
+                    oid *name,
+                    size_t *length,
+                    int exact,
+                    size_t *var_len,
+                    WriteMethod **write_method)
 {
-    struct nlMatrixDSTable_entry          *table_entry;
+  struct nlMatrixDSTable_entry *table_entry;
 
-    table_entry = FindNlMtxDSEntry(vp,name,length,exact);
-    if( table_entry == NULL ) return(NULL);
+  table_entry = FindNlMtxDSEntry(vp, name, length, exact);
+  if (table_entry == NULL)
+    return (NULL);
 
-    /* 
+  /*
    * this is where we do the value assignments for the mib results.
    */
-    switch(vp->magic) {
+  switch (vp->magic)
+  {
 #if 0		
     case NLMATRIXDSTIMEMARK:
         VAR = VALUE;	/* XXX */
@@ -8426,347 +8881,369 @@ var_nlMatrixDSTable(struct variable *vp,
         VAR = VALUE;	/* XXX */
         return (u_char*) &VAR;
 #endif
-    case NLMATRIXDSPKTS:
-        *var_len = sizeof(long);
-        return (u_char*) &table_entry->nlMatrixDSPkts;
-    case NLMATRIXDSOCTETS:
-        *var_len = sizeof(long);
-        return (u_char*) &table_entry->nlMatrixDSOctets;
-    case NLMATRIXDSCREATETIME:
-        *var_len = sizeof(long);
-        return (u_char*) &table_entry->nlMatrixDSCreateTime;
-    default:
-      ERROR_MSG("");
-    }
-    return NULL;
+  case NLMATRIXDSPKTS:
+    *var_len = sizeof(long);
+    return (u_char *)&table_entry->nlMatrixDSPkts;
+  case NLMATRIXDSOCTETS:
+    *var_len = sizeof(long);
+    return (u_char *)&table_entry->nlMatrixDSOctets;
+  case NLMATRIXDSCREATETIME:
+    *var_len = sizeof(long);
+    return (u_char *)&table_entry->nlMatrixDSCreateTime;
+  default:
+    ERROR_MSG("");
+  }
+  return NULL;
 }
 
 FindVarMethod var_alHostTable;
 
-/* 
+/*
  * alHostTable_variables_oid:
  *   this is the top level oid that we want to register under.  This
  *   is essentially a prefix, with the suffix appearing in the
  *   variable below.
  */
 
-oid alHostTable_variables_oid[] = { 1,3,6,1,2,1,16,16,1 };
+oid alHostTable_variables_oid[] = {1, 3, 6, 1, 2, 1, 16, 16, 1};
 
-/* 
+/*
  * variable4 alHostTable_variables:
- *   this variable defines function callbacks and type return information 
- *   for the alHostTable mib section 
+ *   this variable defines function callbacks and type return information
+ *   for the alHostTable mib section
  */
 
 struct variable4 alHostTable_variables[] = {
 /*  magic number        , variable type , ro/rw , callback fn  , L, oidsuffix */
 #if 0
-#define ALHOSTTIMEMARK		1
+#define ALHOSTTIMEMARK 1
 {ALHOSTTIMEMARK,  ASN_TIMETICKS,  RONLY,   var_alHostTable, 2,  { , 1, 1 }},
 #endif
 
-#define ALHOSTINPKTS		2
-{ALHOSTINPKTS,  ASN_GAUGE,  RONLY,   var_alHostTable, 2,  {  1, 2 }},
-#define ALHOSTOUTPKTS		3
-{ALHOSTOUTPKTS,  ASN_GAUGE,  RONLY,   var_alHostTable, 2,  {  1, 3 }},
-#define ALHOSTINOCTETS		4
-{ALHOSTINOCTETS,  ASN_GAUGE,  RONLY,   var_alHostTable, 2,  { 1, 4 }},
-#define ALHOSTOUTOCTETS		5
-{ALHOSTOUTOCTETS,  ASN_GAUGE,  RONLY,   var_alHostTable, 2,  {  1, 5 }},
-#define ALHOSTCREATETIME		6
-{ALHOSTCREATETIME,  ASN_TIMETICKS,  RONLY,   var_alHostTable, 2,  {  1, 6 }}
-};
+#define ALHOSTINPKTS 2
+    {ALHOSTINPKTS, ASN_GAUGE, RONLY, var_alHostTable, 2, {1, 2}},
+#define ALHOSTOUTPKTS 3
+    {ALHOSTOUTPKTS, ASN_GAUGE, RONLY, var_alHostTable, 2, {1, 3}},
+#define ALHOSTINOCTETS 4
+    {ALHOSTINOCTETS, ASN_GAUGE, RONLY, var_alHostTable, 2, {1, 4}},
+#define ALHOSTOUTOCTETS 5
+    {ALHOSTOUTOCTETS, ASN_GAUGE, RONLY, var_alHostTable, 2, {1, 5}},
+#define ALHOSTCREATETIME 6
+    {ALHOSTCREATETIME, ASN_TIMETICKS, RONLY, var_alHostTable, 2, {1, 6}}};
 /*    (L = length of the oidsuffix) */
 
-
 /** Initialize the alHostTable table by defining its contents and how it's structured */
-void
-initialize_table_alHostTable(void)
+void initialize_table_alHostTable(void)
 {
-    static oid alHostTable_oid[] = {1,3,6,1,2,1,16,16,1};
-    size_t alHostTable_oid_len   = OID_LENGTH(alHostTable_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_table_registration_info *table_info;
+  static oid alHostTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 16, 1};
+  size_t alHostTable_oid_len = OID_LENGTH(alHostTable_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_table_registration_info *table_info;
 
-    pAlHostContainer  = netsnmp_container_find( "table_container" );
-    pAlHostMib  = netsnmp_container_find( "table_container" );
-    if( nTimeMarkMode >= 2 ) {
-	    /* register ourselves with the agent to handle our mib tree */
-    	REGISTER_MIB("alHostTable", alHostTable_variables, variable4,
-               alHostTable_variables_oid);
-        return;
-	}
+  pAlHostContainer = netsnmp_container_find("table_container");
+  pAlHostMib = netsnmp_container_find("table_container");
+  if (nTimeMarkMode >= 2)
+  {
+    /* register ourselves with the agent to handle our mib tree */
+    REGISTER_MIB("alHostTable", alHostTable_variables, variable4,
+                 alHostTable_variables_oid);
+    return;
+  }
 
-    reg = netsnmp_create_handler_registration(
-              "alHostTable",     alHostTable_handler,
-              alHostTable_oid, alHostTable_oid_len,
-              HANDLER_CAN_RONLY
-              );
+  reg = netsnmp_create_handler_registration(
+      "alHostTable", alHostTable_handler,
+      alHostTable_oid, alHostTable_oid_len,
+      HANDLER_CAN_RONLY);
 
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: hlHostControlIndex */
-                           ASN_TIMETICKS,  /* index: alHostTimeMark */
-                           ASN_INTEGER,  /* index: protocolDirLocalIndex */
-                           ASN_OCTET_STR,  /* index: nlHostAddress */
-                           ASN_INTEGER,  /* index: protocolDirLocalIndex */
-                           0);
-    table_info->min_column = COLUMN_ALHOSTINPKTS;
-    table_info->max_column = COLUMN_ALHOSTCREATETIME;
-    
-    netsnmp_container_table_register( reg, table_info, nTimeMarkMode == 0 ? pAlHostMib : pAlHostContainer , 0 );
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER,   /* index: hlHostControlIndex */
+                                   ASN_TIMETICKS, /* index: alHostTimeMark */
+                                   ASN_INTEGER,   /* index: protocolDirLocalIndex */
+                                   ASN_OCTET_STR, /* index: nlHostAddress */
+                                   ASN_INTEGER,   /* index: protocolDirLocalIndex */
+                                   0);
+  table_info->min_column = COLUMN_ALHOSTINPKTS;
+  table_info->max_column = COLUMN_ALHOSTCREATETIME;
 
-    /* Initialise the contents of the table here */
+  netsnmp_container_table_register(reg, table_info, nTimeMarkMode == 0 ? pAlHostMib : pAlHostContainer, 0);
+
+  /* Initialise the contents of the table here */
 }
 
-size_t MakeAlHostIndex(long nCI,u_long nTM,long nPDirNet,long nAddrLen,char *pHAddr,long nPDirAp,oid *pOid)
+size_t MakeAlHostIndex(long nCI, u_long nTM, long nPDirNet, long nAddrLen, char *pHAddr, long nPDirAp, oid *pOid)
 {
-	int i;
-	int j;
-	i = 0;
-	pOid[i++] = nCI;
-	pOid[i++] = nTM;
-	pOid[i++] = nPDirNet;
-	pOid[i++] = nAddrLen;
-	for( j = 0;j < nAddrLen;j++ ) {
-		pOid[i++] = (long) pHAddr[j] & 0x00ff;
-	}
-	pOid[i++] = nPDirAp;
-	return((size_t) i );
+  int i;
+  int j;
+  i = 0;
+  pOid[i++] = nCI;
+  pOid[i++] = nTM;
+  pOid[i++] = nPDirNet;
+  pOid[i++] = nAddrLen;
+  for (j = 0; j < nAddrLen; j++)
+  {
+    pOid[i++] = (long)pHAddr[j] & 0x00ff;
+  }
+  pOid[i++] = nPDirAp;
+  return ((size_t)i);
 }
-    /* Typical data structure for a row entry */
-struct alHostTable_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct alHostTable_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long hlHostControlIndex;
-    u_long alHostTimeMark;
-    long protocolDirLocalIndexNl; //Ç±ÇøÇÁÇÕÅAÉlÉbÉgÉèÅ[ÉNëwÇÃéØï ÅAéÂÇ…ÇhÇo
-    char nlHostAddress[16];
-    size_t nlHostAddress_len;
-    long protocolDirLocalIndexAl; //Ç±ÇøÇÁÇÕÅAÉ|Å[ÉgÇ‹Ç≈ä‹ÇﬂÇΩÇ`ÇoëwÇÃéØï 
+  /* Index values */
+  long hlHostControlIndex;
+  u_long alHostTimeMark;
+  long protocolDirLocalIndexNl; //ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÕÅAÔøΩlÔøΩbÔøΩgÔøΩÔøΩÔøΩ[ÔøΩNÔøΩwÔøΩÃéÔøΩÔøΩ ÅAÔøΩÔøΩ…ÇhÔøΩo
+  char nlHostAddress[16];
+  size_t nlHostAddress_len;
+  long protocolDirLocalIndexAl; //ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÕÅAÔøΩ|ÔøΩ[ÔøΩgÔøΩ‹Ç≈ä‹ÇﬂÇÔøΩÔøΩ`ÔøΩoÔøΩwÔøΩÃéÔøΩÔøΩÔøΩ
 
-	oid IndexOid[22];
+  oid IndexOid[22];
 
-    /* Column values */
-    u_long alHostInPkts;
-    u_long alHostOutPkts;
-    u_long alHostInOctets;
-    u_long alHostOutOctets;
-    u_long alHostCreateTime;
+  /* Column values */
+  u_long alHostInPkts;
+  u_long alHostOutPkts;
+  u_long alHostInOctets;
+  u_long alHostOutOctets;
+  u_long alHostCreateTime;
 
-    int   valid;
-    u_long nLastTM;
-    u_long nNewTM;
-    void  *pAlHost;
+  int valid;
+  u_long nLastTM;
+  u_long nNewTM;
+  void *pAlHost;
 };
 
 /* create a new row in the table */
 struct alHostTable_entry *
-alHostTable_createEntry(netsnmp_container *container 
-                 , long  hlHostControlIndex
-                 , u_long  alHostTimeMark
-                 , long  protocolDirLocalIndexNl
-                 , char* nlHostAddress
-                 , size_t nlHostAddress_len
-                 , long  protocolDirLocalIndexAl
-                ) {
-    struct alHostTable_entry *entry;
+alHostTable_createEntry(netsnmp_container *container, long hlHostControlIndex, u_long alHostTimeMark, long protocolDirLocalIndexNl, char *nlHostAddress, size_t nlHostAddress_len, long protocolDirLocalIndexAl)
+{
+  struct alHostTable_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct alHostTable_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct alHostTable_entry);
+  if (!entry)
+    return NULL;
 
-    entry->hlHostControlIndex = hlHostControlIndex;
-    entry->alHostTimeMark = alHostTimeMark;
-    entry->protocolDirLocalIndexNl = protocolDirLocalIndexNl;
-    memcpy(entry->nlHostAddress, nlHostAddress, nlHostAddress_len);
-    entry->nlHostAddress_len = nlHostAddress_len;
-    entry->protocolDirLocalIndexAl = protocolDirLocalIndexAl;
-    entry->oid_index.len  = MakeAlHostIndex(hlHostControlIndex,alHostTimeMark,protocolDirLocalIndexNl
-                 , nlHostAddress_len
-                 , nlHostAddress
-                 , protocolDirLocalIndexAl,entry->IndexOid);
-    entry->oid_index.oids =entry->IndexOid;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->hlHostControlIndex = hlHostControlIndex;
+  entry->alHostTimeMark = alHostTimeMark;
+  entry->protocolDirLocalIndexNl = protocolDirLocalIndexNl;
+  memcpy(entry->nlHostAddress, nlHostAddress, nlHostAddress_len);
+  entry->nlHostAddress_len = nlHostAddress_len;
+  entry->protocolDirLocalIndexAl = protocolDirLocalIndexAl;
+  entry->oid_index.len = MakeAlHostIndex(hlHostControlIndex, alHostTimeMark, protocolDirLocalIndexNl, nlHostAddress_len, nlHostAddress, protocolDirLocalIndexAl, entry->IndexOid);
+  entry->oid_index.oids = entry->IndexOid;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-alHostTable_removeEntry(netsnmp_container *container, 
-                 struct alHostTable_entry *entry) {
+void alHostTable_removeEntry(netsnmp_container *container,
+                             struct alHostTable_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the alHostTable table */
-int
-alHostTable_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
+int alHostTable_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
+{
 
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct alHostTable_entry          *table_entry;
-    int                         ret;
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct alHostTable_entry *table_entry;
+  int ret;
 
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct alHostTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-			if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct alHostTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
 
-            switch (table_info->colnum) {
-            case COLUMN_ALHOSTINPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_GAUGE,
-                                            table_entry->alHostInPkts);
-                break;
-            case COLUMN_ALHOSTOUTPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_GAUGE,
-                                            table_entry->alHostOutPkts);
-                break;
-            case COLUMN_ALHOSTINOCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_GAUGE,
-                                            table_entry->alHostInOctets);
-                break;
-            case COLUMN_ALHOSTOUTOCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_GAUGE,
-                                            table_entry->alHostOutOctets);
-                break;
-            case COLUMN_ALHOSTCREATETIME:
-                snmp_set_var_typed_integer( request->requestvb, ASN_TIMETICKS,
-                                            table_entry->alHostCreateTime);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
+      switch (table_info->colnum)
+      {
+      case COLUMN_ALHOSTINPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_GAUGE,
+                                   table_entry->alHostInPkts);
         break;
-
+      case COLUMN_ALHOSTOUTPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_GAUGE,
+                                   table_entry->alHostOutPkts);
+        break;
+      case COLUMN_ALHOSTINOCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_GAUGE,
+                                   table_entry->alHostInOctets);
+        break;
+      case COLUMN_ALHOSTOUTOCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_GAUGE,
+                                   table_entry->alHostOutOctets);
+        break;
+      case COLUMN_ALHOSTCREATETIME:
+        snmp_set_var_typed_integer(request->requestvb, ASN_TIMETICKS,
+                                   table_entry->alHostCreateTime);
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
     }
-    return SNMP_ERR_NOERROR;
+    break;
+  }
+  return SNMP_ERR_NOERROR;
 }
 
-struct alHostTable_entry  * FindAlHostEntry(struct variable *vp,
-    	    oid     *name,
-    	    size_t  *length,
-    	    int     exact)
+struct alHostTable_entry *FindAlHostEntry(struct variable *vp,
+                                          oid *name,
+                                          size_t *length,
+                                          int exact)
 {
-    struct alHostTable_entry *p;
-    netsnmp_index oid_index;
-    oid IndexOid[MAX_OID_LEN];
-    unsigned long nReqTM;
-    int i,rtest;
-    for (i = 0, rtest = 0;
-         i < (int) vp->namelen && i < (int) (*length) && !rtest; i++) {
-        if (name[i] != vp->name[i]) {
-            if (name[i] < vp->name[i])
-                rtest = -1;
-            else
-                rtest = 1;
-        }
+  struct alHostTable_entry *p;
+  netsnmp_index oid_index;
+  oid IndexOid[MAX_OID_LEN];
+  unsigned long nReqTM;
+  int i, rtest;
+  for (i = 0, rtest = 0;
+       i < (int)vp->namelen && i < (int)(*length) && !rtest; i++)
+  {
+    if (name[i] != vp->name[i])
+    {
+      if (name[i] < vp->name[i])
+        rtest = -1;
+      else
+        rtest = 1;
     }
-    if( rtest > 0 ) {
-		return(NULL);
-	}
-    if( exact ) {
-		// GETÇÃèÍçá
-		if( 5+4 != (*length - vp->namelen) ) return(NULL);
-		nReqTM = (unsigned long) name[vp->namelen+1];
-		name[vp->namelen+1] = 0;
-	    oid_index.len  = (*length - vp->namelen);
-    	oid_index.oids = &name[vp->namelen];
-		p = CONTAINER_FIND(pAlHostContainer, &oid_index);
-		if( p->nLastTM < nReqTM )  return(NULL);
-		name[vp->namelen+1] = nReqTM;
-		return(p);
-	}
-	// GET NEXTÇÃèÍçá
-	if( (*length - vp->namelen) > 1 ) {
-		nReqTM = (unsigned long) name[vp->namelen+1];
-	} else {
-		nReqTM = (unsigned long) 0;
-	}
-    memset(IndexOid, 0, sizeof(IndexOid));
-	for( i =0; i < (int)(*length - vp->namelen);i++ ) {
-		if( i == 1 )     IndexOid[i] =0;
-		else IndexOid[i] = name[vp->namelen+i];
+  }
+  if (rtest > 0)
+  {
+    return (NULL);
+  }
+  if (exact)
+  {
+    // GETÔøΩÃèÍçá
+    if (5 + 4 != (*length - vp->namelen))
+      return (NULL);
+    nReqTM = (unsigned long)name[vp->namelen + 1];
+    name[vp->namelen + 1] = 0;
+    oid_index.len = (*length - vp->namelen);
+    oid_index.oids = &name[vp->namelen];
+    p = CONTAINER_FIND(pAlHostContainer, &oid_index);
+    if (p->nLastTM < nReqTM)
+      return (NULL);
+    name[vp->namelen + 1] = nReqTM;
+    return (p);
+  }
+  // GET NEXTÔøΩÃèÍçá
+  if ((*length - vp->namelen) > 1)
+  {
+    nReqTM = (unsigned long)name[vp->namelen + 1];
+  }
+  else
+  {
+    nReqTM = (unsigned long)0;
+  }
+  memset(IndexOid, 0, sizeof(IndexOid));
+  for (i = 0; i < (int)(*length - vp->namelen); i++)
+  {
+    if (i == 1)
+      IndexOid[i] = 0;
+    else
+      IndexOid[i] = name[vp->namelen + i];
+  }
+  oid_index.len = 5 + 4;
+  oid_index.oids = IndexOid;
+  p = CONTAINER_NEXT(pAlHostContainer, &oid_index);
+  while (p)
+  {
+    if (p->nLastTM >= nReqTM)
+      break;
+    p = CONTAINER_NEXT(pAlHostContainer, &p->oid_index);
+  }
+  // ÔøΩÔøΩÔøΩÔøΩÔøΩCÔøΩÔøΩÔøΩfÔøΩbÔøΩNÔøΩXÔøΩ»èÔøΩ≈ÅAÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÍçáÔøΩB
+  if (p)
+  {
+    *length = p->oid_index.len + vp->namelen;
+    memcpy(name, vp->name, vp->namelen * sizeof(oid));
+    for (i = 0; i < (int)p->oid_index.len; i++)
+    {
+      if (i == 1)
+        name[vp->namelen + i] = nReqTM;
+      else
+        name[vp->namelen + i] = p->oid_index.oids[i];
     }
-    oid_index.len  = 5+4;
-    oid_index.oids = IndexOid;
-	p = CONTAINER_NEXT(pAlHostContainer, &oid_index);
-	while( p ) {
-		if( p->nLastTM >= nReqTM) break;
-		p = CONTAINER_NEXT(pAlHostContainer, &p->oid_index);
-	}
-	// ìØÇ∂ÉCÉìÉfÉbÉNÉXà»è„Ç≈ÅAî≠å©ÇµÇΩèÍçáÅB
-	if( p ) {
-		*length = p->oid_index.len +vp->namelen;
-		memcpy(name,vp->name,vp->namelen*sizeof(oid));
-		for( i =0; i < (int)p->oid_index.len;i++ ) {
-			if( i == 1 )     name[vp->namelen+i] =nReqTM;
-			else name[vp->namelen+i] = p->oid_index.oids[i];
-    	}
-		return(p);
-	}
-	//Ç≈Ç´Ç»Ç©Ç¡ÇΩèÍçáÇÕÅAÉ^ÉCÉÄÉ}Å[ÉNÇçXêVÇµÇƒç≈èâÇ©ÇÁíTÇ∑ÅB
-	nReqTM++;			
-	if( nTimeMarkMode == 3  ) {
-		p = CONTAINER_FIRST(pAlHostMib);
-		while( p ) {
-			if( p->nLastTM >= nReqTM){
-				nReqTM = p->nLastTM;
-				break;
-			}
-			p = CONTAINER_NEXT(pAlHostMib, &p->oid_index);
-		}
-	}
-	p = CONTAINER_FIRST(pAlHostContainer);
-	while( p ) {
-		if( p->nLastTM >= nReqTM) break;
-		p = CONTAINER_NEXT(pAlHostContainer, &p->oid_index);
-	}
-	if( p ) {
-		*length = p->oid_index.len +vp->namelen;
-		memcpy(name,vp->name,vp->namelen*sizeof(oid));
-		for( i =0; i < (int)p->oid_index.len;i++ ) {
-			if( i == 1 )     name[vp->namelen+i] =nReqTM;
-			else name[vp->namelen+i] = p->oid_index.oids[i];
-    	}
-		return(p);
-	}
-	//ç≈å„ÇÕÅAÉIÉuÉWÉFÉNÉgÇïœÇ¶ÇƒÅAêÊì™Çï‘Ç∑ÅB
-	p = CONTAINER_FIRST(pAlHostContainer);
-	if( p ) {
-		*length = p->oid_index.len +vp->namelen;
-		memcpy(name,vp->name,vp->namelen*sizeof(oid));
-		name[vp->namelen-1]++;
-		for( i =0; i < (int)p->oid_index.len;i++ ) {
-			name[vp->namelen+i] = p->oid_index.oids[i];
-    	}
-	}
-	vp->magic++;
-	return(p);
+    return (p);
+  }
+  //ÔøΩ≈ÇÔøΩÔøΩ»ÇÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÍçáÔøΩÕÅAÔøΩ^ÔøΩCÔøΩÔøΩÔøΩ}ÔøΩ[ÔøΩNÔøΩÔøΩÔøΩXÔøΩVÔøΩÔøΩÔøΩƒç≈èÔøΩÔøΩÔøΩÔøΩÔøΩTÔøΩÔøΩÔøΩB
+  nReqTM++;
+  if (nTimeMarkMode == 3)
+  {
+    p = CONTAINER_FIRST(pAlHostMib);
+    while (p)
+    {
+      if (p->nLastTM >= nReqTM)
+      {
+        nReqTM = p->nLastTM;
+        break;
+      }
+      p = CONTAINER_NEXT(pAlHostMib, &p->oid_index);
+    }
+  }
+  p = CONTAINER_FIRST(pAlHostContainer);
+  while (p)
+  {
+    if (p->nLastTM >= nReqTM)
+      break;
+    p = CONTAINER_NEXT(pAlHostContainer, &p->oid_index);
+  }
+  if (p)
+  {
+    *length = p->oid_index.len + vp->namelen;
+    memcpy(name, vp->name, vp->namelen * sizeof(oid));
+    for (i = 0; i < (int)p->oid_index.len; i++)
+    {
+      if (i == 1)
+        name[vp->namelen + i] = nReqTM;
+      else
+        name[vp->namelen + i] = p->oid_index.oids[i];
+    }
+    return (p);
+  }
+  //ÔøΩ≈åÔøΩÕÅAÔøΩIÔøΩuÔøΩWÔøΩFÔøΩNÔøΩgÔøΩÔøΩœÇÔøΩÔøΩƒÅAÔøΩÊì™ÔøΩÔøΩ‘ÇÔøΩÔøΩB
+  p = CONTAINER_FIRST(pAlHostContainer);
+  if (p)
+  {
+    *length = p->oid_index.len + vp->namelen;
+    memcpy(name, vp->name, vp->namelen * sizeof(oid));
+    name[vp->namelen - 1]++;
+    for (i = 0; i < (int)p->oid_index.len; i++)
+    {
+      name[vp->namelen + i] = p->oid_index.oids[i];
+    }
+  }
+  vp->magic++;
+  return (p);
 }
 
 /*
@@ -8776,380 +9253,394 @@ struct alHostTable_entry  * FindAlHostEntry(struct variable *vp,
  */
 unsigned char *
 var_alHostTable(struct variable *vp,
-    	    oid     *name,
-    	    size_t  *length,
-    	    int     exact,
-    	    size_t  *var_len,
-    	    WriteMethod **write_method)
+                oid *name,
+                size_t *length,
+                int exact,
+                size_t *var_len,
+                WriteMethod **write_method)
 {
-    struct alHostTable_entry          *table_entry;
+  struct alHostTable_entry *table_entry;
 
-    table_entry = FindAlHostEntry(vp,name,length,exact);
-    if( table_entry == NULL ) return(NULL);
+  table_entry = FindAlHostEntry(vp, name, length, exact);
+  if (table_entry == NULL)
+    return (NULL);
 
-    /* 
+  /*
    * this is where we do the value assignments for the mib results.
    */
-    switch(vp->magic) {
+  switch (vp->magic)
+  {
 #if 0		
     case ALHOSTTIMEMARK:
         VAR = VALUE;	/* XXX */
         return (u_char*) &VAR;
-#endif       
-    case ALHOSTINPKTS:
-        *var_len = sizeof(long);
-        return (u_char*) &table_entry->alHostInPkts;
-    case ALHOSTOUTPKTS:
-        *var_len = sizeof(long);
-        return (u_char*) &table_entry->alHostOutPkts;
-    case ALHOSTINOCTETS:
-        *var_len = sizeof(long);
-        return (u_char*) &table_entry->alHostInOctets;
-    case ALHOSTOUTOCTETS:
-        *var_len = sizeof(long);
-        return (u_char*) &table_entry->alHostOutOctets;
-    case ALHOSTCREATETIME:
-        *var_len = sizeof(long);
-        return (u_char*) &table_entry->alHostCreateTime;
-    default:
-      ERROR_MSG("");
-    }
-    return NULL;
+#endif
+  case ALHOSTINPKTS:
+    *var_len = sizeof(long);
+    return (u_char *)&table_entry->alHostInPkts;
+  case ALHOSTOUTPKTS:
+    *var_len = sizeof(long);
+    return (u_char *)&table_entry->alHostOutPkts;
+  case ALHOSTINOCTETS:
+    *var_len = sizeof(long);
+    return (u_char *)&table_entry->alHostInOctets;
+  case ALHOSTOUTOCTETS:
+    *var_len = sizeof(long);
+    return (u_char *)&table_entry->alHostOutOctets;
+  case ALHOSTCREATETIME:
+    *var_len = sizeof(long);
+    return (u_char *)&table_entry->alHostCreateTime;
+  default:
+    ERROR_MSG("");
+  }
+  return NULL;
 }
 
 FindVarMethod var_alMatrixSDTable;
 
-/* 
+/*
  * alMatrixSDTable_variables_oid:
  *   this is the top level oid that we want to register under.  This
  *   is essentially a prefix, with the suffix appearing in the
  *   variable below.
  */
 
-oid alMatrixSDTable_variables_oid[] = { 1,3,6,1,2,1,16,17,1 };
+oid alMatrixSDTable_variables_oid[] = {1, 3, 6, 1, 2, 1, 16, 17, 1};
 
-/* 
+/*
  * variable4 alMatrixSDTable_variables:
- *   this variable defines function callbacks and type return information 
- *   for the alMatrixSDTable mib section 
+ *   this variable defines function callbacks and type return information
+ *   for the alMatrixSDTable mib section
  */
 
 struct variable4 alMatrixSDTable_variables[] = {
 /*  magic number        , variable type , ro/rw , callback fn  , L, oidsuffix */
 #if 0
-#define ALMATRIXSDTIMEMARK		1
+#define ALMATRIXSDTIMEMARK 1
 {ALMATRIXSDTIMEMARK,  ASN_TIMETICKS,  RONLY,   var_alMatrixSDTable, 2,  { , 1, 1 }},
 #endif
 
-#define ALMATRIXSDPKTS		2
-{ALMATRIXSDPKTS,  ASN_GAUGE,  RONLY,   var_alMatrixSDTable, 2,  {  1, 2 }},
-#define ALMATRIXSDOCTETS		3
-{ALMATRIXSDOCTETS,  ASN_GAUGE,  RONLY,   var_alMatrixSDTable, 2,  {  1, 3 }},
-#define ALMATRIXSDCREATETIME		4
-{ALMATRIXSDCREATETIME,  ASN_TIMETICKS,  RONLY,   var_alMatrixSDTable, 2,  {  1, 4 }}
-};
+#define ALMATRIXSDPKTS 2
+    {ALMATRIXSDPKTS, ASN_GAUGE, RONLY, var_alMatrixSDTable, 2, {1, 2}},
+#define ALMATRIXSDOCTETS 3
+    {ALMATRIXSDOCTETS, ASN_GAUGE, RONLY, var_alMatrixSDTable, 2, {1, 3}},
+#define ALMATRIXSDCREATETIME 4
+    {ALMATRIXSDCREATETIME, ASN_TIMETICKS, RONLY, var_alMatrixSDTable, 2, {1, 4}}};
 /*    (L = length of the oidsuffix) */
 
-
-
-
 /** Initialize the alMatrixSDTable table by defining its contents and how it's structured */
-void
-initialize_table_alMatrixSDTable(void)
+void initialize_table_alMatrixSDTable(void)
 {
-    static oid alMatrixSDTable_oid[] = {1,3,6,1,2,1,16,17,1};
-    size_t alMatrixSDTable_oid_len   = OID_LENGTH(alMatrixSDTable_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_table_registration_info *table_info;
+  static oid alMatrixSDTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 17, 1};
+  size_t alMatrixSDTable_oid_len = OID_LENGTH(alMatrixSDTable_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_table_registration_info *table_info;
 
-    pAlMtxSDContainer  = netsnmp_container_find( "table_container" );
-    pAlMtxSDMib  = netsnmp_container_find( "table_container" );
-    
-    if( nTimeMarkMode >= 2 ) {
-	    /* register ourselves with the agent to handle our mib tree */
-    	REGISTER_MIB("alMatrixSDTable", alMatrixSDTable_variables, variable4,
-        	       alMatrixSDTable_variables_oid);
+  pAlMtxSDContainer = netsnmp_container_find("table_container");
+  pAlMtxSDMib = netsnmp_container_find("table_container");
 
-	}
+  if (nTimeMarkMode >= 2)
+  {
+    /* register ourselves with the agent to handle our mib tree */
+    REGISTER_MIB("alMatrixSDTable", alMatrixSDTable_variables, variable4,
+                 alMatrixSDTable_variables_oid);
+  }
 
-    reg = netsnmp_create_handler_registration(
-              "alMatrixSDTable",     alMatrixSDTable_handler,
-              alMatrixSDTable_oid, alMatrixSDTable_oid_len,
-              HANDLER_CAN_RONLY
-              );
+  reg = netsnmp_create_handler_registration(
+      "alMatrixSDTable", alMatrixSDTable_handler,
+      alMatrixSDTable_oid, alMatrixSDTable_oid_len,
+      HANDLER_CAN_RONLY);
 
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: hlMatrixControlIndex */
-                           ASN_TIMETICKS,  /* index: alMatrixSDTimeMark */
-                           ASN_INTEGER,  /* index: protocolDirLocalIndex */
-                           ASN_OCTET_STR,  /* index: nlMatrixSDSourceAddress */
-                           ASN_OCTET_STR,  /* index: nlMatrixSDDestAddress */
-                           ASN_INTEGER,  /* index: protocolDirLocalIndex */
-                           0);
-    table_info->min_column = COLUMN_ALMATRIXSDPKTS;
-    table_info->max_column = COLUMN_ALMATRIXSDCREATETIME;
-    
-    netsnmp_container_table_register( reg, table_info, nTimeMarkMode == 0 ? pAlMtxSDMib : pAlMtxSDContainer, 0 );
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER,   /* index: hlMatrixControlIndex */
+                                   ASN_TIMETICKS, /* index: alMatrixSDTimeMark */
+                                   ASN_INTEGER,   /* index: protocolDirLocalIndex */
+                                   ASN_OCTET_STR, /* index: nlMatrixSDSourceAddress */
+                                   ASN_OCTET_STR, /* index: nlMatrixSDDestAddress */
+                                   ASN_INTEGER,   /* index: protocolDirLocalIndex */
+                                   0);
+  table_info->min_column = COLUMN_ALMATRIXSDPKTS;
+  table_info->max_column = COLUMN_ALMATRIXSDCREATETIME;
 
-    /* Initialise the contents of the table here */
+  netsnmp_container_table_register(reg, table_info, nTimeMarkMode == 0 ? pAlMtxSDMib : pAlMtxSDContainer, 0);
+
+  /* Initialise the contents of the table here */
 }
 
-size_t MakeAlMtxIndex(long nCI,u_long nTM,long nPDirNet,long nAddrLen,char *pNAddr1,char *pNAddr2,long nPDirAp,oid *pOid)
+size_t MakeAlMtxIndex(long nCI, u_long nTM, long nPDirNet, long nAddrLen, char *pNAddr1, char *pNAddr2, long nPDirAp, oid *pOid)
 {
-	int i;
-	int j;
-	i = 0;
-	pOid[i++] = nCI;
-	pOid[i++] = nTM;
-	pOid[i++] = nPDirNet;
-	pOid[i++] = nAddrLen;
-	for( j =0; j < nAddrLen;j++ ) {
-		pOid[i++] = (long) pNAddr1[j] & 0x00ff;
-	}
-	pOid[i++] = nAddrLen;
-	for( j =0; j < nAddrLen;j++ ) {
-		pOid[i++] = (long) pNAddr2[j] & 0x00ff;
-	}
-	pOid[i++] = nPDirAp;
-	return( (size_t) i);
+  int i;
+  int j;
+  i = 0;
+  pOid[i++] = nCI;
+  pOid[i++] = nTM;
+  pOid[i++] = nPDirNet;
+  pOid[i++] = nAddrLen;
+  for (j = 0; j < nAddrLen; j++)
+  {
+    pOid[i++] = (long)pNAddr1[j] & 0x00ff;
+  }
+  pOid[i++] = nAddrLen;
+  for (j = 0; j < nAddrLen; j++)
+  {
+    pOid[i++] = (long)pNAddr2[j] & 0x00ff;
+  }
+  pOid[i++] = nPDirAp;
+  return ((size_t)i);
 }
-    /* Typical data structure for a row entry */
-struct alMatrixSDTable_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct alMatrixSDTable_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long hlMatrixControlIndex;
-    u_long alMatrixSDTimeMark;
-    long protocolDirLocalIndexNl;
-    char nlMatrixSDSourceAddress[16];
-    size_t nlMatrixSDSourceAddress_len;
-    char nlMatrixSDDestAddress[16];
-    size_t nlMatrixSDDestAddress_len;
-    long protocolDirLocalIndexAl;
-	oid IndexOid[40];
-	
-    /* Column values */
-    u_long alMatrixSDPkts;
-    u_long alMatrixSDOctets;
-    u_long alMatrixSDCreateTime;
+  /* Index values */
+  long hlMatrixControlIndex;
+  u_long alMatrixSDTimeMark;
+  long protocolDirLocalIndexNl;
+  char nlMatrixSDSourceAddress[16];
+  size_t nlMatrixSDSourceAddress_len;
+  char nlMatrixSDDestAddress[16];
+  size_t nlMatrixSDDestAddress_len;
+  long protocolDirLocalIndexAl;
+  oid IndexOid[40];
 
-    int   valid;
-    u_long nLastTM;
-    u_long nNewTM;
-    void   *pAlMtxSD;
+  /* Column values */
+  u_long alMatrixSDPkts;
+  u_long alMatrixSDOctets;
+  u_long alMatrixSDCreateTime;
+
+  int valid;
+  u_long nLastTM;
+  u_long nNewTM;
+  void *pAlMtxSD;
 };
 
 /* create a new row in the table */
 struct alMatrixSDTable_entry *
-alMatrixSDTable_createEntry(netsnmp_container *container 
-                 , long  hlMatrixControlIndex
-                 , u_long  alMatrixSDTimeMark
-                 , long  protocolDirLocalIndexNl
-                 , char* nlMatrixSDSourceAddress
-                 , size_t nlMatrixSDSourceAddress_len
-                 , char* nlMatrixSDDestAddress
-                 , size_t nlMatrixSDDestAddress_len
-                 , long  protocolDirLocalIndexAl
-                ) {
-    struct alMatrixSDTable_entry *entry;
+alMatrixSDTable_createEntry(netsnmp_container *container, long hlMatrixControlIndex, u_long alMatrixSDTimeMark, long protocolDirLocalIndexNl, char *nlMatrixSDSourceAddress, size_t nlMatrixSDSourceAddress_len, char *nlMatrixSDDestAddress, size_t nlMatrixSDDestAddress_len, long protocolDirLocalIndexAl)
+{
+  struct alMatrixSDTable_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct alMatrixSDTable_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct alMatrixSDTable_entry);
+  if (!entry)
+    return NULL;
 
-    entry->hlMatrixControlIndex = hlMatrixControlIndex;
-    entry->alMatrixSDTimeMark = alMatrixSDTimeMark;
-    entry->protocolDirLocalIndexNl = protocolDirLocalIndexNl;
-    memcpy(entry->nlMatrixSDSourceAddress, nlMatrixSDSourceAddress, nlMatrixSDSourceAddress_len);
-    entry->nlMatrixSDSourceAddress_len = nlMatrixSDSourceAddress_len;
-    memcpy(entry->nlMatrixSDDestAddress, nlMatrixSDDestAddress, nlMatrixSDDestAddress_len);
-    entry->nlMatrixSDDestAddress_len = nlMatrixSDDestAddress_len;
-    entry->protocolDirLocalIndexAl = protocolDirLocalIndexAl;
-    entry->oid_index.len  = MakeAlMtxIndex(
-                   hlMatrixControlIndex
-                 , alMatrixSDTimeMark
-                 , protocolDirLocalIndexNl
-                 , nlMatrixSDSourceAddress_len
-                 , nlMatrixSDSourceAddress
-                 , nlMatrixSDDestAddress
-                 , protocolDirLocalIndexAl,entry->IndexOid);
-    entry->oid_index.oids = entry->IndexOid;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->hlMatrixControlIndex = hlMatrixControlIndex;
+  entry->alMatrixSDTimeMark = alMatrixSDTimeMark;
+  entry->protocolDirLocalIndexNl = protocolDirLocalIndexNl;
+  memcpy(entry->nlMatrixSDSourceAddress, nlMatrixSDSourceAddress, nlMatrixSDSourceAddress_len);
+  entry->nlMatrixSDSourceAddress_len = nlMatrixSDSourceAddress_len;
+  memcpy(entry->nlMatrixSDDestAddress, nlMatrixSDDestAddress, nlMatrixSDDestAddress_len);
+  entry->nlMatrixSDDestAddress_len = nlMatrixSDDestAddress_len;
+  entry->protocolDirLocalIndexAl = protocolDirLocalIndexAl;
+  entry->oid_index.len = MakeAlMtxIndex(
+      hlMatrixControlIndex, alMatrixSDTimeMark, protocolDirLocalIndexNl, nlMatrixSDSourceAddress_len, nlMatrixSDSourceAddress, nlMatrixSDDestAddress, protocolDirLocalIndexAl, entry->IndexOid);
+  entry->oid_index.oids = entry->IndexOid;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-alMatrixSDTable_removeEntry(netsnmp_container *container, 
-                 struct alMatrixSDTable_entry *entry) {
+void alMatrixSDTable_removeEntry(netsnmp_container *container,
+                                 struct alMatrixSDTable_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the alMatrixSDTable table */
-int
-alMatrixSDTable_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
-
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct alMatrixSDTable_entry          *table_entry;
-    int                         ret;
-
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct alMatrixSDTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-    		if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
-    
-            switch (table_info->colnum) {
-            case COLUMN_ALMATRIXSDPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_GAUGE,
-                                            table_entry->alMatrixSDPkts);
-                break;
-            case COLUMN_ALMATRIXSDOCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_GAUGE,
-                                            table_entry->alMatrixSDOctets);
-                break;
-            case COLUMN_ALMATRIXSDCREATETIME:
-                snmp_set_var_typed_integer( request->requestvb, ASN_TIMETICKS,
-                                            table_entry->alMatrixSDCreateTime);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
-        break;
-
-    }
-    return SNMP_ERR_NOERROR;
-}
-
-struct alMatrixSDTable_entry  * FindAlMtxSDEntry(struct variable *vp,
-    	    oid     *name,
-    	    size_t  *length,
-    	    int     exact)
+int alMatrixSDTable_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
 {
-    struct alMatrixSDTable_entry *p;
-    netsnmp_index oid_index;
-    oid IndexOid[MAX_OID_LEN];
-    unsigned long nReqTM;
-    int i,rtest;
-    for (i = 0, rtest = 0;
-         i < (int) vp->namelen && i < (int) (*length) && !rtest; i++) {
-        if (name[i] != vp->name[i]) {
-            if (name[i] < vp->name[i])
-                rtest = -1;
-            else
-                rtest = 1;
-        }
+
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct alMatrixSDTable_entry *table_entry;
+  int ret;
+
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct alMatrixSDTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
+
+      switch (table_info->colnum)
+      {
+      case COLUMN_ALMATRIXSDPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_GAUGE,
+                                   table_entry->alMatrixSDPkts);
+        break;
+      case COLUMN_ALMATRIXSDOCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_GAUGE,
+                                   table_entry->alMatrixSDOctets);
+        break;
+      case COLUMN_ALMATRIXSDCREATETIME:
+        snmp_set_var_typed_integer(request->requestvb, ASN_TIMETICKS,
+                                   table_entry->alMatrixSDCreateTime);
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
     }
-    if( rtest > 0 ) {
-		return(NULL);
-	}
-    if( exact ) {
-		// GETÇÃèÍçá
-		if( 6+8 != (*length - vp->namelen) ) return(NULL);
-		nReqTM = (unsigned long) name[vp->namelen+1];
-		name[vp->namelen+1] = 0;
-	    oid_index.len  = (*length - vp->namelen);
-    	oid_index.oids = &name[vp->namelen];
-		p = CONTAINER_FIND(pAlMtxSDContainer, &oid_index);
-		if( p->nLastTM < nReqTM )  return(NULL);
-		name[vp->namelen+1] = nReqTM;
-		return(p);
-	}
-	// GET NEXTÇÃèÍçá
-	if( (*length - vp->namelen) > 1 ) {
-		nReqTM = (unsigned long) name[vp->namelen+1];
-	} else {
-		nReqTM = (unsigned long) 0;
-	}
-    memset(IndexOid, 0, sizeof(IndexOid));
-	for( i =0; i < (int)(*length - vp->namelen);i++ ) {
-		if( i == 1 )     IndexOid[i] =0;
-		else IndexOid[i] = name[vp->namelen+i];
-    }
-    oid_index.len  = 6+8;
-    oid_index.oids = IndexOid;
-	p = CONTAINER_NEXT(pAlMtxSDContainer, &oid_index);
-	while( p ) {
-		if( p->nLastTM >= nReqTM) break;
-		p = CONTAINER_NEXT(pAlMtxSDContainer, &p->oid_index);
-	}
-	// ìØÇ∂ÉCÉìÉfÉbÉNÉXà»è„Ç≈ÅAî≠å©ÇµÇΩèÍçáÅB
-	if( p ) {
-		*length = p->oid_index.len +vp->namelen;
-		memcpy(name,vp->name,vp->namelen*sizeof(oid));
-		for( i =0; i < (int)p->oid_index.len;i++ ) {
-			if( i == 1 )     name[vp->namelen+i] =nReqTM;
-			else name[vp->namelen+i] = p->oid_index.oids[i];
-    	}
-		return(p);
-	}
-	//Ç≈Ç´Ç»Ç©Ç¡ÇΩèÍçáÇÕÅAÉ^ÉCÉÄÉ}Å[ÉNÇçXêVÇµÇƒç≈èâÇ©ÇÁíTÇ∑ÅB
-	nReqTM++;			
-	if( nTimeMarkMode == 3  ) {
-		p = CONTAINER_FIRST(pAlMtxSDMib);
-		while( p ) {
-			if( p->nLastTM >= nReqTM){
-				nReqTM = p->nLastTM;
-				break;
-			}
-			p = CONTAINER_NEXT(pAlMtxSDMib, &p->oid_index);
-		}
-	}
-	p = CONTAINER_FIRST(pAlMtxSDContainer);
-	while( p ) {
-		if( p->nLastTM >= nReqTM) break;
-		p = CONTAINER_NEXT(pAlMtxSDContainer, &p->oid_index);
-	}
-	if( p ) {
-		*length = p->oid_index.len +vp->namelen;
-		memcpy(name,vp->name,vp->namelen*sizeof(oid));
-		for( i =0; i < (int)p->oid_index.len;i++ ) {
-			if( i == 1 )     name[vp->namelen+i] =nReqTM;
-			else name[vp->namelen+i] = p->oid_index.oids[i];
-    	}
-		return(p);
-	}
-	//ç≈å„ÇÕÅAÉIÉuÉWÉFÉNÉgÇïœÇ¶ÇƒÅAêÊì™Çï‘Ç∑ÅB
-	p = CONTAINER_FIRST(pAlMtxSDContainer);
-	if( p ) {
-		*length = p->oid_index.len +vp->namelen;
-		memcpy(name,vp->name,vp->namelen*sizeof(oid));
-		name[vp->namelen-1]++;
-		for( i =0; i < (int)p->oid_index.len;i++ ) {
-			name[vp->namelen+i] = p->oid_index.oids[i];
-    	}
-	}
-	vp->magic++;
-	return(p);
+    break;
+  }
+  return SNMP_ERR_NOERROR;
 }
 
-
-
+struct alMatrixSDTable_entry *FindAlMtxSDEntry(struct variable *vp,
+                                               oid *name,
+                                               size_t *length,
+                                               int exact)
+{
+  struct alMatrixSDTable_entry *p;
+  netsnmp_index oid_index;
+  oid IndexOid[MAX_OID_LEN];
+  unsigned long nReqTM;
+  int i, rtest;
+  for (i = 0, rtest = 0;
+       i < (int)vp->namelen && i < (int)(*length) && !rtest; i++)
+  {
+    if (name[i] != vp->name[i])
+    {
+      if (name[i] < vp->name[i])
+        rtest = -1;
+      else
+        rtest = 1;
+    }
+  }
+  if (rtest > 0)
+  {
+    return (NULL);
+  }
+  if (exact)
+  {
+    // GETÔøΩÃèÍçá
+    if (6 + 8 != (*length - vp->namelen))
+      return (NULL);
+    nReqTM = (unsigned long)name[vp->namelen + 1];
+    name[vp->namelen + 1] = 0;
+    oid_index.len = (*length - vp->namelen);
+    oid_index.oids = &name[vp->namelen];
+    p = CONTAINER_FIND(pAlMtxSDContainer, &oid_index);
+    if (p->nLastTM < nReqTM)
+      return (NULL);
+    name[vp->namelen + 1] = nReqTM;
+    return (p);
+  }
+  // GET NEXTÔøΩÃèÍçá
+  if ((*length - vp->namelen) > 1)
+  {
+    nReqTM = (unsigned long)name[vp->namelen + 1];
+  }
+  else
+  {
+    nReqTM = (unsigned long)0;
+  }
+  memset(IndexOid, 0, sizeof(IndexOid));
+  for (i = 0; i < (int)(*length - vp->namelen); i++)
+  {
+    if (i == 1)
+      IndexOid[i] = 0;
+    else
+      IndexOid[i] = name[vp->namelen + i];
+  }
+  oid_index.len = 6 + 8;
+  oid_index.oids = IndexOid;
+  p = CONTAINER_NEXT(pAlMtxSDContainer, &oid_index);
+  while (p)
+  {
+    if (p->nLastTM >= nReqTM)
+      break;
+    p = CONTAINER_NEXT(pAlMtxSDContainer, &p->oid_index);
+  }
+  // ÔøΩÔøΩÔøΩÔøΩÔøΩCÔøΩÔøΩÔøΩfÔøΩbÔøΩNÔøΩXÔøΩ»èÔøΩ≈ÅAÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÍçáÔøΩB
+  if (p)
+  {
+    *length = p->oid_index.len + vp->namelen;
+    memcpy(name, vp->name, vp->namelen * sizeof(oid));
+    for (i = 0; i < (int)p->oid_index.len; i++)
+    {
+      if (i == 1)
+        name[vp->namelen + i] = nReqTM;
+      else
+        name[vp->namelen + i] = p->oid_index.oids[i];
+    }
+    return (p);
+  }
+  //ÔøΩ≈ÇÔøΩÔøΩ»ÇÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÍçáÔøΩÕÅAÔøΩ^ÔøΩCÔøΩÔøΩÔøΩ}ÔøΩ[ÔøΩNÔøΩÔøΩÔøΩXÔøΩVÔøΩÔøΩÔøΩƒç≈èÔøΩÔøΩÔøΩÔøΩÔøΩTÔøΩÔøΩÔøΩB
+  nReqTM++;
+  if (nTimeMarkMode == 3)
+  {
+    p = CONTAINER_FIRST(pAlMtxSDMib);
+    while (p)
+    {
+      if (p->nLastTM >= nReqTM)
+      {
+        nReqTM = p->nLastTM;
+        break;
+      }
+      p = CONTAINER_NEXT(pAlMtxSDMib, &p->oid_index);
+    }
+  }
+  p = CONTAINER_FIRST(pAlMtxSDContainer);
+  while (p)
+  {
+    if (p->nLastTM >= nReqTM)
+      break;
+    p = CONTAINER_NEXT(pAlMtxSDContainer, &p->oid_index);
+  }
+  if (p)
+  {
+    *length = p->oid_index.len + vp->namelen;
+    memcpy(name, vp->name, vp->namelen * sizeof(oid));
+    for (i = 0; i < (int)p->oid_index.len; i++)
+    {
+      if (i == 1)
+        name[vp->namelen + i] = nReqTM;
+      else
+        name[vp->namelen + i] = p->oid_index.oids[i];
+    }
+    return (p);
+  }
+  //ÔøΩ≈åÔøΩÕÅAÔøΩIÔøΩuÔøΩWÔøΩFÔøΩNÔøΩgÔøΩÔøΩœÇÔøΩÔøΩƒÅAÔøΩÊì™ÔøΩÔøΩ‘ÇÔøΩÔøΩB
+  p = CONTAINER_FIRST(pAlMtxSDContainer);
+  if (p)
+  {
+    *length = p->oid_index.len + vp->namelen;
+    memcpy(name, vp->name, vp->namelen * sizeof(oid));
+    name[vp->namelen - 1]++;
+    for (i = 0; i < (int)p->oid_index.len; i++)
+    {
+      name[vp->namelen + i] = p->oid_index.oids[i];
+    }
+  }
+  vp->magic++;
+  return (p);
+}
 
 /*
  * var_alMatrixSDTable():
@@ -9158,356 +9649,370 @@ struct alMatrixSDTable_entry  * FindAlMtxSDEntry(struct variable *vp,
  */
 unsigned char *
 var_alMatrixSDTable(struct variable *vp,
-    	    oid     *name,
-    	    size_t  *length,
-    	    int     exact,
-    	    size_t  *var_len,
-    	    WriteMethod **write_method)
+                    oid *name,
+                    size_t *length,
+                    int exact,
+                    size_t *var_len,
+                    WriteMethod **write_method)
 {
-    struct alMatrixSDTable_entry          *table_entry;
+  struct alMatrixSDTable_entry *table_entry;
 
-    table_entry = FindAlMtxSDEntry(vp,name,length,exact);
-    if( table_entry == NULL ) return(NULL);
+  table_entry = FindAlMtxSDEntry(vp, name, length, exact);
+  if (table_entry == NULL)
+    return (NULL);
 
-    /* 
+  /*
    * this is where we do the value assignments for the mib results.
    */
-    switch(vp->magic) {
+  switch (vp->magic)
+  {
 #if 0
     case ALMATRIXSDTIMEMARK:
         VAR = VALUE;	/* XXX */
         return (u_char*) &VAR;
-#endif        
-    case ALMATRIXSDPKTS:
-        *var_len = sizeof(long);
-        return (u_char*) &table_entry->alMatrixSDPkts;
-    case ALMATRIXSDOCTETS:
-        *var_len = sizeof(long);
-        return (u_char*) &table_entry->alMatrixSDOctets;
-    case ALMATRIXSDCREATETIME:
-        *var_len = sizeof(long);
-        return (u_char*) &table_entry->alMatrixSDCreateTime;
-    default:
-      ERROR_MSG("");
-    }
-    return NULL;
+#endif
+  case ALMATRIXSDPKTS:
+    *var_len = sizeof(long);
+    return (u_char *)&table_entry->alMatrixSDPkts;
+  case ALMATRIXSDOCTETS:
+    *var_len = sizeof(long);
+    return (u_char *)&table_entry->alMatrixSDOctets;
+  case ALMATRIXSDCREATETIME:
+    *var_len = sizeof(long);
+    return (u_char *)&table_entry->alMatrixSDCreateTime;
+  default:
+    ERROR_MSG("");
+  }
+  return NULL;
 }
-
 
 FindVarMethod var_alMatrixDSTable;
 
-/* 
+/*
  * alMatrixDSTable_variables_oid:
  *   this is the top level oid that we want to register under.  This
  *   is essentially a prefix, with the suffix appearing in the
  *   variable below.
  */
 
-oid alMatrixDSTable_variables_oid[] = { 1,3,6,1,2,1,16,17,2 };
+oid alMatrixDSTable_variables_oid[] = {1, 3, 6, 1, 2, 1, 16, 17, 2};
 
-/* 
+/*
  * variable4 alMatrixDSTable_variables:
- *   this variable defines function callbacks and type return information 
- *   for the alMatrixDSTable mib section 
+ *   this variable defines function callbacks and type return information
+ *   for the alMatrixDSTable mib section
  */
 
 struct variable4 alMatrixDSTable_variables[] = {
 /*  magic number        , variable type , ro/rw , callback fn  , L, oidsuffix */
 
 #if 0
-#define ALMATRIXDSTIMEMARK		1
+#define ALMATRIXDSTIMEMARK 1
 {ALMATRIXDSTIMEMARK,  ASN_TIMETICKS,  RONLY,   var_alMatrixDSTable, 2,  { , 1, 1 }},
 #endif
 
-#define ALMATRIXDSPKTS		2
-{ALMATRIXDSPKTS,  ASN_GAUGE,  RONLY,   var_alMatrixDSTable, 2,  {  1, 2 }},
-#define ALMATRIXDSOCTETS		3
-{ALMATRIXDSOCTETS,  ASN_GAUGE,  RONLY,   var_alMatrixDSTable, 2,  {  1, 3 }},
-#define ALMATRIXDSCREATETIME		4
-{ALMATRIXDSCREATETIME,  ASN_TIMETICKS,  RONLY,   var_alMatrixDSTable, 2,  {  1, 4 }}
-};
+#define ALMATRIXDSPKTS 2
+    {ALMATRIXDSPKTS, ASN_GAUGE, RONLY, var_alMatrixDSTable, 2, {1, 2}},
+#define ALMATRIXDSOCTETS 3
+    {ALMATRIXDSOCTETS, ASN_GAUGE, RONLY, var_alMatrixDSTable, 2, {1, 3}},
+#define ALMATRIXDSCREATETIME 4
+    {ALMATRIXDSCREATETIME, ASN_TIMETICKS, RONLY, var_alMatrixDSTable, 2, {1, 4}}};
 /*    (L = length of the oidsuffix) */
 
-
 /** Initialize the alMatrixDSTable table by defining its contents and how it's structured */
-void
-initialize_table_alMatrixDSTable(void)
+void initialize_table_alMatrixDSTable(void)
 {
-    static oid alMatrixDSTable_oid[] = {1,3,6,1,2,1,16,17,2};
-    size_t alMatrixDSTable_oid_len   = OID_LENGTH(alMatrixDSTable_oid);
-    netsnmp_handler_registration    *reg;
-    netsnmp_table_registration_info *table_info;
+  static oid alMatrixDSTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 17, 2};
+  size_t alMatrixDSTable_oid_len = OID_LENGTH(alMatrixDSTable_oid);
+  netsnmp_handler_registration *reg;
+  netsnmp_table_registration_info *table_info;
 
-    pAlMtxDSContainer  = netsnmp_container_find( "table_container" );
-    pAlMtxDSMib  = netsnmp_container_find( "table_container" );
+  pAlMtxDSContainer = netsnmp_container_find("table_container");
+  pAlMtxDSMib = netsnmp_container_find("table_container");
 
-	if( nTimeMarkMode >= 2 ) {
-	    /* register ourselves with the agent to handle our mib tree */
-    	REGISTER_MIB("alMatrixDSTable", alMatrixDSTable_variables, variable4,
-               alMatrixDSTable_variables_oid);
-        return;
-	}
+  if (nTimeMarkMode >= 2)
+  {
+    /* register ourselves with the agent to handle our mib tree */
+    REGISTER_MIB("alMatrixDSTable", alMatrixDSTable_variables, variable4,
+                 alMatrixDSTable_variables_oid);
+    return;
+  }
 
-    reg = netsnmp_create_handler_registration(
-              "alMatrixDSTable",     alMatrixDSTable_handler,
-              alMatrixDSTable_oid, alMatrixDSTable_oid_len,
-              HANDLER_CAN_RONLY
-              );
+  reg = netsnmp_create_handler_registration(
+      "alMatrixDSTable", alMatrixDSTable_handler,
+      alMatrixDSTable_oid, alMatrixDSTable_oid_len,
+      HANDLER_CAN_RONLY);
 
-    table_info = SNMP_MALLOC_TYPEDEF( netsnmp_table_registration_info );
-    netsnmp_table_helper_add_indexes(table_info,
-                           ASN_INTEGER,  /* index: hlMatrixControlIndex */
-                           ASN_TIMETICKS,  /* index: alMatrixDSTimeMark */
-                           ASN_INTEGER,  /* index: protocolDirLocalIndex */
-                           ASN_OCTET_STR,  /* index: nlMatrixDSDestAddress */
-                           ASN_OCTET_STR,  /* index: nlMatrixDSSourceAddress */
-                           ASN_INTEGER,  /* index: protocolDirLocalIndex */
-                           0);
-    table_info->min_column = COLUMN_ALMATRIXDSPKTS;
-    table_info->max_column = COLUMN_ALMATRIXDSCREATETIME;
-    
-    netsnmp_container_table_register( reg, table_info, nTimeMarkMode == 0 ? pAlMtxDSMib : pAlMtxDSContainer, 0 );
+  table_info = SNMP_MALLOC_TYPEDEF(netsnmp_table_registration_info);
+  netsnmp_table_helper_add_indexes(table_info,
+                                   ASN_INTEGER,   /* index: hlMatrixControlIndex */
+                                   ASN_TIMETICKS, /* index: alMatrixDSTimeMark */
+                                   ASN_INTEGER,   /* index: protocolDirLocalIndex */
+                                   ASN_OCTET_STR, /* index: nlMatrixDSDestAddress */
+                                   ASN_OCTET_STR, /* index: nlMatrixDSSourceAddress */
+                                   ASN_INTEGER,   /* index: protocolDirLocalIndex */
+                                   0);
+  table_info->min_column = COLUMN_ALMATRIXDSPKTS;
+  table_info->max_column = COLUMN_ALMATRIXDSCREATETIME;
 
-    /* Initialise the contents of the table here */
+  netsnmp_container_table_register(reg, table_info, nTimeMarkMode == 0 ? pAlMtxDSMib : pAlMtxDSContainer, 0);
+
+  /* Initialise the contents of the table here */
 }
 
-    /* Typical data structure for a row entry */
-struct alMatrixDSTable_entry {
-    netsnmp_index oid_index;
+/* Typical data structure for a row entry */
+struct alMatrixDSTable_entry
+{
+  netsnmp_index oid_index;
 
-    /* Index values */
-    long hlMatrixControlIndex;
-    u_long alMatrixDSTimeMark;
-    long protocolDirLocalIndexNl;
-    char nlMatrixDSDestAddress[16];
-    size_t nlMatrixDSDestAddress_len;
-    char nlMatrixDSSourceAddress[16];
-    size_t nlMatrixDSSourceAddress_len;
-    long protocolDirLocalIndexAl;
+  /* Index values */
+  long hlMatrixControlIndex;
+  u_long alMatrixDSTimeMark;
+  long protocolDirLocalIndexNl;
+  char nlMatrixDSDestAddress[16];
+  size_t nlMatrixDSDestAddress_len;
+  char nlMatrixDSSourceAddress[16];
+  size_t nlMatrixDSSourceAddress_len;
+  long protocolDirLocalIndexAl;
 
-	oid IndexOid[40];
-	
-    /* Column values */
-    u_long alMatrixDSPkts;
-    u_long alMatrixDSOctets;
-    u_long alMatrixDSCreateTime;
+  oid IndexOid[40];
 
-    int   valid;
-    
-    u_long  nLastTM;
-    u_long  nNewTM;
-    void    *pAlMtxDS;
+  /* Column values */
+  u_long alMatrixDSPkts;
+  u_long alMatrixDSOctets;
+  u_long alMatrixDSCreateTime;
+
+  int valid;
+
+  u_long nLastTM;
+  u_long nNewTM;
+  void *pAlMtxDS;
 };
 
 /* create a new row in the table */
 struct alMatrixDSTable_entry *
-alMatrixDSTable_createEntry(netsnmp_container *container
-                 , long  hlMatrixControlIndex
-                 , u_long  alMatrixDSTimeMark
-                 , long  protocolDirLocalIndexNl
-                 , char* nlMatrixDSDestAddress
-                 , size_t nlMatrixDSDestAddress_len
-                 , char* nlMatrixDSSourceAddress
-                 , size_t nlMatrixDSSourceAddress_len
-                 , long  protocolDirLocalIndexAl
-                ) {
-    struct alMatrixDSTable_entry *entry;
+alMatrixDSTable_createEntry(netsnmp_container *container, long hlMatrixControlIndex, u_long alMatrixDSTimeMark, long protocolDirLocalIndexNl, char *nlMatrixDSDestAddress, size_t nlMatrixDSDestAddress_len, char *nlMatrixDSSourceAddress, size_t nlMatrixDSSourceAddress_len, long protocolDirLocalIndexAl)
+{
+  struct alMatrixDSTable_entry *entry;
 
-    entry = SNMP_MALLOC_TYPEDEF(struct alMatrixDSTable_entry);
-    if (!entry)
-        return NULL;
+  entry = SNMP_MALLOC_TYPEDEF(struct alMatrixDSTable_entry);
+  if (!entry)
+    return NULL;
 
-    entry->hlMatrixControlIndex = hlMatrixControlIndex;
-    entry->alMatrixDSTimeMark = alMatrixDSTimeMark;
-    entry->protocolDirLocalIndexNl = protocolDirLocalIndexNl;
-    memcpy(entry->nlMatrixDSDestAddress, nlMatrixDSDestAddress, nlMatrixDSDestAddress_len);
-    entry->nlMatrixDSDestAddress_len = nlMatrixDSDestAddress_len;
-    memcpy(entry->nlMatrixDSSourceAddress, nlMatrixDSSourceAddress, nlMatrixDSSourceAddress_len);
-    entry->nlMatrixDSSourceAddress_len = nlMatrixDSSourceAddress_len;
-    entry->protocolDirLocalIndexAl = protocolDirLocalIndexAl;
-    entry->oid_index.len  = MakeAlMtxIndex(
-                   hlMatrixControlIndex
-                 , alMatrixDSTimeMark
-                 , protocolDirLocalIndexNl
-                 , nlMatrixDSSourceAddress_len
-                 , nlMatrixDSDestAddress
-                 , nlMatrixDSSourceAddress
-                 , protocolDirLocalIndexAl,entry->IndexOid);
-    entry->oid_index.oids = entry->IndexOid;
-    CONTAINER_INSERT( container, entry );
-    return entry;
+  entry->hlMatrixControlIndex = hlMatrixControlIndex;
+  entry->alMatrixDSTimeMark = alMatrixDSTimeMark;
+  entry->protocolDirLocalIndexNl = protocolDirLocalIndexNl;
+  memcpy(entry->nlMatrixDSDestAddress, nlMatrixDSDestAddress, nlMatrixDSDestAddress_len);
+  entry->nlMatrixDSDestAddress_len = nlMatrixDSDestAddress_len;
+  memcpy(entry->nlMatrixDSSourceAddress, nlMatrixDSSourceAddress, nlMatrixDSSourceAddress_len);
+  entry->nlMatrixDSSourceAddress_len = nlMatrixDSSourceAddress_len;
+  entry->protocolDirLocalIndexAl = protocolDirLocalIndexAl;
+  entry->oid_index.len = MakeAlMtxIndex(
+      hlMatrixControlIndex, alMatrixDSTimeMark, protocolDirLocalIndexNl, nlMatrixDSSourceAddress_len, nlMatrixDSDestAddress, nlMatrixDSSourceAddress, protocolDirLocalIndexAl, entry->IndexOid);
+  entry->oid_index.oids = entry->IndexOid;
+  CONTAINER_INSERT(container, entry);
+  return entry;
 }
 
 /* remove a row from the table */
-void
-alMatrixDSTable_removeEntry(netsnmp_container *container, 
-                 struct alMatrixDSTable_entry *entry) {
+void alMatrixDSTable_removeEntry(netsnmp_container *container,
+                                 struct alMatrixDSTable_entry *entry)
+{
 
-    if (!entry)
-        return;    /* Nothing to remove */
-    CONTAINER_REMOVE( container, entry );
-    if (entry)
-        SNMP_FREE( entry );   /* XXX - release any other internal resources */
+  if (!entry)
+    return; /* Nothing to remove */
+  CONTAINER_REMOVE(container, entry);
+  if (entry)
+    SNMP_FREE(entry); /* XXX - release any other internal resources */
 }
 
 /** handles requests for the alMatrixDSTable table */
-int
-alMatrixDSTable_handler(
-    netsnmp_mib_handler               *handler,
-    netsnmp_handler_registration      *reginfo,
-    netsnmp_agent_request_info        *reqinfo,
-    netsnmp_request_info              *requests) {
-
-    netsnmp_request_info       *request;
-    netsnmp_table_request_info *table_info;
-    netsnmp_table_data         *table_data;
-    netsnmp_container          *container;
-    struct alMatrixDSTable_entry          *table_entry;
-    int                         ret;
-
-    switch (reqinfo->mode) {
-        /*
-         * Read-support (also covers GetNext requests)
-         */
-    case MODE_GET:
-        for (request=requests; request; request=request->next) {
-            table_entry = (struct alMatrixDSTable_entry *)
-                              netsnmp_container_table_extract_context(request);
-            table_info  =     netsnmp_extract_table_info(request);
-    		if( table_entry == NULL || table_info == NULL ) {
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-                continue;
-			}
-            switch (table_info->colnum) {
-            case COLUMN_ALMATRIXDSPKTS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_GAUGE,
-                                            table_entry->alMatrixDSPkts);
-                break;
-            case COLUMN_ALMATRIXDSOCTETS:
-                snmp_set_var_typed_integer( request->requestvb, ASN_GAUGE,
-                                            table_entry->alMatrixDSOctets);
-                break;
-            case COLUMN_ALMATRIXDSCREATETIME:
-                snmp_set_var_typed_integer( request->requestvb, ASN_TIMETICKS,
-                                            table_entry->alMatrixDSCreateTime);
-                break;
-            default:
-                /* An unsupported/unreadable column (if applicable) */
-                snmp_set_var_typed_value( request->requestvb, SNMP_NOSUCHOBJECT,
-                                          NULL, 0 );
-            }
-        }
-        break;
-
-    }
-    return SNMP_ERR_NOERROR;
-}
-
-struct alMatrixDSTable_entry  * FindAlMtxDSEntry(struct variable *vp,
-    	    oid     *name,
-    	    size_t  *length,
-    	    int     exact)
+int alMatrixDSTable_handler(
+    netsnmp_mib_handler *handler,
+    netsnmp_handler_registration *reginfo,
+    netsnmp_agent_request_info *reqinfo,
+    netsnmp_request_info *requests)
 {
-    struct alMatrixDSTable_entry *p;
-    netsnmp_index oid_index;
-    oid IndexOid[MAX_OID_LEN];
-    unsigned long nReqTM;
-    int i,rtest;
-    for (i = 0, rtest = 0;
-         i < (int) vp->namelen && i < (int) (*length) && !rtest; i++) {
-        if (name[i] != vp->name[i]) {
-            if (name[i] < vp->name[i])
-                rtest = -1;
-            else
-                rtest = 1;
-        }
+
+  netsnmp_request_info *request;
+  netsnmp_table_request_info *table_info;
+  netsnmp_table_data *table_data;
+  netsnmp_container *container;
+  struct alMatrixDSTable_entry *table_entry;
+  int ret;
+
+  switch (reqinfo->mode)
+  {
+    /*
+     * Read-support (also covers GetNext requests)
+     */
+  case MODE_GET:
+    for (request = requests; request; request = request->next)
+    {
+      table_entry = (struct alMatrixDSTable_entry *)
+          netsnmp_container_table_extract_context(request);
+      table_info = netsnmp_extract_table_info(request);
+      if (table_entry == NULL || table_info == NULL)
+      {
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+        continue;
+      }
+      switch (table_info->colnum)
+      {
+      case COLUMN_ALMATRIXDSPKTS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_GAUGE,
+                                   table_entry->alMatrixDSPkts);
+        break;
+      case COLUMN_ALMATRIXDSOCTETS:
+        snmp_set_var_typed_integer(request->requestvb, ASN_GAUGE,
+                                   table_entry->alMatrixDSOctets);
+        break;
+      case COLUMN_ALMATRIXDSCREATETIME:
+        snmp_set_var_typed_integer(request->requestvb, ASN_TIMETICKS,
+                                   table_entry->alMatrixDSCreateTime);
+        break;
+      default:
+        /* An unsupported/unreadable column (if applicable) */
+        snmp_set_var_typed_value(request->requestvb, SNMP_NOSUCHOBJECT,
+                                 NULL, 0);
+      }
     }
-    if( rtest > 0 ) {
-		return(NULL);
-	}
-    if( exact ) {
-		// GETÇÃèÍçá
-		if( 6+8 != (*length - vp->namelen) ) return(NULL);
-		nReqTM = (unsigned long) name[vp->namelen+1];
-		name[vp->namelen+1] = 0;
-	    oid_index.len  = (*length - vp->namelen);
-    	oid_index.oids = &name[vp->namelen];
-		p = CONTAINER_FIND(pAlMtxDSContainer, &oid_index);
-		if( p->nLastTM < nReqTM )  return(NULL);
-		name[vp->namelen+1] = nReqTM;
-		return(p);
-	}
-	// GET NEXTÇÃèÍçá
-	if( (*length - vp->namelen) > 1 ) {
-		nReqTM = (unsigned long) name[vp->namelen+1];
-	} else {
-		nReqTM = (unsigned long) 0;
-	}
-    memset(IndexOid, 0, sizeof(IndexOid));
-	for( i =0; i < (int)(*length - vp->namelen);i++ ) {
-		if( i == 1 )     IndexOid[i] =0;
-		else IndexOid[i] = name[vp->namelen+i];
-    }
-    oid_index.len  = 6+8;
-    oid_index.oids = IndexOid;
-	p = CONTAINER_NEXT(pAlMtxDSContainer, &oid_index);
-	while( p ) {
-		if( p->nLastTM >= nReqTM) break;
-		p = CONTAINER_NEXT(pAlMtxDSContainer, &p->oid_index);
-	}
-	// ìØÇ∂ÉCÉìÉfÉbÉNÉXà»è„Ç≈ÅAî≠å©ÇµÇΩèÍçáÅB
-	if( p ) {
-		*length = p->oid_index.len +vp->namelen;
-		memcpy(name,vp->name,vp->namelen*sizeof(oid));
-		for( i =0; i < (int)p->oid_index.len;i++ ) {
-			if( i == 1 )     name[vp->namelen+i] =nReqTM;
-			else name[vp->namelen+i] = p->oid_index.oids[i];
-    	}
-		return(p);
-	}
-	//Ç≈Ç´Ç»Ç©Ç¡ÇΩèÍçáÇÕÅAÉ^ÉCÉÄÉ}Å[ÉNÇçXêVÇµÇƒç≈èâÇ©ÇÁíTÇ∑ÅB
-	nReqTM++;			
-	if( nTimeMarkMode == 3  ) {
-		p = CONTAINER_FIRST(pAlMtxDSMib);
-		while( p ) {
-			if( p->nLastTM >= nReqTM){
-				nReqTM = p->nLastTM;
-				break;
-			}
-			p = CONTAINER_NEXT(pAlMtxDSMib, &p->oid_index);
-		}
-	}
-	p = CONTAINER_FIRST(pAlMtxDSContainer);
-	while( p ) {
-		if( p->nLastTM >= nReqTM) break;
-		p = CONTAINER_NEXT(pAlMtxDSContainer, &p->oid_index);
-	}
-	if( p ) {
-		*length = p->oid_index.len +vp->namelen;
-		memcpy(name,vp->name,vp->namelen*sizeof(oid));
-		for( i =0; i < (int)p->oid_index.len;i++ ) {
-			if( i == 1 )     name[vp->namelen+i] =nReqTM;
-			else name[vp->namelen+i] = p->oid_index.oids[i];
-    	}
-		return(p);
-	}
-	//ç≈å„ÇÕÅAÉIÉuÉWÉFÉNÉgÇïœÇ¶ÇƒÅAêÊì™Çï‘Ç∑ÅB
-	p = CONTAINER_FIRST(pAlMtxDSContainer);
-	if( p ) {
-		*length = p->oid_index.len +vp->namelen;
-		memcpy(name,vp->name,vp->namelen*sizeof(oid));
-		name[vp->namelen-1]++;
-		for( i =0; i < (int)p->oid_index.len;i++ ) {
-			name[vp->namelen+i] = p->oid_index.oids[i];
-    	}
-	}
-	vp->magic++;
-	return(p);
+    break;
+  }
+  return SNMP_ERR_NOERROR;
 }
 
-
-
+struct alMatrixDSTable_entry *FindAlMtxDSEntry(struct variable *vp,
+                                               oid *name,
+                                               size_t *length,
+                                               int exact)
+{
+  struct alMatrixDSTable_entry *p;
+  netsnmp_index oid_index;
+  oid IndexOid[MAX_OID_LEN];
+  unsigned long nReqTM;
+  int i, rtest;
+  for (i = 0, rtest = 0;
+       i < (int)vp->namelen && i < (int)(*length) && !rtest; i++)
+  {
+    if (name[i] != vp->name[i])
+    {
+      if (name[i] < vp->name[i])
+        rtest = -1;
+      else
+        rtest = 1;
+    }
+  }
+  if (rtest > 0)
+  {
+    return (NULL);
+  }
+  if (exact)
+  {
+    // GETÔøΩÃèÍçá
+    if (6 + 8 != (*length - vp->namelen))
+      return (NULL);
+    nReqTM = (unsigned long)name[vp->namelen + 1];
+    name[vp->namelen + 1] = 0;
+    oid_index.len = (*length - vp->namelen);
+    oid_index.oids = &name[vp->namelen];
+    p = CONTAINER_FIND(pAlMtxDSContainer, &oid_index);
+    if (p->nLastTM < nReqTM)
+      return (NULL);
+    name[vp->namelen + 1] = nReqTM;
+    return (p);
+  }
+  // GET NEXTÔøΩÃèÍçá
+  if ((*length - vp->namelen) > 1)
+  {
+    nReqTM = (unsigned long)name[vp->namelen + 1];
+  }
+  else
+  {
+    nReqTM = (unsigned long)0;
+  }
+  memset(IndexOid, 0, sizeof(IndexOid));
+  for (i = 0; i < (int)(*length - vp->namelen); i++)
+  {
+    if (i == 1)
+      IndexOid[i] = 0;
+    else
+      IndexOid[i] = name[vp->namelen + i];
+  }
+  oid_index.len = 6 + 8;
+  oid_index.oids = IndexOid;
+  p = CONTAINER_NEXT(pAlMtxDSContainer, &oid_index);
+  while (p)
+  {
+    if (p->nLastTM >= nReqTM)
+      break;
+    p = CONTAINER_NEXT(pAlMtxDSContainer, &p->oid_index);
+  }
+  // ÔøΩÔøΩÔøΩÔøΩÔøΩCÔøΩÔøΩÔøΩfÔøΩbÔøΩNÔøΩXÔøΩ»èÔøΩ≈ÅAÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÍçáÔøΩB
+  if (p)
+  {
+    *length = p->oid_index.len + vp->namelen;
+    memcpy(name, vp->name, vp->namelen * sizeof(oid));
+    for (i = 0; i < (int)p->oid_index.len; i++)
+    {
+      if (i == 1)
+        name[vp->namelen + i] = nReqTM;
+      else
+        name[vp->namelen + i] = p->oid_index.oids[i];
+    }
+    return (p);
+  }
+  //ÔøΩ≈ÇÔøΩÔøΩ»ÇÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÍçáÔøΩÕÅAÔøΩ^ÔøΩCÔøΩÔøΩÔøΩ}ÔøΩ[ÔøΩNÔøΩÔøΩÔøΩXÔøΩVÔøΩÔøΩÔøΩƒç≈èÔøΩÔøΩÔøΩÔøΩÔøΩTÔøΩÔøΩÔøΩB
+  nReqTM++;
+  if (nTimeMarkMode == 3)
+  {
+    p = CONTAINER_FIRST(pAlMtxDSMib);
+    while (p)
+    {
+      if (p->nLastTM >= nReqTM)
+      {
+        nReqTM = p->nLastTM;
+        break;
+      }
+      p = CONTAINER_NEXT(pAlMtxDSMib, &p->oid_index);
+    }
+  }
+  p = CONTAINER_FIRST(pAlMtxDSContainer);
+  while (p)
+  {
+    if (p->nLastTM >= nReqTM)
+      break;
+    p = CONTAINER_NEXT(pAlMtxDSContainer, &p->oid_index);
+  }
+  if (p)
+  {
+    *length = p->oid_index.len + vp->namelen;
+    memcpy(name, vp->name, vp->namelen * sizeof(oid));
+    for (i = 0; i < (int)p->oid_index.len; i++)
+    {
+      if (i == 1)
+        name[vp->namelen + i] = nReqTM;
+      else
+        name[vp->namelen + i] = p->oid_index.oids[i];
+    }
+    return (p);
+  }
+  //ÔøΩ≈åÔøΩÕÅAÔøΩIÔøΩuÔøΩWÔøΩFÔøΩNÔøΩgÔøΩÔøΩœÇÔøΩÔøΩƒÅAÔøΩÊì™ÔøΩÔøΩ‘ÇÔøΩÔøΩB
+  p = CONTAINER_FIRST(pAlMtxDSContainer);
+  if (p)
+  {
+    *length = p->oid_index.len + vp->namelen;
+    memcpy(name, vp->name, vp->namelen * sizeof(oid));
+    name[vp->namelen - 1]++;
+    for (i = 0; i < (int)p->oid_index.len; i++)
+    {
+      name[vp->namelen + i] = p->oid_index.oids[i];
+    }
+  }
+  vp->magic++;
+  return (p);
+}
 
 /*
  * var_alMatrixDSTable():
@@ -9516,2048 +10021,2323 @@ struct alMatrixDSTable_entry  * FindAlMtxDSEntry(struct variable *vp,
  */
 unsigned char *
 var_alMatrixDSTable(struct variable *vp,
-    	    oid     *name,
-    	    size_t  *length,
-    	    int     exact,
-    	    size_t  *var_len,
-    	    WriteMethod **write_method)
+                    oid *name,
+                    size_t *length,
+                    int exact,
+                    size_t *var_len,
+                    WriteMethod **write_method)
 {
-    struct alMatrixDSTable_entry          *table_entry;
+  struct alMatrixDSTable_entry *table_entry;
 
-    table_entry = FindAlMtxDSEntry(vp,name,length,exact);
-    if( table_entry == NULL ) return(NULL);
+  table_entry = FindAlMtxDSEntry(vp, name, length, exact);
+  if (table_entry == NULL)
+    return (NULL);
 
-    /* 
+  /*
    * this is where we do the value assignments for the mib results.
    */
-    switch(vp->magic) {
+  switch (vp->magic)
+  {
 #if 0
     case ALMATRIXSDTIMEMARK:
         VAR = VALUE;	/* XXX */
         return (u_char*) &VAR;
-#endif        
-    case ALMATRIXDSPKTS:
-        *var_len = sizeof(long);
-        return (u_char*) &table_entry->alMatrixDSPkts;
-    case ALMATRIXDSOCTETS:
-        *var_len = sizeof(long);
-        return (u_char*) &table_entry->alMatrixDSOctets;
-    case ALMATRIXDSCREATETIME:
-        *var_len = sizeof(long);
-        return (u_char*) &table_entry->alMatrixDSCreateTime;
-    default:
-      ERROR_MSG("");
-    }
-    return NULL;
+#endif
+  case ALMATRIXDSPKTS:
+    *var_len = sizeof(long);
+    return (u_char *)&table_entry->alMatrixDSPkts;
+  case ALMATRIXDSOCTETS:
+    *var_len = sizeof(long);
+    return (u_char *)&table_entry->alMatrixDSOctets;
+  case ALMATRIXDSCREATETIME:
+    *var_len = sizeof(long);
+    return (u_char *)&table_entry->alMatrixDSCreateTime;
+  default:
+    ERROR_MSG("");
+  }
+  return NULL;
 }
-
-
-
 
 // Internal Func
 
 void InitEthStatEnt(netsnmp_container *pC)
 {
-    struct etherStatsTable_entry *p;
-	if( pC == NULL ) return;
-	p = etherStatsTable_createEntry(pC,1); // Only One Entry;
-	if( p == NULL ) return;
-	memcpy(p->etherStatsDataSource,IfDataSource_oid,sizeof(IfDataSource_oid));
-    p->etherStatsDataSource_len = IfDataSource_oid_len *sizeof(oid);
-    memset(p->old_etherStatsDataSource,0,16);
-    p->old_etherStatsDataSource_len=0;
-    p->etherStatsDropEvents=0;
-    p->etherStatsOctets=0;
-    p->etherStatsPkts=0;
-    p->etherStatsBroadcastPkts=0;
-    p->etherStatsMulticastPkts=0;
-    p->etherStatsCRCAlignErrors=0;
-    p->etherStatsUndersizePkts=0;
-    p->etherStatsOversizePkts=0;
-    p->etherStatsFragments=0;
-    p->etherStatsJabbers=0;
-    p->etherStatsCollisions=0;
-    p->etherStatsPkts64Octets=0;
-    p->etherStatsPkts65to127Octets=0;
-    p->etherStatsPkts128to255Octets=0;
-    p->etherStatsPkts256to511Octets=0;
-    p->etherStatsPkts512to1023Octets=0;
-    p->etherStatsPkts1024to1518Octets=0;
-    strcpy(p->etherStatsOwner,"Config");
-    p->etherStatsOwner_len = strlen(p->etherStatsOwner);
-    memset(p->old_etherStatsOwner,0,256);
-    p->old_etherStatsOwner_len=0;
-    p->etherStatsStatus=1;
-    p->old_etherStatsStatus=0;
-    p->valid=1;
-	pEthStatEnt = p;
-	return;
+  struct etherStatsTable_entry *p;
+  if (pC == NULL)
+    return;
+  p = etherStatsTable_createEntry(pC, 1); // Only One Entry;
+  if (p == NULL)
+    return;
+  memcpy(p->etherStatsDataSource, IfDataSource_oid, sizeof(IfDataSource_oid));
+  p->etherStatsDataSource_len = IfDataSource_oid_len * sizeof(oid);
+  memset(p->old_etherStatsDataSource, 0, 16);
+  p->old_etherStatsDataSource_len = 0;
+  p->etherStatsDropEvents = 0;
+  p->etherStatsOctets = 0;
+  p->etherStatsPkts = 0;
+  p->etherStatsBroadcastPkts = 0;
+  p->etherStatsMulticastPkts = 0;
+  p->etherStatsCRCAlignErrors = 0;
+  p->etherStatsUndersizePkts = 0;
+  p->etherStatsOversizePkts = 0;
+  p->etherStatsFragments = 0;
+  p->etherStatsJabbers = 0;
+  p->etherStatsCollisions = 0;
+  p->etherStatsPkts64Octets = 0;
+  p->etherStatsPkts65to127Octets = 0;
+  p->etherStatsPkts128to255Octets = 0;
+  p->etherStatsPkts256to511Octets = 0;
+  p->etherStatsPkts512to1023Octets = 0;
+  p->etherStatsPkts1024to1518Octets = 0;
+  strcpy(p->etherStatsOwner, "Config");
+  p->etherStatsOwner_len = strlen(p->etherStatsOwner);
+  memset(p->old_etherStatsOwner, 0, 256);
+  p->old_etherStatsOwner_len = 0;
+  p->etherStatsStatus = 1;
+  p->old_etherStatsStatus = 0;
+  p->valid = 1;
+  pEthStatEnt = p;
+  return;
 }
 
 void InitEthStat2Ent(netsnmp_container *pC)
 {
-	struct etherStats2Table_entry *p;
-	if (pC == NULL ) return;
-	p  = etherStats2Table_createEntry(pC,1);
-	if( p == NULL ) return;
-    p->etherStatsDroppedFrames =0;;
-    p->etherStatsCreateTime = netsnmp_get_agent_uptime();
-    p->valid=1;
-    pEthStat2Ent = p;
-	return;
+  struct etherStats2Table_entry *p;
+  if (pC == NULL)
+    return;
+  p = etherStats2Table_createEntry(pC, 1);
+  if (p == NULL)
+    return;
+  p->etherStatsDroppedFrames = 0;
+  ;
+  p->etherStatsCreateTime = netsnmp_get_agent_uptime();
+  p->valid = 1;
+  pEthStat2Ent = p;
+  return;
 }
 
 void InitEthStatHCEnt(netsnmp_container *pC)
 {
-    struct etherStatsHighCapacityTable_entry *p;
-	if (pC == NULL ) return;
-	p = etherStatsHighCapacityTable_createEntry(pC,1);
-	if( p == NULL ) return;
-//    p->etherStatsHighCapacityOverflowPkts=0;
-    zeroU64(&p->etherStatsHighCapacityPkts);
-//    p->etherStatsHighCapacityOverflowOctets=0;
-    zeroU64(&p->etherStatsHighCapacityOctets);
-//    p->etherStatsHighCapacityOverflowPkts64Octets=0;
-    zeroU64(&p->etherStatsHighCapacityPkts64Octets);
-//    p->etherStatsHighCapacityOverflowPkts65to127Octets=0;
-    zeroU64(&p->etherStatsHighCapacityPkts65to127Octets);
-//    p->etherStatsHighCapacityOverflowPkts128to255Octets=0;
-    zeroU64(&p->etherStatsHighCapacityPkts128to255Octets);
-//    p->etherStatsHighCapacityOverflowPkts256to511Octets=0;
-    zeroU64(&p->etherStatsHighCapacityPkts256to511Octets);
-//    p->etherStatsHighCapacityOverflowPkts512to1023Octets=0;
-    zeroU64(&p->etherStatsHighCapacityPkts512to1023Octets);
-//    p->etherStatsHighCapacityOverflowPkts1024to1518Octets=0;
-    zeroU64(&p->etherStatsHighCapacityPkts1024to1518Octets);
-    p->valid=1;
-    pEthStatHCEnt = p;
+  struct etherStatsHighCapacityTable_entry *p;
+  if (pC == NULL)
     return;
-
+  p = etherStatsHighCapacityTable_createEntry(pC, 1);
+  if (p == NULL)
+    return;
+  //    p->etherStatsHighCapacityOverflowPkts=0;
+  zeroU64(&p->etherStatsHighCapacityPkts);
+  //    p->etherStatsHighCapacityOverflowOctets=0;
+  zeroU64(&p->etherStatsHighCapacityOctets);
+  //    p->etherStatsHighCapacityOverflowPkts64Octets=0;
+  zeroU64(&p->etherStatsHighCapacityPkts64Octets);
+  //    p->etherStatsHighCapacityOverflowPkts65to127Octets=0;
+  zeroU64(&p->etherStatsHighCapacityPkts65to127Octets);
+  //    p->etherStatsHighCapacityOverflowPkts128to255Octets=0;
+  zeroU64(&p->etherStatsHighCapacityPkts128to255Octets);
+  //    p->etherStatsHighCapacityOverflowPkts256to511Octets=0;
+  zeroU64(&p->etherStatsHighCapacityPkts256to511Octets);
+  //    p->etherStatsHighCapacityOverflowPkts512to1023Octets=0;
+  zeroU64(&p->etherStatsHighCapacityPkts512to1023Octets);
+  //    p->etherStatsHighCapacityOverflowPkts1024to1518Octets=0;
+  zeroU64(&p->etherStatsHighCapacityPkts1024to1518Octets);
+  p->valid = 1;
+  pEthStatHCEnt = p;
+  return;
 }
 
 void InitEthHistContEnt(netsnmp_container *pC)
 {
-    struct historyControlTable_entry *p;
-	if( pC == NULL ) return;
-	p = historyControlTable_createEntry(pC,1); // Only One Entry;
-	if( p == NULL ) return;
-    memcpy(p->historyControlDataSource,IfDataSource_oid,sizeof(IfDataSource_oid));
-    p->historyControlDataSource_len =IfDataSource_oid_len *sizeof(oid);
-    memset(p->old_historyControlDataSource,0,16*4);
-    p->old_historyControlDataSource_len=0;
-    p->historyControlBucketsRequested= 24*2;
-    p->old_historyControlBucketsRequested=0;
-    p->historyControlBucketsGranted=24*2;
-    p->historyControlInterval=1800;
-    p->old_historyControlInterval=0;
-    strcpy(p->historyControlOwner,"Config");
-    p->historyControlOwner_len= strlen(p->historyControlOwner);
-    memset(p->old_historyControlOwner,0,sizeof(p->old_historyControlOwner));
-    p->old_historyControlOwner_len=0;
-    p->historyControlStatus=1;
-    p->old_historyControlStatus=0;
-    p->valid=1;
-	pEthHistCntEnt = p;
-	return;
+  struct historyControlTable_entry *p;
+  if (pC == NULL)
+    return;
+  p = historyControlTable_createEntry(pC, 1); // Only One Entry;
+  if (p == NULL)
+    return;
+  memcpy(p->historyControlDataSource, IfDataSource_oid, sizeof(IfDataSource_oid));
+  p->historyControlDataSource_len = IfDataSource_oid_len * sizeof(oid);
+  memset(p->old_historyControlDataSource, 0, 16 * 4);
+  p->old_historyControlDataSource_len = 0;
+  p->historyControlBucketsRequested = 24 * 2;
+  p->old_historyControlBucketsRequested = 0;
+  p->historyControlBucketsGranted = 24 * 2;
+  p->historyControlInterval = 1800;
+  p->old_historyControlInterval = 0;
+  strcpy(p->historyControlOwner, "Config");
+  p->historyControlOwner_len = strlen(p->historyControlOwner);
+  memset(p->old_historyControlOwner, 0, sizeof(p->old_historyControlOwner));
+  p->old_historyControlOwner_len = 0;
+  p->historyControlStatus = 1;
+  p->old_historyControlStatus = 0;
+  p->valid = 1;
+  pEthHistCntEnt = p;
+  return;
 }
 
 void CheckEthHistTable(void)
 {
-    struct etherHistoryTable_entry *pC,*pN;
-    struct etherHistoryHighCapacityTable_entry *pCHC,*pNHC;
+  struct etherHistoryTable_entry *pC, *pN;
+  struct etherHistoryHighCapacityTable_entry *pCHC, *pNHC;
 
-	pC = &CurrentEthHistEnt;
-	pCHC = &CurrentEthHistHCEnt;
-	if( nLastEthHist != 0 && (nLastEthHist+ pEthHistCntEnt->historyControlInterval) > time(0) ) return;
-	if( nLastEthHist != 0 ) {
-		pN = etherHistoryTable_createEntry(pEthHistContainer,1,pC->etherHistorySampleIndex);
-		if( pN == NULL ) return;
+  pC = &CurrentEthHistEnt;
+  pCHC = &CurrentEthHistHCEnt;
+  if (nLastEthHist != 0 && (nLastEthHist + pEthHistCntEnt->historyControlInterval) > time(0))
+    return;
+  if (nLastEthHist != 0)
+  {
+    pN = etherHistoryTable_createEntry(pEthHistContainer, 1, pC->etherHistorySampleIndex);
+    if (pN == NULL)
+      return;
     /* Column values */
-  		pN->etherHistoryIntervalStart= pC->etherHistoryIntervalStart;
-    	pN->etherHistoryDropEvents=pC->etherHistoryDropEvents;
-    	pN->etherHistoryOctets=pC->etherHistoryOctets;
-    	pN->etherHistoryPkts=pC->etherHistoryPkts;
-    	pN->etherHistoryBroadcastPkts=pC->etherHistoryBroadcastPkts;
-    	pN->etherHistoryMulticastPkts=pC->etherHistoryMulticastPkts;
-    	pN->etherHistoryCRCAlignErrors=pC->etherHistoryCRCAlignErrors;
-    	pN->etherHistoryUndersizePkts=pC->etherHistoryUndersizePkts;
-    	pN->etherHistoryOversizePkts=pC->etherHistoryOversizePkts;
-    	pN->etherHistoryFragments=pC->etherHistoryFragments;
-    	pN->etherHistoryJabbers=pC->etherHistoryJabbers;
-    	pN->etherHistoryCollisions=pC->etherHistoryCollisions;
-    	pN->etherHistoryUtilization=pC->etherHistoryUtilization;
-		pN->valid = 1;
-		pNHC = etherHistoryHighCapacityTable_createEntry(pEthHistHCContainer,1,pCHC->etherHistorySampleIndex);
-		if( pNHC ) {
-//		    pNHC->etherHistoryHighCapacityOverflowPkts=pCHC->etherHistoryHighCapacityOverflowPkts;
-    		pNHC->etherHistoryHighCapacityPkts=pCHC->etherHistoryHighCapacityPkts;
-//   	 		pNHC->etherHistoryHighCapacityOverflowOctets=pCHC->etherHistoryHighCapacityOverflowOctets;
-    		pNHC->etherHistoryHighCapacityOctets=pCHC->etherHistoryHighCapacityOctets;
-    		pNHC->valid = 1;
-		}
-	} else {
-	    pC->etherHistoryIndex=1;
-    	pC->etherHistorySampleIndex=0;
-    	pC->valid = 1;
-	    pCHC->etherHistoryIndex=1;
-    	pCHC->etherHistorySampleIndex=0;
-    	pCHC->valid = 1;
-    	
+    pN->etherHistoryIntervalStart = pC->etherHistoryIntervalStart;
+    pN->etherHistoryDropEvents = pC->etherHistoryDropEvents;
+    pN->etherHistoryOctets = pC->etherHistoryOctets;
+    pN->etherHistoryPkts = pC->etherHistoryPkts;
+    pN->etherHistoryBroadcastPkts = pC->etherHistoryBroadcastPkts;
+    pN->etherHistoryMulticastPkts = pC->etherHistoryMulticastPkts;
+    pN->etherHistoryCRCAlignErrors = pC->etherHistoryCRCAlignErrors;
+    pN->etherHistoryUndersizePkts = pC->etherHistoryUndersizePkts;
+    pN->etherHistoryOversizePkts = pC->etherHistoryOversizePkts;
+    pN->etherHistoryFragments = pC->etherHistoryFragments;
+    pN->etherHistoryJabbers = pC->etherHistoryJabbers;
+    pN->etherHistoryCollisions = pC->etherHistoryCollisions;
+    pN->etherHistoryUtilization = pC->etherHistoryUtilization;
+    pN->valid = 1;
+    pNHC = etherHistoryHighCapacityTable_createEntry(pEthHistHCContainer, 1, pCHC->etherHistorySampleIndex);
+    if (pNHC)
+    {
+      //		    pNHC->etherHistoryHighCapacityOverflowPkts=pCHC->etherHistoryHighCapacityOverflowPkts;
+      pNHC->etherHistoryHighCapacityPkts = pCHC->etherHistoryHighCapacityPkts;
+      //   	 		pNHC->etherHistoryHighCapacityOverflowOctets=pCHC->etherHistoryHighCapacityOverflowOctets;
+      pNHC->etherHistoryHighCapacityOctets = pCHC->etherHistoryHighCapacityOctets;
+      pNHC->valid = 1;
     }
-	nLastEthHist = time(0);
-   	pC->etherHistorySampleIndex++;
-    /* Column values */
-    pC->etherHistoryIntervalStart=netsnmp_get_agent_uptime();
-    pC->etherHistoryDropEvents=0;;
-    pC->etherHistoryOctets=0;
-    pC->etherHistoryPkts=0;
-    pC->etherHistoryBroadcastPkts=0;
-    pC->etherHistoryMulticastPkts=0;
-    pC->etherHistoryCRCAlignErrors=0;
-    pC->etherHistoryUndersizePkts=0;
-    pC->etherHistoryOversizePkts=0;
-    pC->etherHistoryFragments=0;
-    pC->etherHistoryJabbers=0;
-    pC->etherHistoryCollisions=0;
-    pC->etherHistoryUtilization=0;
-    
-   	pCHC->etherHistorySampleIndex++;
-//    pCHC->etherHistoryHighCapacityOverflowPkts=0;
-    zeroU64(&pCHC->etherHistoryHighCapacityPkts);
-//    pCHC->etherHistoryHighCapacityOverflowOctets=0;
-    zeroU64(&pCHC->etherHistoryHighCapacityOctets);
-	return;
+  }
+  else
+  {
+    pC->etherHistoryIndex = 1;
+    pC->etherHistorySampleIndex = 0;
+    pC->valid = 1;
+    pCHC->etherHistoryIndex = 1;
+    pCHC->etherHistorySampleIndex = 0;
+    pCHC->valid = 1;
+  }
+  nLastEthHist = time(0);
+  pC->etherHistorySampleIndex++;
+  /* Column values */
+  pC->etherHistoryIntervalStart = netsnmp_get_agent_uptime();
+  pC->etherHistoryDropEvents = 0;
+  ;
+  pC->etherHistoryOctets = 0;
+  pC->etherHistoryPkts = 0;
+  pC->etherHistoryBroadcastPkts = 0;
+  pC->etherHistoryMulticastPkts = 0;
+  pC->etherHistoryCRCAlignErrors = 0;
+  pC->etherHistoryUndersizePkts = 0;
+  pC->etherHistoryOversizePkts = 0;
+  pC->etherHistoryFragments = 0;
+  pC->etherHistoryJabbers = 0;
+  pC->etherHistoryCollisions = 0;
+  pC->etherHistoryUtilization = 0;
+
+  pCHC->etherHistorySampleIndex++;
+  //    pCHC->etherHistoryHighCapacityOverflowPkts=0;
+  zeroU64(&pCHC->etherHistoryHighCapacityPkts);
+  //    pCHC->etherHistoryHighCapacityOverflowOctets=0;
+  zeroU64(&pCHC->etherHistoryHighCapacityOctets);
+  return;
 }
 
 void InitEthHistCont2Ent(netsnmp_container *pC)
 {
-    struct historyControl2Table_entry *p;
-	if( pC == NULL ) return;
-	p = historyControl2Table_createEntry(pC,1); // Only One Entry;
-	if( p == NULL ) return;
-    p->historyControlDroppedFrames =0;
-    p->valid=1;
-	pEthHistCnt2Ent = p;
-	return;
+  struct historyControl2Table_entry *p;
+  if (pC == NULL)
+    return;
+  p = historyControl2Table_createEntry(pC, 1); // Only One Entry;
+  if (p == NULL)
+    return;
+  p->historyControlDroppedFrames = 0;
+  p->valid = 1;
+  pEthHistCnt2Ent = p;
+  return;
 }
 
 void InitHostContEnt(netsnmp_container *pC)
 {
-	struct hostControlTable_entry *p;
-	if( pC == NULL ) return;
-	p = hostControlTable_createEntry(pC,1); // Only One Entry;
-	if( p == NULL ) return;
-    memcpy(p->hostControlDataSource,IfDataSource_oid,sizeof(IfDataSource_oid));
-    p->hostControlDataSource_len =IfDataSource_oid_len *sizeof(oid);
-    memset(p->old_hostControlDataSource,0,sizeof(p->old_hostControlDataSource));
-    p->old_hostControlDataSource_len=0;
-    p->hostControlTableSize=0;
-    p->hostControlLastDeleteTime=0;
-    strcpy(p->hostControlOwner,"Config");
-    p->hostControlOwner_len= strlen(p->hostControlOwner);
-    memset(p->old_hostControlOwner,0,sizeof(p->old_hostControlOwner));
-    p->old_hostControlOwner_len=0;
-    p->hostControlStatus=1;
-    p->old_hostControlStatus=0;
-    p->valid=1;
-	pHostCntEnt = p;
-	return;
+  struct hostControlTable_entry *p;
+  if (pC == NULL)
+    return;
+  p = hostControlTable_createEntry(pC, 1); // Only One Entry;
+  if (p == NULL)
+    return;
+  memcpy(p->hostControlDataSource, IfDataSource_oid, sizeof(IfDataSource_oid));
+  p->hostControlDataSource_len = IfDataSource_oid_len * sizeof(oid);
+  memset(p->old_hostControlDataSource, 0, sizeof(p->old_hostControlDataSource));
+  p->old_hostControlDataSource_len = 0;
+  p->hostControlTableSize = 0;
+  p->hostControlLastDeleteTime = 0;
+  strcpy(p->hostControlOwner, "Config");
+  p->hostControlOwner_len = strlen(p->hostControlOwner);
+  memset(p->old_hostControlOwner, 0, sizeof(p->old_hostControlOwner));
+  p->old_hostControlOwner_len = 0;
+  p->hostControlStatus = 1;
+  p->old_hostControlStatus = 0;
+  p->valid = 1;
+  pHostCntEnt = p;
+  return;
 }
 
 void InitHostCont2Ent(netsnmp_container *pC)
 {
-    struct hostControl2Table_entry *p;
-	if( pC == NULL ) return;
-	p = hostControl2Table_createEntry(pC,1); // Only One Entry;
-	if( p == NULL ) return;
-    p->hostControlDroppedFrames=0;
-    p->hostControlCreateTime= netsnmp_get_agent_uptime();
-    p->valid=1;
-	pHostCnt2Ent = p;
-	return;
+  struct hostControl2Table_entry *p;
+  if (pC == NULL)
+    return;
+  p = hostControl2Table_createEntry(pC, 1); // Only One Entry;
+  if (p == NULL)
+    return;
+  p->hostControlDroppedFrames = 0;
+  p->hostControlCreateTime = netsnmp_get_agent_uptime();
+  p->valid = 1;
+  pHostCnt2Ent = p;
+  return;
 }
 
 void InitMtxContEnt(netsnmp_container *pC)
 {
-    struct matrixControlTable_entry *p;
-	if( pC == NULL ) return;
-	p = matrixControlTable_createEntry(pC,1); // Only One Entry;
-	if( p == NULL ) return;
-    memcpy(p->matrixControlDataSource,IfDataSource_oid,sizeof(IfDataSource_oid));
-    p->matrixControlDataSource_len = IfDataSource_oid_len *sizeof(oid);
-    memset(p->old_matrixControlDataSource,0,sizeof(p->old_matrixControlDataSource));
-    p->old_matrixControlDataSource_len=0;
-    p->matrixControlTableSize=0;
-    p->matrixControlLastDeleteTime=0;
-    strcpy(p->matrixControlOwner,"Config");;
-    p->matrixControlOwner_len=strlen(p->matrixControlOwner);
-    memset(p->old_matrixControlOwner,0,sizeof(p->old_matrixControlOwner));
-    p->old_matrixControlOwner_len=0;
-    p->matrixControlStatus=1;
-    p->old_matrixControlStatus=0;
-    p->valid=1;
-	pMtxCntEnt = p;
-	return;
+  struct matrixControlTable_entry *p;
+  if (pC == NULL)
+    return;
+  p = matrixControlTable_createEntry(pC, 1); // Only One Entry;
+  if (p == NULL)
+    return;
+  memcpy(p->matrixControlDataSource, IfDataSource_oid, sizeof(IfDataSource_oid));
+  p->matrixControlDataSource_len = IfDataSource_oid_len * sizeof(oid);
+  memset(p->old_matrixControlDataSource, 0, sizeof(p->old_matrixControlDataSource));
+  p->old_matrixControlDataSource_len = 0;
+  p->matrixControlTableSize = 0;
+  p->matrixControlLastDeleteTime = 0;
+  strcpy(p->matrixControlOwner, "Config");
+  ;
+  p->matrixControlOwner_len = strlen(p->matrixControlOwner);
+  memset(p->old_matrixControlOwner, 0, sizeof(p->old_matrixControlOwner));
+  p->old_matrixControlOwner_len = 0;
+  p->matrixControlStatus = 1;
+  p->old_matrixControlStatus = 0;
+  p->valid = 1;
+  pMtxCntEnt = p;
+  return;
 }
 
 void InitMtxCont2Ent(netsnmp_container *pC)
 {
-    struct matrixControl2Table_entry *p;
-	if( pC == NULL ) return;
-	p = matrixControl2Table_createEntry(pC,1); // Only One Entry;
-	if( p == NULL ) return;
-    p->matrixControlDroppedFrames=0;
-    p->matrixControlCreateTime= netsnmp_get_agent_uptime();
-    p->valid=1;
-	pMtxCnt2Ent = p;
-	return;
+  struct matrixControl2Table_entry *p;
+  if (pC == NULL)
+    return;
+  p = matrixControl2Table_createEntry(pC, 1); // Only One Entry;
+  if (p == NULL)
+    return;
+  p->matrixControlDroppedFrames = 0;
+  p->matrixControlCreateTime = netsnmp_get_agent_uptime();
+  p->valid = 1;
+  pMtxCnt2Ent = p;
+  return;
 }
 
 void InitProtDistContEnt(netsnmp_container *pC)
 {
-    struct protocolDistControlTable_entry *p;
-	if( pC == NULL ) return;
-	p = protocolDistControlTable_createEntry(pC,1); // Only One Entry;
-	if( p == NULL ){
-		printf("InitProtDistContEnt Error\n");
-		 return;
-	 }
-    memcpy(p->protocolDistControlDataSource,IfDataSource_oid,sizeof(IfDataSource_oid));
-    p->protocolDistControlDataSource_len=IfDataSource_oid_len *sizeof(oid);
-    memset(p->old_protocolDistControlDataSource,0,sizeof(p->protocolDistControlDataSource));
-    p->old_protocolDistControlDataSource_len=0;
-    p->protocolDistControlDroppedFrames=0;
-    p->protocolDistControlCreateTime= netsnmp_get_agent_uptime();
-    strcpy(p->protocolDistControlOwner,"Config");
-    p->protocolDistControlOwner_len= strlen(p->protocolDistControlOwner);
-    memset(p->old_protocolDistControlOwner,0,sizeof(p->old_protocolDistControlOwner));
-    p->old_protocolDistControlOwner_len=0;
-    p->protocolDistControlStatus=1;
-    p->valid=1;
-	pProtDistCntEnt = p;
-	return;
+  struct protocolDistControlTable_entry *p;
+  if (pC == NULL)
+    return;
+  p = protocolDistControlTable_createEntry(pC, 1); // Only One Entry;
+  if (p == NULL)
+  {
+    printf("InitProtDistContEnt Error\n");
+    return;
+  }
+  memcpy(p->protocolDistControlDataSource, IfDataSource_oid, sizeof(IfDataSource_oid));
+  p->protocolDistControlDataSource_len = IfDataSource_oid_len * sizeof(oid);
+  memset(p->old_protocolDistControlDataSource, 0, sizeof(p->protocolDistControlDataSource));
+  p->old_protocolDistControlDataSource_len = 0;
+  p->protocolDistControlDroppedFrames = 0;
+  p->protocolDistControlCreateTime = netsnmp_get_agent_uptime();
+  strcpy(p->protocolDistControlOwner, "Config");
+  p->protocolDistControlOwner_len = strlen(p->protocolDistControlOwner);
+  memset(p->old_protocolDistControlOwner, 0, sizeof(p->old_protocolDistControlOwner));
+  p->old_protocolDistControlOwner_len = 0;
+  p->protocolDistControlStatus = 1;
+  p->valid = 1;
+  pProtDistCntEnt = p;
+  return;
 }
 
 void InitAddrMapContEnt(netsnmp_container *pC)
 {
-    struct addressMapControlTable_entry *p;
-	if( pC == NULL ) return;
-	p = addressMapControlTable_createEntry(pC,1); // Only One Entry;
-	if( p == NULL ){
-		printf("InitAddrMapContEnt Error\n");
-		 return;
-	 }
-    memcpy(p->addressMapControlDataSource,IfDataSource_oid,sizeof(IfDataSource_oid));
-    p->addressMapControlDataSource_len=IfDataSource_oid_len *sizeof(oid);
-    memset(p->old_addressMapControlDataSource,0,sizeof(p->old_addressMapControlDataSource));
-    p->old_addressMapControlDataSource_len=0;
-    p->addressMapControlDroppedFrames =0;
-    strcpy(p->addressMapControlOwner,"Config");
-    p->addressMapControlOwner_len= strlen(p->addressMapControlOwner);
-    memset(p->old_addressMapControlOwner,0,sizeof(p->old_addressMapControlOwner));
-    p->old_addressMapControlOwner_len=0;
-    p->addressMapControlStatus=1;
+  struct addressMapControlTable_entry *p;
+  if (pC == NULL)
+    return;
+  p = addressMapControlTable_createEntry(pC, 1); // Only One Entry;
+  if (p == NULL)
+  {
+    printf("InitAddrMapContEnt Error\n");
+    return;
+  }
+  memcpy(p->addressMapControlDataSource, IfDataSource_oid, sizeof(IfDataSource_oid));
+  p->addressMapControlDataSource_len = IfDataSource_oid_len * sizeof(oid);
+  memset(p->old_addressMapControlDataSource, 0, sizeof(p->old_addressMapControlDataSource));
+  p->old_addressMapControlDataSource_len = 0;
+  p->addressMapControlDroppedFrames = 0;
+  strcpy(p->addressMapControlOwner, "Config");
+  p->addressMapControlOwner_len = strlen(p->addressMapControlOwner);
+  memset(p->old_addressMapControlOwner, 0, sizeof(p->old_addressMapControlOwner));
+  p->old_addressMapControlOwner_len = 0;
+  p->addressMapControlStatus = 1;
 
-    p->valid=1;
-	pAddrMapCntEnt = p;
-	return;
+  p->valid = 1;
+  pAddrMapCntEnt = p;
+  return;
 }
 
 void InitHlHostContEnt(netsnmp_container *pC)
 {
-    struct hlHostControlTable_entry *p;
-	if( pC == NULL ) return;
-	p = hlHostControlTable_createEntry(pC,1); // Only One Entry;
-	if( p == NULL ){
-		printf("InitHlHostContEnt Error\n");
-		 return;
-	 }
-    memcpy(p->hlHostControlDataSource,IfDataSource_oid,sizeof(IfDataSource_oid));
-    p->hlHostControlDataSource_len=IfDataSource_oid_len*sizeof(oid);
-    memset(p->old_hlHostControlDataSource,0,sizeof(p->old_hlHostControlDataSource));
-    p->old_hlHostControlDataSource_len=0;
-    p->hlHostControlNlDroppedFrames =0;
-    p->hlHostControlNlInserts=0;
-    p->hlHostControlNlDeletes=0;
-    p->hlHostControlNlMaxDesiredEntries=8000;// YMI
-    p->old_hlHostControlNlMaxDesiredEntries=0;
-    p->hlHostControlAlDroppedFrames=0;
-    p->hlHostControlAlInserts=0;
-    p->hlHostControlAlDeletes=0;
-    p->hlHostControlAlMaxDesiredEntries=8000; // YMI
-    p->old_hlHostControlAlMaxDesiredEntries=0;
-    strcpy(p->hlHostControlOwner,"Config");
-    p->hlHostControlOwner_len= strlen(p->hlHostControlOwner);
-    memset(p->old_hlHostControlOwner,0,sizeof(p->old_hlHostControlOwner));
-    p->old_hlHostControlOwner_len=0;
-    p->hlHostControlStatus=1;
-    p->valid=1;
-	pHlHostCntEnt = p;
-	return;
+  struct hlHostControlTable_entry *p;
+  if (pC == NULL)
+    return;
+  p = hlHostControlTable_createEntry(pC, 1); // Only One Entry;
+  if (p == NULL)
+  {
+    printf("InitHlHostContEnt Error\n");
+    return;
+  }
+  memcpy(p->hlHostControlDataSource, IfDataSource_oid, sizeof(IfDataSource_oid));
+  p->hlHostControlDataSource_len = IfDataSource_oid_len * sizeof(oid);
+  memset(p->old_hlHostControlDataSource, 0, sizeof(p->old_hlHostControlDataSource));
+  p->old_hlHostControlDataSource_len = 0;
+  p->hlHostControlNlDroppedFrames = 0;
+  p->hlHostControlNlInserts = 0;
+  p->hlHostControlNlDeletes = 0;
+  p->hlHostControlNlMaxDesiredEntries = 8000; // YMI
+  p->old_hlHostControlNlMaxDesiredEntries = 0;
+  p->hlHostControlAlDroppedFrames = 0;
+  p->hlHostControlAlInserts = 0;
+  p->hlHostControlAlDeletes = 0;
+  p->hlHostControlAlMaxDesiredEntries = 8000; // YMI
+  p->old_hlHostControlAlMaxDesiredEntries = 0;
+  strcpy(p->hlHostControlOwner, "Config");
+  p->hlHostControlOwner_len = strlen(p->hlHostControlOwner);
+  memset(p->old_hlHostControlOwner, 0, sizeof(p->old_hlHostControlOwner));
+  p->old_hlHostControlOwner_len = 0;
+  p->hlHostControlStatus = 1;
+  p->valid = 1;
+  pHlHostCntEnt = p;
+  return;
 }
-
 
 void InitHlMtxContEnt(netsnmp_container *pC)
 {
-    struct hlMatrixControlTable_entry *p;
-	if( pC == NULL ) return;
-	p = hlMatrixControlTable_createEntry(pC,1); // Only One Entry;
-	if( p == NULL ){
-		printf("InitHlMtxContEnt Error\n");
-		 return;
-	 }
-    memcpy(p->hlMatrixControlDataSource,IfDataSource_oid,sizeof(IfDataSource_oid));
-    p->hlMatrixControlDataSource_len=IfDataSource_oid_len *sizeof(oid);
-    memset(p->old_hlMatrixControlDataSource,0,sizeof(p->old_hlMatrixControlDataSource));
-    p->old_hlMatrixControlDataSource_len=0;
-    p->hlMatrixControlNlDroppedFrames =0;
-    p->hlMatrixControlNlInserts=0;
-    p->hlMatrixControlNlDeletes=0;
-    p->hlMatrixControlNlMaxDesiredEntries=10000;
-    p->old_hlMatrixControlNlMaxDesiredEntries=0;
-    p->hlMatrixControlAlDroppedFrames=0;
-    p->hlMatrixControlAlInserts=0;
-    p->hlMatrixControlAlDeletes=0;
-    p->hlMatrixControlAlMaxDesiredEntries=10000;
-    p->old_hlMatrixControlAlMaxDesiredEntries=0;
-    strcpy(p->hlMatrixControlOwner,"Config");
-    p->hlMatrixControlOwner_len= strlen(p->hlMatrixControlOwner);
-    memset(p->old_hlMatrixControlOwner,0,sizeof(p->old_hlMatrixControlOwner));
-    p->old_hlMatrixControlOwner_len=0;
-    p->hlMatrixControlStatus=1;
-    p->valid=1;
+  struct hlMatrixControlTable_entry *p;
+  if (pC == NULL)
+    return;
+  p = hlMatrixControlTable_createEntry(pC, 1); // Only One Entry;
+  if (p == NULL)
+  {
+    printf("InitHlMtxContEnt Error\n");
+    return;
+  }
+  memcpy(p->hlMatrixControlDataSource, IfDataSource_oid, sizeof(IfDataSource_oid));
+  p->hlMatrixControlDataSource_len = IfDataSource_oid_len * sizeof(oid);
+  memset(p->old_hlMatrixControlDataSource, 0, sizeof(p->old_hlMatrixControlDataSource));
+  p->old_hlMatrixControlDataSource_len = 0;
+  p->hlMatrixControlNlDroppedFrames = 0;
+  p->hlMatrixControlNlInserts = 0;
+  p->hlMatrixControlNlDeletes = 0;
+  p->hlMatrixControlNlMaxDesiredEntries = 10000;
+  p->old_hlMatrixControlNlMaxDesiredEntries = 0;
+  p->hlMatrixControlAlDroppedFrames = 0;
+  p->hlMatrixControlAlInserts = 0;
+  p->hlMatrixControlAlDeletes = 0;
+  p->hlMatrixControlAlMaxDesiredEntries = 10000;
+  p->old_hlMatrixControlAlMaxDesiredEntries = 0;
+  strcpy(p->hlMatrixControlOwner, "Config");
+  p->hlMatrixControlOwner_len = strlen(p->hlMatrixControlOwner);
+  memset(p->old_hlMatrixControlOwner, 0, sizeof(p->old_hlMatrixControlOwner));
+  p->old_hlMatrixControlOwner_len = 0;
+  p->hlMatrixControlStatus = 1;
+  p->valid = 1;
 
-	pHlMtxCntEnt = p;
-	return;
+  pHlMtxCntEnt = p;
+  return;
 }
 
-long  AddProtID(long nEType,long nIPProt,long nPort,char *pDescr,char *pOwner)
+long AddProtID(long nEType, long nIPProt, long nPort, char *pDescr, char *pOwner)
 {
-	char szID[32];
-	char szParam[8];
-    struct protocolDirTable_entry *p;
-	int nIDLen;
-	long nTmp =  GetProtDirLI(nEType,nIPProt,nPort);
-	if( nTmp ){
-		printf("Dup AddProtID = %s - %d -%d : %s\n",pDescr,nIPProt,nPort,pOwner);
-		 return(nTmp);
-	 }
-	memset(szParam,0,sizeof(szParam));
-	nIDLen = MakeProtID(nEType,nIPProt,nPort,szID);
-	p = protocolDirTable_createEntry(pProtDirContainer,szID,nIDLen,szParam,nIDLen/4);
-	if( p == NULL ) {
-		return(-1); // Error
-	}
-	p->protocolDirLocalIndex = nProtDirLI++;
-    strcpy(p->protocolDirDescr,pDescr);
-    p->protocolDirDescr_len = strlen(p->protocolDirDescr);
-    memset(p->old_protocolDirDescr,0,sizeof(p->old_protocolDirDescr));
-    p->old_protocolDirDescr_len=0;
-    p->protocolDirType[0] = 0x80;
-    p->protocolDirType_len=1;
-    p->protocolDirAddressMapConfig=1;
-    p->old_protocolDirAddressMapConfig=0;
-    p->protocolDirHostConfig=3;
-    p->old_protocolDirHostConfig=0;
-    p->protocolDirMatrixConfig=3;
-    p->old_protocolDirMatrixConfig=0;
-    strcpy(p->protocolDirOwner,pOwner);
-    p->protocolDirOwner_len= strlen(p->protocolDirOwner);
-    memset(p->old_protocolDirOwner,0,sizeof(p->old_protocolDirOwner));
-    p->old_protocolDirOwner_len = 0;
-    p->protocolDirStatus=1;
-   	p->valid =1;
-   	if( nPort > 0  ) {
-		nPort &=0x0000ffff;
-   		if( nIPProt == 6  ) {
-			nProtDirLITCP[nPort] = p->protocolDirLocalIndex;
-		} else if (nIPProt == 17 ) {
-			nProtDirLIUDP[nPort] = p->protocolDirLocalIndex;
-		}
-	}
-	return(p->protocolDirLocalIndex);
+  char szID[32];
+  char szParam[8];
+  struct protocolDirTable_entry *p;
+  int nIDLen;
+  long nTmp = GetProtDirLI(nEType, nIPProt, nPort);
+  if (nTmp)
+  {
+    printf("Dup AddProtID = %s - %ld -%ld : %s\n", pDescr, nIPProt, nPort, pOwner);
+    return (nTmp);
+  }
+  memset(szParam, 0, sizeof(szParam));
+  nIDLen = MakeProtID(nEType, nIPProt, nPort, szID);
+  p = protocolDirTable_createEntry(pProtDirContainer, szID, nIDLen, szParam, nIDLen / 4);
+  if (p == NULL)
+  {
+    return (-1); // Error
+  }
+  p->protocolDirLocalIndex = nProtDirLI++;
+  strcpy(p->protocolDirDescr, pDescr);
+  p->protocolDirDescr_len = strlen(p->protocolDirDescr);
+  memset(p->old_protocolDirDescr, 0, sizeof(p->old_protocolDirDescr));
+  p->old_protocolDirDescr_len = 0;
+  p->protocolDirType[0] = 0x80;
+  p->protocolDirType_len = 1;
+  p->protocolDirAddressMapConfig = 1;
+  p->old_protocolDirAddressMapConfig = 0;
+  p->protocolDirHostConfig = 3;
+  p->old_protocolDirHostConfig = 0;
+  p->protocolDirMatrixConfig = 3;
+  p->old_protocolDirMatrixConfig = 0;
+  strcpy(p->protocolDirOwner, pOwner);
+  p->protocolDirOwner_len = strlen(p->protocolDirOwner);
+  memset(p->old_protocolDirOwner, 0, sizeof(p->old_protocolDirOwner));
+  p->old_protocolDirOwner_len = 0;
+  p->protocolDirStatus = 1;
+  p->valid = 1;
+  if (nPort > 0)
+  {
+    nPort &= 0x0000ffff;
+    if (nIPProt == 6)
+    {
+      nProtDirLITCP[nPort] = p->protocolDirLocalIndex;
+    }
+    else if (nIPProt == 17)
+    {
+      nProtDirLIUDP[nPort] = p->protocolDirLocalIndex;
+    }
+  }
+  return (p->protocolDirLocalIndex);
 }
 
 void LoadSystemProtDir(void)
 {
-	memset(nProtDirLITCP,0,sizeof(nProtDirLITCP));
-	memset(nProtDirLIUDP,0,sizeof(nProtDirLIUDP));
-	nProtDirLIIP = AddProtID(0x0800,0,0,"ether2.ipv4","system");
-	nProtDirLIARP = AddProtID(0x0806,0,0,"ether2.arp","system");
-	nProtDirLIICMP = AddProtID(0x0800,1,0,"ether2.icmp","system");
-	nProtDirLITCP[0] = AddProtID(0x0800,6,0,"ether2.tcp","system");
-	nProtDirLIUDP[0] = AddProtID(0x0800,17,0,"ether2.udp","system");
+  memset(nProtDirLITCP, 0, sizeof(nProtDirLITCP));
+  memset(nProtDirLIUDP, 0, sizeof(nProtDirLIUDP));
+  nProtDirLIIP = AddProtID(0x0800, 0, 0, "ether2.ipv4", "system");
+  nProtDirLIARP = AddProtID(0x0806, 0, 0, "ether2.arp", "system");
+  nProtDirLIICMP = AddProtID(0x0800, 1, 0, "ether2.icmp", "system");
+  nProtDirLITCP[0] = AddProtID(0x0800, 6, 0, "ether2.tcp", "system");
+  nProtDirLIUDP[0] = AddProtID(0x0800, 17, 0, "ether2.udp", "system");
 }
 
-int LoadProtDirFromFile(char *szFile,char *szOwner) 
+int LoadProtDirFromFile(char *szFile, char *szOwner)
 {
-	FILE *fp;
-	int bHit = 0;
-	char szLine[2048];
-	char szName[64];
-	char szPort[64];
-	long nPort;
-	long nIPProt;
-	char *p;
-	fp = fopen(szFile,"r");
-	if( fp == NULL ) return(0);
-	while( fgets(szLine,sizeof(szLine),fp) ) {
-		if( sscanf(szLine,"%s %s" ,szName,szPort) != 2 ) continue;
-		if( szName[0] == '#') continue;
-		p = strchr(szPort,'/');
-		if( p == NULL ) continue;
-		*p= '\0';
-		p++;
-		if( strcasecmp(p,"tcp") == 0 ) {
-			nIPProt = 6;
-		} else if (strcasecmp(p,"udp") == 0 ) {
-			nIPProt = 17;
-		} else {
-			continue;
-		}
-		nPort = atoi(szPort);
-		sprintf(szLine,"ether2.%s.%s",p,szName);
-		if( AddProtID(0x0800,nIPProt,nPort,szLine,szOwner)>0 ) bHit = 1;
-		
-	}
-	fclose(fp);
-	return(bHit);	
+  FILE *fp;
+  int bHit = 0;
+  char szLine[2048];
+  char szName[64];
+  char szPort[64];
+  long nPort;
+  long nIPProt;
+  char *p;
+  fp = fopen(szFile, "r");
+  if (fp == NULL)
+    return (0);
+  while (fgets(szLine, sizeof(szLine), fp))
+  {
+    if (sscanf(szLine, "%s %s", szName, szPort) != 2)
+      continue;
+    if (szName[0] == '#')
+      continue;
+    p = strchr(szPort, '/');
+    if (p == NULL)
+      continue;
+    *p = '\0';
+    p++;
+    if (strcasecmp(p, "tcp") == 0)
+    {
+      nIPProt = 6;
+    }
+    else if (strcasecmp(p, "udp") == 0)
+    {
+      nIPProt = 17;
+    }
+    else
+    {
+      continue;
+    }
+    nPort = atoi(szPort);
+    sprintf(szLine, "ether2.%s.%s", p, szName);
+    if (AddProtID(0x0800, nIPProt, nPort, szLine, szOwner) > 0)
+      bHit = 1;
+  }
+  fclose(fp);
+  return (bHit);
 }
 
 void LoadProtDir(void)
 {
-	LoadSystemProtDir();
-	if( LoadProtDirFromFile("/etc/rmonpdir.txt","Config") ) return;
-	LoadProtDirFromFile("/etc/services","Services");
-	return;
+  LoadSystemProtDir();
+  if (LoadProtDirFromFile("/etc/rmonpdir.txt", "Config"))
+    return;
+  LoadProtDirFromFile("/etc/services", "Services");
+  return;
 }
 
-long GetProtDirLI(long nEType,long nIPProt,long nPort)
+long GetProtDirLI(long nEType, long nIPProt, long nPort)
 {
-	char szID[32];
-	char szParam[8];
-	netsnmp_index oid_index;
-	oid IndexOid[64];
-    struct protocolDirTable_entry *p;
-	int nIDLen;
-	if( pProtDirContainer == NULL ) return(0);
-	memset(szParam,0,sizeof(szParam));
-	nIDLen = MakeProtID(nEType,nIPProt,nPort,szID);
-    oid_index.len  = MakeProtDirIndex(nIDLen,szID,nIDLen/4,szParam,IndexOid);
-    oid_index.oids = IndexOid;
-	p = CONTAINER_FIND(pProtDirContainer, &oid_index);
-	if( p == NULL ) return(0);
-	return( p->protocolDirLocalIndex);
+  char szID[32];
+  char szParam[8];
+  netsnmp_index oid_index;
+  oid IndexOid[64];
+  struct protocolDirTable_entry *p;
+  int nIDLen;
+  if (pProtDirContainer == NULL)
+    return (0);
+  memset(szParam, 0, sizeof(szParam));
+  nIDLen = MakeProtID(nEType, nIPProt, nPort, szID);
+  oid_index.len = MakeProtDirIndex(nIDLen, szID, nIDLen / 4, szParam, IndexOid);
+  oid_index.oids = IndexOid;
+  p = CONTAINER_FIND(pProtDirContainer, &oid_index);
+  if (p == NULL)
+    return (0);
+  return (p->protocolDirLocalIndex);
 }
-
-
-
-
 
 static oid snmptrap_oid[] = {1, 3, 6, 1, 6, 3, 1, 1, 4, 1, 0};
 
-
-// Send Traps 
-int SendRmonTrap( int nMode ,struct alarmTable_entry *p)
+// Send Traps
+int SendRmonTrap(int nMode, struct alarmTable_entry *p)
 {
-    netsnmp_variable_list  *var_list = NULL;
-    oid fallingAlarm_oid[] = { 1,3,6,1,2,1,16,0,2 };
-    oid alarmIndex_oid[] = { 1,3,6,1,2,1,16,3,1,1,1, 0 };
-    oid alarmVariable_oid[] = { 1,3,6,1,2,1,16,3,1,1,3,0 };
-    oid alarmSampleType_oid[] = { 1,3,6,1,2,1,16,3,1,1,4, 0 };
-    oid alarmValue_oid[] = { 1,3,6,1,2,1,16,3,1,1,5,0 };
-    oid alarmFallingThreshold_oid[] = { 1,3,6,1,2,1,16,3,1,1,8,0 };
+  netsnmp_variable_list *var_list = NULL;
+  oid fallingAlarm_oid[] = {1, 3, 6, 1, 2, 1, 16, 0, 2};
+  oid alarmIndex_oid[] = {1, 3, 6, 1, 2, 1, 16, 3, 1, 1, 1, 0};
+  oid alarmVariable_oid[] = {1, 3, 6, 1, 2, 1, 16, 3, 1, 1, 3, 0};
+  oid alarmSampleType_oid[] = {1, 3, 6, 1, 2, 1, 16, 3, 1, 1, 4, 0};
+  oid alarmValue_oid[] = {1, 3, 6, 1, 2, 1, 16, 3, 1, 1, 5, 0};
+  oid alarmFallingThreshold_oid[] = {1, 3, 6, 1, 2, 1, 16, 3, 1, 1, 8, 0};
 
-    oid risingAlarm_oid[] = { 1,3,6,1,2,1,16,0,1 };
-    oid alarmRisingThreshold_oid[] = { 1,3,6,1,2,1,16,3,1,1,7,0 };
-	size_t i;
+  oid risingAlarm_oid[] = {1, 3, 6, 1, 2, 1, 16, 0, 1};
+  oid alarmRisingThreshold_oid[] = {1, 3, 6, 1, 2, 1, 16, 3, 1, 1, 7, 0};
+  size_t i;
 
-    /*
-     * Set the snmpTrapOid.0 value
-     */
-     if( nMode == 0 ) {
-    	snmp_varlist_add_variable(&var_list,
-        	snmptrap_oid, OID_LENGTH(snmptrap_oid),
-        	ASN_OBJECT_ID,
-        	(char*)fallingAlarm_oid, sizeof(fallingAlarm_oid));
-    } else {
-	    snmp_varlist_add_variable(&var_list,
-	    snmptrap_oid, OID_LENGTH(snmptrap_oid),
-        	ASN_OBJECT_ID,
-        	(char*)risingAlarm_oid, sizeof(risingAlarm_oid));
-	}
-    /*
-     * Add any objects from the trap definition
-     */
-     i = OID_LENGTH(alarmIndex_oid);
-     alarmIndex_oid[i-1] = p->alarmIndex;
-    snmp_varlist_add_variable(&var_list, alarmIndex_oid, i,
-        ASN_INTEGER,(char*)&p->alarmIndex,sizeof(long));
-        
-     i = OID_LENGTH(alarmVariable_oid);
-     alarmVariable_oid[i-1] = p->alarmIndex;
+  /*
+   * Set the snmpTrapOid.0 value
+   */
+  if (nMode == 0)
+  {
     snmp_varlist_add_variable(&var_list,
-        alarmVariable_oid, OID_LENGTH(alarmVariable_oid),
-        ASN_OBJECT_ID,(char*)p->alarmVariable,p->alarmVariable_len);
-
-     i = OID_LENGTH(alarmSampleType_oid);
-     alarmSampleType_oid[i-1] = p->alarmIndex;
+                              snmptrap_oid, OID_LENGTH(snmptrap_oid),
+                              ASN_OBJECT_ID,
+                              (char *)fallingAlarm_oid, sizeof(fallingAlarm_oid));
+  }
+  else
+  {
     snmp_varlist_add_variable(&var_list,
-        alarmSampleType_oid, OID_LENGTH(alarmSampleType_oid),
-        ASN_INTEGER,(char*)&p->alarmSampleType,sizeof(long));
+                              snmptrap_oid, OID_LENGTH(snmptrap_oid),
+                              ASN_OBJECT_ID,
+                              (char *)risingAlarm_oid, sizeof(risingAlarm_oid));
+  }
+  /*
+   * Add any objects from the trap definition
+   */
+  i = OID_LENGTH(alarmIndex_oid);
+  alarmIndex_oid[i - 1] = p->alarmIndex;
+  snmp_varlist_add_variable(&var_list, alarmIndex_oid, i,
+                            ASN_INTEGER, (char *)&p->alarmIndex, sizeof(long));
 
-     i = OID_LENGTH(alarmValue_oid);
-     alarmValue_oid[i-1] = p->alarmIndex;
+  i = OID_LENGTH(alarmVariable_oid);
+  alarmVariable_oid[i - 1] = p->alarmIndex;
+  snmp_varlist_add_variable(&var_list,
+                            alarmVariable_oid, OID_LENGTH(alarmVariable_oid),
+                            ASN_OBJECT_ID, (char *)p->alarmVariable, p->alarmVariable_len);
+
+  i = OID_LENGTH(alarmSampleType_oid);
+  alarmSampleType_oid[i - 1] = p->alarmIndex;
+  snmp_varlist_add_variable(&var_list,
+                            alarmSampleType_oid, OID_LENGTH(alarmSampleType_oid),
+                            ASN_INTEGER, (char *)&p->alarmSampleType, sizeof(long));
+
+  i = OID_LENGTH(alarmValue_oid);
+  alarmValue_oid[i - 1] = p->alarmIndex;
+  snmp_varlist_add_variable(&var_list,
+                            alarmValue_oid, OID_LENGTH(alarmValue_oid),
+                            ASN_INTEGER, (char *)&p->alarmValue, sizeof(long));
+  if (nMode == 0)
+  {
+    i = OID_LENGTH(alarmFallingThreshold_oid);
+    alarmFallingThreshold_oid[i - 1] = p->alarmIndex;
     snmp_varlist_add_variable(&var_list,
-        alarmValue_oid, OID_LENGTH(alarmValue_oid),
-        ASN_INTEGER,(char*)&p->alarmValue,sizeof(long));
-     if( nMode == 0 ) {   
-	     i = OID_LENGTH(alarmFallingThreshold_oid);
-    	 alarmFallingThreshold_oid[i-1] = p->alarmIndex;
-  	  	snmp_varlist_add_variable(&var_list,
-        	alarmFallingThreshold_oid, OID_LENGTH(alarmFallingThreshold_oid),
-        	ASN_INTEGER,(char*)&p->alarmFallingThreshold,sizeof(long));
-	} else {
-	     i = OID_LENGTH(alarmRisingThreshold_oid);
-    	 alarmRisingThreshold_oid[i-1] = p->alarmIndex;
-	    snmp_varlist_add_variable(&var_list,
-    	    alarmRisingThreshold_oid, OID_LENGTH(alarmRisingThreshold_oid),
-        	ASN_INTEGER,(char *)&p->alarmRisingThreshold,sizeof(long));
-	}
-    /*
-     * Add any extra (optional) objects here
-     */
+                              alarmFallingThreshold_oid, OID_LENGTH(alarmFallingThreshold_oid),
+                              ASN_INTEGER, (char *)&p->alarmFallingThreshold, sizeof(long));
+  }
+  else
+  {
+    i = OID_LENGTH(alarmRisingThreshold_oid);
+    alarmRisingThreshold_oid[i - 1] = p->alarmIndex;
+    snmp_varlist_add_variable(&var_list,
+                              alarmRisingThreshold_oid, OID_LENGTH(alarmRisingThreshold_oid),
+                              ASN_INTEGER, (char *)&p->alarmRisingThreshold, sizeof(long));
+  }
+  /*
+   * Add any extra (optional) objects here
+   */
 
-    /*
-     * Send the trap to the list of configured destinations
-     *  and clean up
-     */
-    send_v2trap( var_list );
-    snmp_free_varbind( var_list );
+  /*
+   * Send the trap to the list of configured destinations
+   *  and clean up
+   */
+  send_v2trap(var_list);
+  snmp_free_varbind(var_list);
 
-    return SNMP_ERR_NOERROR;
+  return SNMP_ERR_NOERROR;
 }
-
 
 void UpdateRmonDrop(int nDrop)
 {
-	if( nDrop < 1 ) return;
-	// EthStat
-	if( pEthStatEnt) pEthStatEnt->etherStatsDropEvents++;
-	// EthStat2
-	if( pEthStat2Ent ) pEthStat2Ent->etherStatsDroppedFrames+=nDrop;
-	// EthHist
-	CurrentEthHistEnt.etherHistoryDropEvents++;
-	// EthHistCnt2
-	if( pEthHistCnt2Ent ) pEthHistCnt2Ent->historyControlDroppedFrames+=nDrop;
-	// HostConrol2 
-	if( pHostCnt2Ent ) pHostCnt2Ent->hostControlDroppedFrames += nDrop;
-	// Matrix Control2
-	if( pMtxCnt2Ent ) pMtxCnt2Ent->matrixControlDroppedFrames += nDrop;
-	if( pProtDistCntEnt ) pProtDistCntEnt->protocolDistControlDroppedFrames += nDrop;
-	if( pAddrMapCntEnt ) pAddrMapCntEnt->addressMapControlDroppedFrames += nDrop;
-	if( pHlHostCntEnt ){
-		 pHlHostCntEnt->hlHostControlNlDroppedFrames+=nDrop;
-		 pHlHostCntEnt->hlHostControlAlDroppedFrames+=nDrop;
-	}
-	if( pHlMtxCntEnt ) {
-		pHlMtxCntEnt->hlMatrixControlNlDroppedFrames += nDrop;
-		pHlMtxCntEnt->hlMatrixControlAlDroppedFrames += nDrop;
-	}
-	return;
+  if (nDrop < 1)
+    return;
+  // EthStat
+  if (pEthStatEnt)
+    pEthStatEnt->etherStatsDropEvents++;
+  // EthStat2
+  if (pEthStat2Ent)
+    pEthStat2Ent->etherStatsDroppedFrames += nDrop;
+  // EthHist
+  CurrentEthHistEnt.etherHistoryDropEvents++;
+  // EthHistCnt2
+  if (pEthHistCnt2Ent)
+    pEthHistCnt2Ent->historyControlDroppedFrames += nDrop;
+  // HostConrol2
+  if (pHostCnt2Ent)
+    pHostCnt2Ent->hostControlDroppedFrames += nDrop;
+  // Matrix Control2
+  if (pMtxCnt2Ent)
+    pMtxCnt2Ent->matrixControlDroppedFrames += nDrop;
+  if (pProtDistCntEnt)
+    pProtDistCntEnt->protocolDistControlDroppedFrames += nDrop;
+  if (pAddrMapCntEnt)
+    pAddrMapCntEnt->addressMapControlDroppedFrames += nDrop;
+  if (pHlHostCntEnt)
+  {
+    pHlHostCntEnt->hlHostControlNlDroppedFrames += nDrop;
+    pHlHostCntEnt->hlHostControlAlDroppedFrames += nDrop;
+  }
+  if (pHlMtxCntEnt)
+  {
+    pHlMtxCntEnt->hlMatrixControlNlDroppedFrames += nDrop;
+    pHlMtxCntEnt->hlMatrixControlAlDroppedFrames += nDrop;
+  }
+  return;
 }
 
-
-void UpdateHost(int nDir,int nSMode,char *szMac,int nLen)
+void UpdateHost(int nDir, int nSMode, char *szMac, int nLen)
 {
-    netsnmp_index oid_index;
-    oid IndexOid[8];
-    struct hostTable_entry *p =NULL;
-    struct hostTimeTable_entry *pt=NULL;
-    oid_index.len = MakeHostIndex(szMac,IndexOid);
-    oid_index.oids = IndexOid;
-	p = CONTAINER_FIND(pHostContainer, &oid_index);
-    if( p == NULL ) {
-		// New Host 
-		p = hostTable_createEntry(pHostContainer,1,szMac,6);
-		if( p == NULL ) return;
-		p->hostCreationOrder = nLastHostCreateTime;
-		p->hostInPkts=0;
-		p->hostOutPkts=0;
-		p->hostInOctets=0;
-		p->hostOutOctets =0;
-		p->hostOutErrors =0;
-		p->hostOutBroadcastPkts=0;
-		p->hostOutMulticastPkts=0;
-		pt = hostTimeTable_createEntry(pHostTimeContainer,1,nLastHostCreateTime);
-		if( pt ) {
-			pt->pHostEnt =p;
-		}
-		nLastHostCreateTime++;
-		
-	}
-	if( nDir == 1 ) {  //ëóéÛêMÇ™ãtÇ≈ÇµÇΩÅBYMI 2007.7.5
-		p->hostOutPkts++;
-		p->hostOutOctets +=nLen;
-		if(nSMode == 2 ) p->hostOutBroadcastPkts++;
-		if(nSMode == 1 ) p->hostOutMulticastPkts++;
-	} else {
-		p->hostInPkts++;
-		p->hostInOctets+=nLen;
-	}
+  netsnmp_index oid_index;
+  oid IndexOid[8];
+  struct hostTable_entry *p = NULL;
+  struct hostTimeTable_entry *pt = NULL;
+  oid_index.len = MakeHostIndex(szMac, IndexOid);
+  oid_index.oids = IndexOid;
+  p = CONTAINER_FIND(pHostContainer, &oid_index);
+  if (p == NULL)
+  {
+    // New Host
+    p = hostTable_createEntry(pHostContainer, 1, szMac, 6);
+    if (p == NULL)
+      return;
+    p->hostCreationOrder = nLastHostCreateTime;
+    p->hostInPkts = 0;
+    p->hostOutPkts = 0;
+    p->hostInOctets = 0;
+    p->hostOutOctets = 0;
+    p->hostOutErrors = 0;
+    p->hostOutBroadcastPkts = 0;
+    p->hostOutMulticastPkts = 0;
+    pt = hostTimeTable_createEntry(pHostTimeContainer, 1, nLastHostCreateTime);
+    if (pt)
+    {
+      pt->pHostEnt = p;
+    }
+    nLastHostCreateTime++;
+  }
+  if (nDir == 1)
+  { //ÔøΩÔøΩÔøΩÔøΩMÔøΩÔøΩÔøΩtÔøΩ≈ÇÔøΩÔøΩÔøΩÔøΩBYMI 2007.7.5
+    p->hostOutPkts++;
+    p->hostOutOctets += nLen;
+    if (nSMode == 2)
+      p->hostOutBroadcastPkts++;
+    if (nSMode == 1)
+      p->hostOutMulticastPkts++;
+  }
+  else
+  {
+    p->hostInPkts++;
+    p->hostInOctets += nLen;
+  }
 }
 
-void UpdateMtx(struct tw_eth *pEth,int nLen)
+void UpdateMtx(struct tw_eth *pEth, int nLen)
 {
-    netsnmp_index oid_index;
-    oid IndexOid[1+7*2];
-    struct matrixSDTable_entry *pSD =NULL;
-    struct matrixDSTable_entry *pDS =NULL;
-    oid_index.len = MakeMtxIndex(1,pEth->ether_shost,pEth->ether_dhost,IndexOid);
-    oid_index.oids = IndexOid;
-	pSD = CONTAINER_FIND(pMtxSDContainer, &oid_index);
-    if( pSD == NULL ) {
-		pSD = matrixSDTable_createEntry(pMtxSDContainer,1,pEth->ether_shost,6,pEth->ether_dhost,6);
-		if( pSD  ){ 
-			pSD->matrixSDPkts=1;
-			pSD->matrixSDOctets=nLen;
-			pSD->matrixSDErrors = 0;
-			pSD->valid = 1;
-		}
-	} else {
-		pSD->matrixSDPkts++;
-		pSD->matrixSDOctets+=nLen;
-	}
-    oid_index.len = MakeMtxIndex(1,pEth->ether_dhost,pEth->ether_shost,IndexOid);
-    oid_index.oids = IndexOid;
-	pDS = CONTAINER_FIND(pMtxDSContainer, &oid_index);
-    if( pDS == NULL ) {
-		pDS = matrixDSTable_createEntry(pMtxDSContainer,1,pEth->ether_dhost,6,pEth->ether_shost,6);
-		if( pDS  ){ 
-			pDS->matrixDSPkts=1;
-			pDS->matrixDSOctets=nLen;
-			pDS->matrixDSErrors = 0;
-			pDS->valid = 1;
-			if( pSD ) {
-				pSD->pMtxDS =(void*) pDS;
-			}
-			pDS->pMtxSD=pSD;
-		}
-	} else {
-		pDS->matrixDSPkts++;
-		pDS->matrixDSOctets+=nLen;
-	}
-	return;
- 
+  netsnmp_index oid_index;
+  oid IndexOid[1 + 7 * 2];
+  struct matrixSDTable_entry *pSD = NULL;
+  struct matrixDSTable_entry *pDS = NULL;
+  oid_index.len = MakeMtxIndex(1, pEth->ether_shost, pEth->ether_dhost, IndexOid);
+  oid_index.oids = IndexOid;
+  pSD = CONTAINER_FIND(pMtxSDContainer, &oid_index);
+  if (pSD == NULL)
+  {
+    pSD = matrixSDTable_createEntry(pMtxSDContainer, 1, pEth->ether_shost, 6, pEth->ether_dhost, 6);
+    if (pSD)
+    {
+      pSD->matrixSDPkts = 1;
+      pSD->matrixSDOctets = nLen;
+      pSD->matrixSDErrors = 0;
+      pSD->valid = 1;
+    }
+  }
+  else
+  {
+    pSD->matrixSDPkts++;
+    pSD->matrixSDOctets += nLen;
+  }
+  oid_index.len = MakeMtxIndex(1, pEth->ether_dhost, pEth->ether_shost, IndexOid);
+  oid_index.oids = IndexOid;
+  pDS = CONTAINER_FIND(pMtxDSContainer, &oid_index);
+  if (pDS == NULL)
+  {
+    pDS = matrixDSTable_createEntry(pMtxDSContainer, 1, pEth->ether_dhost, 6, pEth->ether_shost, 6);
+    if (pDS)
+    {
+      pDS->matrixDSPkts = 1;
+      pDS->matrixDSOctets = nLen;
+      pDS->matrixDSErrors = 0;
+      pDS->valid = 1;
+      if (pSD)
+      {
+        pSD->pMtxDS = (void *)pDS;
+      }
+      pDS->pMtxSD = pSD;
+    }
+  }
+  else
+  {
+    pDS->matrixDSPkts++;
+    pDS->matrixDSOctets += nLen;
+  }
+  return;
 }
 
-void UpdateProtDist(long nPLI,int nLen)
+void UpdateProtDist(long nPLI, int nLen)
 {
-    netsnmp_index oid_index;
-    struct protocolDistStatsTable_entry *p;
-    oid IndexOid[2];
-    if( nPLI == 0 ) return;
-    IndexOid[0] = 1;
-    IndexOid[1] = nPLI;
-	oid_index.len = 2;
-	oid_index.oids = IndexOid;
-	p = CONTAINER_FIND(pProtDistContainer, &oid_index);
-	if( p == NULL ) {
-		p = protocolDistStatsTable_createEntry(pProtDistContainer,1,nPLI);
-		if( p == NULL ) return;
-		p->protocolDistStatsPkts=1;
-		p->protocolDistStatsOctets=nLen;
-		p->valid = 1;
-	} else {
-		p->protocolDistStatsPkts++;
-		p->protocolDistStatsOctets+=nLen;
-	}
-	return;
+  netsnmp_index oid_index;
+  struct protocolDistStatsTable_entry *p;
+  oid IndexOid[2];
+  if (nPLI == 0)
+    return;
+  IndexOid[0] = 1;
+  IndexOid[1] = nPLI;
+  oid_index.len = 2;
+  oid_index.oids = IndexOid;
+  p = CONTAINER_FIND(pProtDistContainer, &oid_index);
+  if (p == NULL)
+  {
+    p = protocolDistStatsTable_createEntry(pProtDistContainer, 1, nPLI);
+    if (p == NULL)
+      return;
+    p->protocolDistStatsPkts = 1;
+    p->protocolDistStatsOctets = nLen;
+    p->valid = 1;
+  }
+  else
+  {
+    p->protocolDistStatsPkts++;
+    p->protocolDistStatsOctets += nLen;
+  }
+  return;
 }
 
-
-void UpdateRmonEth(struct tw_eth *pEth,int nLen)
+void UpdateRmonEth(struct tw_eth *pEth, int nLen)
 {
-	//ìùåvÉOÉãÅ[ÉvÅiÉpÉPÉbÉgêîÅAÉoÉCÉgêîÅAÇ†ÇƒêÊï ÅAÉpÉPÉbÉgÉTÉCÉYï Åj
-	//óöóÉOÉãÅ[Év
-	int nSMode =0;
-	if( pEthStatEnt == NULL  ) return;
-	pEthStatEnt->etherStatsOctets += nLen;
-	pEthStatEnt->etherStatsPkts++;
-	incrByU32(&pEthStatHCEnt->etherStatsHighCapacityPkts,1);
-	incrByU32(&pEthStatHCEnt->etherStatsHighCapacityOctets,nLen);
-	
-	CurrentEthHistEnt.etherHistoryPkts++;
-	CurrentEthHistEnt.etherHistoryOctets+=nLen;
-	incrByU32(&CurrentEthHistHCEnt.etherHistoryHighCapacityPkts,1);
-	incrByU32(&CurrentEthHistHCEnt.etherHistoryHighCapacityOctets,nLen);
-	if( pEth->ether_dhost[0] & 0x01 ) {
-		nSMode++;
-		if( pEth->ether_dhost[0] == 0xff && pEth->ether_dhost[1] == 0xff && pEth->ether_dhost[2] == 0xff &&
-		    pEth->ether_dhost[3] == 0xff && pEth->ether_dhost[4] == 0xff && pEth->ether_dhost[5] == 0xff ){
-			pEthStatEnt->etherStatsBroadcastPkts++;
-			CurrentEthHistEnt.etherHistoryBroadcastPkts++;
-			nSMode++;
-		}
-		pEthStatEnt->etherStatsMulticastPkts++;
-		CurrentEthHistEnt.etherHistoryMulticastPkts++;
-	}
-	if( nLen < 64 ) {
-		pEthStatEnt->etherStatsUndersizePkts++;
-		CurrentEthHistEnt.etherHistoryUndersizePkts++;
-    } else if( nLen ==64 ) {
-		pEthStatEnt->etherStatsPkts64Octets++;
-		incrByU32(&pEthStatHCEnt->etherStatsHighCapacityPkts64Octets,1);
-	} else if ( nLen <128 ) {
-		pEthStatEnt->etherStatsPkts65to127Octets++;
-		incrByU32(&pEthStatHCEnt->etherStatsHighCapacityPkts65to127Octets,1);
-	} else if ( nLen < 256 ) {
-		pEthStatEnt->etherStatsPkts128to255Octets++;
-		incrByU32(&pEthStatHCEnt->etherStatsHighCapacityPkts128to255Octets,1);
-	} else if ( nLen < 512 ) {
-		pEthStatEnt->etherStatsPkts256to511Octets++;
-		incrByU32(&pEthStatHCEnt->etherStatsHighCapacityPkts256to511Octets,1);
-	} else if ( nLen < 1024 ) {
-		pEthStatEnt->etherStatsPkts512to1023Octets++;
-		incrByU32(&pEthStatHCEnt->etherStatsHighCapacityPkts512to1023Octets,1);
-	} else if ( nLen < 1519 ) {
-		pEthStatEnt->etherStatsPkts1024to1518Octets++;
-		incrByU32(&pEthStatHCEnt->etherStatsHighCapacityPkts1024to1518Octets,1);
-	} else {
-		pEthStatEnt->etherStatsOversizePkts++;
-		CurrentEthHistEnt.etherHistoryOversizePkts++;
-	}
-	//ÉzÉXÉgÉOÉãÅ[Év
-	UpdateHost(0,nSMode,pEth->ether_dhost,nLen);
-	UpdateHost(1,nSMode,pEth->ether_shost,nLen);
-	//É}ÉgÉäÉbÉNÉXÉOÉãÅ[Év
-	UpdateMtx(pEth,nLen);
-	if( pEth->ether_type == 0x0608 ) {
-		UpdateProtDist(nProtDirLIARP,nLen);
-	}
+  //ÔøΩÔøΩÔøΩvÔøΩOÔøΩÔøΩÔøΩ[ÔøΩvÔøΩiÔøΩpÔøΩPÔøΩbÔøΩgÔøΩÔøΩÔøΩAÔøΩoÔøΩCÔøΩgÔøΩÔøΩÔøΩAÔøΩÔøΩÔøΩƒêÔøΩ ÅAÔøΩpÔøΩPÔøΩbÔøΩgÔøΩTÔøΩCÔøΩYÔøΩ Åj
+  //ÔøΩÔøΩÔøΩÔøΩÔøΩOÔøΩÔøΩÔøΩ[ÔøΩv
+  int nSMode = 0;
+  if (pEthStatEnt == NULL)
+    return;
+  pEthStatEnt->etherStatsOctets += nLen;
+  pEthStatEnt->etherStatsPkts++;
+  incrByU32(&pEthStatHCEnt->etherStatsHighCapacityPkts, 1);
+  incrByU32(&pEthStatHCEnt->etherStatsHighCapacityOctets, nLen);
+
+  CurrentEthHistEnt.etherHistoryPkts++;
+  CurrentEthHistEnt.etherHistoryOctets += nLen;
+  incrByU32(&CurrentEthHistHCEnt.etherHistoryHighCapacityPkts, 1);
+  incrByU32(&CurrentEthHistHCEnt.etherHistoryHighCapacityOctets, nLen);
+  if (pEth->ether_dhost[0] & 0x01)
+  {
+    nSMode++;
+    if (pEth->ether_dhost[0] == 0xff && pEth->ether_dhost[1] == 0xff && pEth->ether_dhost[2] == 0xff &&
+        pEth->ether_dhost[3] == 0xff && pEth->ether_dhost[4] == 0xff && pEth->ether_dhost[5] == 0xff)
+    {
+      pEthStatEnt->etherStatsBroadcastPkts++;
+      CurrentEthHistEnt.etherHistoryBroadcastPkts++;
+      nSMode++;
+    }
+    pEthStatEnt->etherStatsMulticastPkts++;
+    CurrentEthHistEnt.etherHistoryMulticastPkts++;
+  }
+  if (nLen < 64)
+  {
+    pEthStatEnt->etherStatsUndersizePkts++;
+    CurrentEthHistEnt.etherHistoryUndersizePkts++;
+  }
+  else if (nLen == 64)
+  {
+    pEthStatEnt->etherStatsPkts64Octets++;
+    incrByU32(&pEthStatHCEnt->etherStatsHighCapacityPkts64Octets, 1);
+  }
+  else if (nLen < 128)
+  {
+    pEthStatEnt->etherStatsPkts65to127Octets++;
+    incrByU32(&pEthStatHCEnt->etherStatsHighCapacityPkts65to127Octets, 1);
+  }
+  else if (nLen < 256)
+  {
+    pEthStatEnt->etherStatsPkts128to255Octets++;
+    incrByU32(&pEthStatHCEnt->etherStatsHighCapacityPkts128to255Octets, 1);
+  }
+  else if (nLen < 512)
+  {
+    pEthStatEnt->etherStatsPkts256to511Octets++;
+    incrByU32(&pEthStatHCEnt->etherStatsHighCapacityPkts256to511Octets, 1);
+  }
+  else if (nLen < 1024)
+  {
+    pEthStatEnt->etherStatsPkts512to1023Octets++;
+    incrByU32(&pEthStatHCEnt->etherStatsHighCapacityPkts512to1023Octets, 1);
+  }
+  else if (nLen < 1519)
+  {
+    pEthStatEnt->etherStatsPkts1024to1518Octets++;
+    incrByU32(&pEthStatHCEnt->etherStatsHighCapacityPkts1024to1518Octets, 1);
+  }
+  else
+  {
+    pEthStatEnt->etherStatsOversizePkts++;
+    CurrentEthHistEnt.etherHistoryOversizePkts++;
+  }
+  //ÔøΩzÔøΩXÔøΩgÔøΩOÔøΩÔøΩÔøΩ[ÔøΩv
+  UpdateHost(0, nSMode, pEth->ether_dhost, nLen);
+  UpdateHost(1, nSMode, pEth->ether_shost, nLen);
+  //ÔøΩ}ÔøΩgÔøΩÔøΩÔøΩbÔøΩNÔøΩXÔøΩOÔøΩÔøΩÔøΩ[ÔøΩv
+  UpdateMtx(pEth, nLen);
+  if (pEth->ether_type == 0x0608)
+  {
+    UpdateProtDist(nProtDirLIARP, nLen);
+  }
 }
 
-void UpdateAddrMap(char *szMac,unsigned long nIP)
+void UpdateAddrMap(char *szMac, unsigned long nIP)
 {
-    struct addressMapTable_entry *p;
-    netsnmp_index oid_index;
-    oid IndexOid[64];
-    oid_index.len  = MakeAddrMapIndex(0,nProtDirLIIP,4,(char*)&nIP,IfDataSource_oid_len,IfDataSource_oid,IndexOid);
-    oid_index.oids = IndexOid;
-	p = CONTAINER_FIND(pAddrMapContainer, &oid_index);
-	if( p == NULL ) {
-		p = addressMapTable_createEntry(pAddrMapContainer,0,nProtDirLIIP,(char*)&nIP,4,IfDataSource_oid,IfDataSource_oid_len);
-		if( p == NULL ) return;
-		memcpy(p->addressMapPhysicalAddress,szMac,6);
-		p->addressMapPhysicalAddress_len =6;
-		p->addressMapLastChange=netsnmp_get_agent_uptime();
-		p->nLastTM =0;
-		p->valid = 0;
-		p->pAddrMap = NULL;
-		nAddrMapIns++;
-	} else {
-		if( memcmp(p->addressMapPhysicalAddress,szMac,6) == 0 ) return;
-		memcpy(p->addressMapPhysicalAddress,szMac,6);
-
-	}
-	p->nNewTM = p->addressMapLastChange=netsnmp_get_agent_uptime();
+  struct addressMapTable_entry *p;
+  netsnmp_index oid_index;
+  oid IndexOid[64];
+  oid_index.len = MakeAddrMapIndex(0, nProtDirLIIP, 4, (char *)&nIP, IfDataSource_oid_len, IfDataSource_oid, IndexOid);
+  oid_index.oids = IndexOid;
+  p = CONTAINER_FIND(pAddrMapContainer, &oid_index);
+  if (p == NULL)
+  {
+    p = addressMapTable_createEntry(pAddrMapContainer, 0, nProtDirLIIP, (char *)&nIP, 4, IfDataSource_oid, IfDataSource_oid_len);
+    if (p == NULL)
+      return;
+    memcpy(p->addressMapPhysicalAddress, szMac, 6);
+    p->addressMapPhysicalAddress_len = 6;
+    p->addressMapLastChange = netsnmp_get_agent_uptime();
+    p->nLastTM = 0;
+    p->valid = 0;
+    p->pAddrMap = NULL;
+    nAddrMapIns++;
+  }
+  else
+  {
+    if (memcmp(p->addressMapPhysicalAddress, szMac, 6) == 0)
+      return;
+    memcpy(p->addressMapPhysicalAddress, szMac, 6);
+  }
+  p->nNewTM = p->addressMapLastChange = netsnmp_get_agent_uptime();
 }
 
-
-void UpdateRmonIP(struct tw_eth *pEth,struct tw_ip *pIP,int nLen)
+void UpdateRmonIP(struct tw_eth *pEth, struct tw_ip *pIP, int nLen)
 {
-	//ÉvÉçÉgÉRÉãï ÇÃIP,ICMPÇèàóù
-	UpdateProtDist(nProtDirLIIP,nLen);
-	if( pIP->ip_p == 1 ) {
-		UpdateProtDist(nProtDirLIICMP,nLen);
-	}
-	//ÉAÉhÉåÉXÇlÇ`ÇoÇèàóù
-	UpdateAddrMap(pEth->ether_shost,pIP->ip_src);
-	UpdateAddrMap(pEth->ether_dhost,pIP->ip_dst);
-	return;
+  //ÔøΩvÔøΩÔøΩÔøΩgÔøΩRÔøΩÔøΩÔøΩ ÇÔøΩIP,ICMPÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ
+  UpdateProtDist(nProtDirLIIP, nLen);
+  if (pIP->ip_p == 1)
+  {
+    UpdateProtDist(nProtDirLIICMP, nLen);
+  }
+  //ÔøΩAÔøΩhÔøΩÔøΩÔøΩXÔøΩlÔøΩ`ÔøΩoÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ
+  UpdateAddrMap(pEth->ether_shost, pIP->ip_src);
+  UpdateAddrMap(pEth->ether_dhost, pIP->ip_dst);
+  return;
 }
 
-void UpdateNlHost(int nDir,int bMCas,u_long nIP,int nLen)
+void UpdateNlHost(int nDir, int bMCas, u_long nIP, int nLen)
 {
-   struct nlHostTable_entry *p;
-    netsnmp_index oid_index;
-    oid IndexOid[64];
-    oid_index.len  = MakeNlHostIndex(1,0,nProtDirLIIP,4,(char*)&nIP,IndexOid);
-    oid_index.oids = IndexOid;
-	p = CONTAINER_FIND(pNlHostContainer, &oid_index);
-	if( p == NULL ) {
-		p = nlHostTable_createEntry(pNlHostContainer,1,0,nProtDirLIIP,(char*)&nIP,4);
-		if( p == NULL ) return;
-		p->nlHostInPkts =0;
-		p->nlHostOutPkts =0;
-		p->nlHostInOctets =0;
-		p->nlHostOutOctets =0;
-		p->nlHostOutMacNonUnicastPkts =0;
-		p->nlHostCreateTime=netsnmp_get_agent_uptime();
-	    pHlHostCntEnt->hlHostControlNlInserts++;
-		p->nLastTM =0;
-		p->pNlHost = NULL;
-	}
-	if( nDir == 0 ) {
-		p->nlHostInPkts++;
-		p->nlHostInOctets+=nLen;
-	} else {
-		p->nlHostOutPkts++;
-		p->nlHostOutOctets+=nLen;
-		if( bMCas ) p->nlHostOutMacNonUnicastPkts++;
-	}
-	p->nNewTM = netsnmp_get_agent_uptime();
-	p->valid = 0;
-	return;
+  struct nlHostTable_entry *p;
+  netsnmp_index oid_index;
+  oid IndexOid[64];
+  oid_index.len = MakeNlHostIndex(1, 0, nProtDirLIIP, 4, (char *)&nIP, IndexOid);
+  oid_index.oids = IndexOid;
+  p = CONTAINER_FIND(pNlHostContainer, &oid_index);
+  if (p == NULL)
+  {
+    p = nlHostTable_createEntry(pNlHostContainer, 1, 0, nProtDirLIIP, (char *)&nIP, 4);
+    if (p == NULL)
+      return;
+    p->nlHostInPkts = 0;
+    p->nlHostOutPkts = 0;
+    p->nlHostInOctets = 0;
+    p->nlHostOutOctets = 0;
+    p->nlHostOutMacNonUnicastPkts = 0;
+    p->nlHostCreateTime = netsnmp_get_agent_uptime();
+    pHlHostCntEnt->hlHostControlNlInserts++;
+    p->nLastTM = 0;
+    p->pNlHost = NULL;
+  }
+  if (nDir == 0)
+  {
+    p->nlHostInPkts++;
+    p->nlHostInOctets += nLen;
+  }
+  else
+  {
+    p->nlHostOutPkts++;
+    p->nlHostOutOctets += nLen;
+    if (bMCas)
+      p->nlHostOutMacNonUnicastPkts++;
+  }
+  p->nNewTM = netsnmp_get_agent_uptime();
+  p->valid = 0;
+  return;
 }
 
-void UpdateAlHost(int nDir,long nPLI,u_long nIP,int nLen)
+void UpdateAlHost(int nDir, long nPLI, u_long nIP, int nLen)
 {
-   struct alHostTable_entry *p;
-    netsnmp_index oid_index;
-    oid IndexOid[64];
-    oid_index.len  = MakeAlHostIndex(1,0,nProtDirLIIP,4,(char*)&nIP,nPLI,IndexOid);
-    oid_index.oids = IndexOid;
-	p = CONTAINER_FIND(pAlHostContainer, &oid_index);
-	if( p == NULL ) {
-		p = alHostTable_createEntry(pAlHostContainer,1,0,nProtDirLIIP,(char*)&nIP,4,nPLI);
-		if( p == NULL ) return;
-		p->alHostInPkts =0;
-		p->alHostOutPkts =0;
-		p->alHostInOctets =0;
-		p->alHostOutOctets =0;
-		p->alHostCreateTime=netsnmp_get_agent_uptime();
-		p->pAlHost = NULL;
-	    pHlHostCntEnt->hlHostControlAlInserts++;
-		p->nLastTM =0;
-	}
-	if( nDir == 0 ) {
-		p->alHostInPkts++;
-		p->alHostInOctets+=nLen;
-	} else {
-		p->alHostOutPkts++;
-		p->alHostOutOctets+=nLen;
-	}
-	p->nNewTM = netsnmp_get_agent_uptime();
-	p->valid = 0;
-	return;
+  struct alHostTable_entry *p;
+  netsnmp_index oid_index;
+  oid IndexOid[64];
+  oid_index.len = MakeAlHostIndex(1, 0, nProtDirLIIP, 4, (char *)&nIP, nPLI, IndexOid);
+  oid_index.oids = IndexOid;
+  p = CONTAINER_FIND(pAlHostContainer, &oid_index);
+  if (p == NULL)
+  {
+    p = alHostTable_createEntry(pAlHostContainer, 1, 0, nProtDirLIIP, (char *)&nIP, 4, nPLI);
+    if (p == NULL)
+      return;
+    p->alHostInPkts = 0;
+    p->alHostOutPkts = 0;
+    p->alHostInOctets = 0;
+    p->alHostOutOctets = 0;
+    p->alHostCreateTime = netsnmp_get_agent_uptime();
+    p->pAlHost = NULL;
+    pHlHostCntEnt->hlHostControlAlInserts++;
+    p->nLastTM = 0;
+  }
+  if (nDir == 0)
+  {
+    p->alHostInPkts++;
+    p->alHostInOctets += nLen;
+  }
+  else
+  {
+    p->alHostOutPkts++;
+    p->alHostOutOctets += nLen;
+  }
+  p->nNewTM = netsnmp_get_agent_uptime();
+  p->valid = 0;
+  return;
 }
 
-
-void UpdateNlMtx(struct tw_flow *pFlow,int nLen)
+void UpdateNlMtx(struct tw_flow *pFlow, int nLen)
 {
-   struct nlMatrixSDTable_entry *pSD;
-   struct nlMatrixDSTable_entry *pDS;
-    netsnmp_index oid_index;
-    oid IndexOid[64];
-    oid_index.len  = MakeNlMtxIndex(1,0,nProtDirLIIP,4,(char*)&pFlow->ip_src,(char*)&pFlow->ip_dst,IndexOid);
-    oid_index.oids = IndexOid;
-	pSD = CONTAINER_FIND(pNlMtxSDContainer, &oid_index);
-	if( pSD == NULL ) {
-		pSD = nlMatrixSDTable_createEntry(pNlMtxSDContainer,1,0,nProtDirLIIP,(char*)&pFlow->ip_src,4,(char*)&pFlow->ip_dst,4);
-		if( pSD == NULL ) return;
-		pSD->nlMatrixSDPkts =1;
-		pSD->nlMatrixSDOctets =nLen;
-		pSD->nlMatrixSDCreateTime=netsnmp_get_agent_uptime();
-		pSD->nLastTM =0;
-		pSD->valid = 0;
-	    pHlMtxCntEnt->hlMatrixControlNlInserts++;
-	    pSD->pNlMtxSD= NULL;
-	} else {
-		pSD->nlMatrixSDPkts++;
-		pSD->nlMatrixSDOctets+=nLen;
-	}
-	pSD->nNewTM = netsnmp_get_agent_uptime();
-    oid_index.len  = MakeNlMtxIndex(1,0,nProtDirLIIP,4,(char*)&pFlow->ip_dst,(char*)&pFlow->ip_src,IndexOid);
-    oid_index.oids = IndexOid;
-	pDS = CONTAINER_FIND(pNlMtxDSContainer, &oid_index);
-	if( pDS == NULL ) {
-		pDS = nlMatrixDSTable_createEntry(pNlMtxDSContainer,1,0,nProtDirLIIP,(char*)&pFlow->ip_dst,4,(char*)&pFlow->ip_src,4);
-		if( pDS == NULL ) return;
-		pDS->nlMatrixDSPkts =1;
-		pDS->nlMatrixDSOctets =nLen;
-		pDS->nlMatrixDSCreateTime=netsnmp_get_agent_uptime();
-		pDS->nLastTM =0;
-		pDS->valid = 0;
-		pDS->pNlMtxDS = NULL;
-	} else {
-		pDS->nlMatrixDSPkts++;
-		pDS->nlMatrixDSOctets+=nLen;
-	}
-	pDS->nNewTM = netsnmp_get_agent_uptime();
-	return;
+  struct nlMatrixSDTable_entry *pSD;
+  struct nlMatrixDSTable_entry *pDS;
+  netsnmp_index oid_index;
+  oid IndexOid[64];
+  oid_index.len = MakeNlMtxIndex(1, 0, nProtDirLIIP, 4, (char *)&pFlow->ip_src, (char *)&pFlow->ip_dst, IndexOid);
+  oid_index.oids = IndexOid;
+  pSD = CONTAINER_FIND(pNlMtxSDContainer, &oid_index);
+  if (pSD == NULL)
+  {
+    pSD = nlMatrixSDTable_createEntry(pNlMtxSDContainer, 1, 0, nProtDirLIIP, (char *)&pFlow->ip_src, 4, (char *)&pFlow->ip_dst, 4);
+    if (pSD == NULL)
+      return;
+    pSD->nlMatrixSDPkts = 1;
+    pSD->nlMatrixSDOctets = nLen;
+    pSD->nlMatrixSDCreateTime = netsnmp_get_agent_uptime();
+    pSD->nLastTM = 0;
+    pSD->valid = 0;
+    pHlMtxCntEnt->hlMatrixControlNlInserts++;
+    pSD->pNlMtxSD = NULL;
+  }
+  else
+  {
+    pSD->nlMatrixSDPkts++;
+    pSD->nlMatrixSDOctets += nLen;
+  }
+  pSD->nNewTM = netsnmp_get_agent_uptime();
+  oid_index.len = MakeNlMtxIndex(1, 0, nProtDirLIIP, 4, (char *)&pFlow->ip_dst, (char *)&pFlow->ip_src, IndexOid);
+  oid_index.oids = IndexOid;
+  pDS = CONTAINER_FIND(pNlMtxDSContainer, &oid_index);
+  if (pDS == NULL)
+  {
+    pDS = nlMatrixDSTable_createEntry(pNlMtxDSContainer, 1, 0, nProtDirLIIP, (char *)&pFlow->ip_dst, 4, (char *)&pFlow->ip_src, 4);
+    if (pDS == NULL)
+      return;
+    pDS->nlMatrixDSPkts = 1;
+    pDS->nlMatrixDSOctets = nLen;
+    pDS->nlMatrixDSCreateTime = netsnmp_get_agent_uptime();
+    pDS->nLastTM = 0;
+    pDS->valid = 0;
+    pDS->pNlMtxDS = NULL;
+  }
+  else
+  {
+    pDS->nlMatrixDSPkts++;
+    pDS->nlMatrixDSOctets += nLen;
+  }
+  pDS->nNewTM = netsnmp_get_agent_uptime();
+  return;
 }
 
-void UpdateAlMtx(long nPLI,struct tw_flow *pFlow,int nLen)
+void UpdateAlMtx(long nPLI, struct tw_flow *pFlow, int nLen)
 {
-   struct alMatrixSDTable_entry *pSD;
-   struct alMatrixDSTable_entry *pDS;
-    netsnmp_index oid_index;
-    oid IndexOid[64];
-    oid_index.len  = MakeAlMtxIndex(1,0,nProtDirLIIP,4,(char*)&pFlow->ip_src,(char*)&pFlow->ip_dst,nPLI,IndexOid);
-    oid_index.oids = IndexOid;
-	pSD = CONTAINER_FIND(pAlMtxSDContainer, &oid_index);
-	if( pSD == NULL ) {
-		pSD = alMatrixSDTable_createEntry(pAlMtxSDContainer,1,0,nProtDirLIIP,(char*)&pFlow->ip_src,4,(char*)&pFlow->ip_dst,4,nPLI);
-		if( pSD == NULL )return;
-		pSD->alMatrixSDPkts =1;
-		pSD->alMatrixSDOctets =nLen;
-		pSD->alMatrixSDCreateTime=netsnmp_get_agent_uptime();
-	    pHlMtxCntEnt->hlMatrixControlAlInserts++;
-		pSD->nLastTM =0;
-		pSD->valid = 0;
-		pSD->pAlMtxSD = NULL;
-	} else {
-		pSD->alMatrixSDPkts++;
-		pSD->alMatrixSDOctets+=nLen;
-	}
-	pSD->nNewTM = netsnmp_get_agent_uptime();
-    oid_index.len  = MakeAlMtxIndex(1,0,nProtDirLIIP,4,(char*)&pFlow->ip_dst,(char*)&pFlow->ip_src,nPLI,IndexOid);
-    oid_index.oids = IndexOid;
-	pDS = CONTAINER_FIND(pAlMtxDSContainer, &oid_index);
-	if( pDS == NULL ) {
-		pDS = alMatrixDSTable_createEntry(pAlMtxDSContainer,1,0,nProtDirLIIP,(char*)&pFlow->ip_dst,4,(char*)&pFlow->ip_src,4,nPLI);
-		if( pDS == NULL )return;
-		pDS->alMatrixDSPkts =1;
-		pDS->alMatrixDSOctets =nLen;
-		pDS->alMatrixDSCreateTime=netsnmp_get_agent_uptime();
-		pDS->nLastTM =0;
-		pDS->valid = 0;
-		pDS->pAlMtxDS = NULL;
-	} else {
-		pDS->alMatrixDSPkts++;
-		pDS->alMatrixDSOctets+=nLen;
-	}
-	pDS->nNewTM = netsnmp_get_agent_uptime();
-	return;
+  struct alMatrixSDTable_entry *pSD;
+  struct alMatrixDSTable_entry *pDS;
+  netsnmp_index oid_index;
+  oid IndexOid[64];
+  oid_index.len = MakeAlMtxIndex(1, 0, nProtDirLIIP, 4, (char *)&pFlow->ip_src, (char *)&pFlow->ip_dst, nPLI, IndexOid);
+  oid_index.oids = IndexOid;
+  pSD = CONTAINER_FIND(pAlMtxSDContainer, &oid_index);
+  if (pSD == NULL)
+  {
+    pSD = alMatrixSDTable_createEntry(pAlMtxSDContainer, 1, 0, nProtDirLIIP, (char *)&pFlow->ip_src, 4, (char *)&pFlow->ip_dst, 4, nPLI);
+    if (pSD == NULL)
+      return;
+    pSD->alMatrixSDPkts = 1;
+    pSD->alMatrixSDOctets = nLen;
+    pSD->alMatrixSDCreateTime = netsnmp_get_agent_uptime();
+    pHlMtxCntEnt->hlMatrixControlAlInserts++;
+    pSD->nLastTM = 0;
+    pSD->valid = 0;
+    pSD->pAlMtxSD = NULL;
+  }
+  else
+  {
+    pSD->alMatrixSDPkts++;
+    pSD->alMatrixSDOctets += nLen;
+  }
+  pSD->nNewTM = netsnmp_get_agent_uptime();
+  oid_index.len = MakeAlMtxIndex(1, 0, nProtDirLIIP, 4, (char *)&pFlow->ip_dst, (char *)&pFlow->ip_src, nPLI, IndexOid);
+  oid_index.oids = IndexOid;
+  pDS = CONTAINER_FIND(pAlMtxDSContainer, &oid_index);
+  if (pDS == NULL)
+  {
+    pDS = alMatrixDSTable_createEntry(pAlMtxDSContainer, 1, 0, nProtDirLIIP, (char *)&pFlow->ip_dst, 4, (char *)&pFlow->ip_src, 4, nPLI);
+    if (pDS == NULL)
+      return;
+    pDS->alMatrixDSPkts = 1;
+    pDS->alMatrixDSOctets = nLen;
+    pDS->alMatrixDSCreateTime = netsnmp_get_agent_uptime();
+    pDS->nLastTM = 0;
+    pDS->valid = 0;
+    pDS->pAlMtxDS = NULL;
+  }
+  else
+  {
+    pDS->alMatrixDSPkts++;
+    pDS->alMatrixDSOctets += nLen;
+  }
+  pDS->nNewTM = netsnmp_get_agent_uptime();
+  return;
 }
-	
 
-void UpdateRmonFlow(struct tw_flow *pFlow,int nLen)
+void UpdateRmonFlow(struct tw_flow *pFlow, int nLen)
 {
-	long nPLIS;
-	long nPLID;
-	//ÉvÉçÉgÉRÉãï ÇÃTCP,UDP,ALÇÃèàóù
-	pFlow->sport =ntohs(pFlow->sport);
-	pFlow->dport =ntohs(pFlow->dport);
-	if( pFlow->ip_p == 6 ) {
-		UpdateProtDist(nProtDirLITCP[0],nLen);
-		nPLIS = nProtDirLITCP[pFlow->sport];
-		nPLID = nProtDirLITCP[pFlow->dport];
-	} else if ( pFlow->ip_p == 17 ) {
-		UpdateProtDist(nProtDirLIUDP[0],nLen);
-		nPLIS = nProtDirLIUDP[pFlow->sport];
-		nPLID = nProtDirLIUDP[pFlow->dport];
-	} else {
-		// Not Supoort;
-		return;
-	}
-	if( nPLIS ) {
-		UpdateProtDist(nPLIS,nLen);
-		UpdateAlHost(0,nPLIS,pFlow->ip_dst,nLen);
-		UpdateAlHost(1,nPLIS,pFlow->ip_src,nLen);
-		UpdateAlMtx(nPLIS,pFlow,nLen);
-	}
-	if( nPLID ) {
-		UpdateProtDist(nPLID,nLen);
-		UpdateAlHost(0,nPLID,pFlow->ip_dst,nLen);
-		UpdateAlHost(1,nPLID,pFlow->ip_src,nLen);
-		UpdateAlMtx(nPLID,pFlow,nLen); // YMI Fix 2007.7.
-	}
-	// Net Host & Mtx
-	UpdateNlHost(0,pFlow->bMCas,pFlow->ip_dst,nLen);
-	UpdateNlHost(1,pFlow->bMCas,pFlow->ip_src,nLen);
-	UpdateNlMtx(pFlow,nLen);
-	return;
+  long nPLIS;
+  long nPLID;
+  //ÔøΩvÔøΩÔøΩÔøΩgÔøΩRÔøΩÔøΩÔøΩ ÇÔøΩTCP,UDP,ALÔøΩÃèÔøΩÔøΩÔøΩ
+  pFlow->sport = ntohs(pFlow->sport);
+  pFlow->dport = ntohs(pFlow->dport);
+  if (pFlow->ip_p == 6)
+  {
+    UpdateProtDist(nProtDirLITCP[0], nLen);
+    nPLIS = nProtDirLITCP[pFlow->sport];
+    nPLID = nProtDirLITCP[pFlow->dport];
+  }
+  else if (pFlow->ip_p == 17)
+  {
+    UpdateProtDist(nProtDirLIUDP[0], nLen);
+    nPLIS = nProtDirLIUDP[pFlow->sport];
+    nPLID = nProtDirLIUDP[pFlow->dport];
+  }
+  else
+  {
+    // Not Supoort;
+    return;
+  }
+  if (nPLIS)
+  {
+    UpdateProtDist(nPLIS, nLen);
+    UpdateAlHost(0, nPLIS, pFlow->ip_dst, nLen);
+    UpdateAlHost(1, nPLIS, pFlow->ip_src, nLen);
+    UpdateAlMtx(nPLIS, pFlow, nLen);
+  }
+  if (nPLID)
+  {
+    UpdateProtDist(nPLID, nLen);
+    UpdateAlHost(0, nPLID, pFlow->ip_dst, nLen);
+    UpdateAlHost(1, nPLID, pFlow->ip_src, nLen);
+    UpdateAlMtx(nPLID, pFlow, nLen); // YMI Fix 2007.7.
+  }
+  // Net Host & Mtx
+  UpdateNlHost(0, pFlow->bMCas, pFlow->ip_dst, nLen);
+  UpdateNlHost(1, pFlow->bMCas, pFlow->ip_src, nLen);
+  UpdateNlMtx(pFlow, nLen);
+  return;
 }
-
 
 void SetDataSource(char *szDev)
 {
-	FILE *fp;
-	char szLine[1024];
-	int i =1;
-	fp = fopen("/proc/net/dev","r");
-	if( fp == NULL ) return;
-	while( fgets(szLine,sizeof(szLine)-1,fp) ) {
-		if( strchr(szLine,':') == NULL ) continue;  // eth1:ÇÃÇÊÇ§Ç»å`éÆÇÃÇ›ÉJÉEÉìÉg
-		if( strstr(szLine,szDev) != NULL ) break;
-		i++;
-	}
-	fclose(fp);
-	IfDataSource_oid[IfDataSource_oid_len-1] = i;
-	return;
+  FILE *fp;
+  char szLine[1024];
+  int i = 1;
+  fp = fopen("/proc/net/dev", "r");
+  if (fp == NULL)
+    return;
+  while (fgets(szLine, sizeof(szLine) - 1, fp))
+  {
+    if (strchr(szLine, ':') == NULL)
+      continue; // eth1:ÔøΩÃÇÊÇ§ÔøΩ»å`ÔøΩÔøΩÔøΩÃÇ›ÉJÔøΩEÔøΩÔøΩÔøΩg
+    if (strstr(szLine, szDev) != NULL)
+      break;
+    i++;
+  }
+  fclose(fp);
+  IfDataSource_oid[IfDataSource_oid_len - 1] = i;
+  return;
 }
 
 void DeleteMtx(char *pMac)
 {
-    netsnmp_index oid_index;
-    int  nDel = 0;
-    oid IndexOid[1+7*2];
-    char pMacDummy[6];
-    struct matrixSDTable_entry *pSD =NULL;
-    struct matrixDSTable_entry *pDS =NULL;
-    oid_index.len = MakeMtxIndex(1,pMac,pMacDummy,IndexOid);
-    oid_index.oids = IndexOid;
-    memset(pMacDummy,0,sizeof(pMacDummy));
-	while(pSD = CONTAINER_NEXT(pMtxSDContainer, &oid_index) ) {
-			pDS = pSD->pMtxDS;
-			if( pDS ) {
-				matrixDSTable_removeEntry(pMtxDSContainer,pDS);
-			}
-			matrixSDTable_removeEntry(pMtxSDContainer,pSD);
-			nDel++;
-	}
-	while(pDS = CONTAINER_NEXT(pMtxDSContainer, &oid_index) ) {
-			pSD = pDS->pMtxSD;
-			if( pSD ) {
-				matrixSDTable_removeEntry(pMtxSDContainer,pSD);
-			}
-			matrixDSTable_removeEntry(pMtxDSContainer,pDS);
-			nDel++;
-	}
-	if( nDel > 0 ) {
-	    pMtxCntEnt->matrixControlLastDeleteTime=netsnmp_get_agent_uptime();
-	}
-	return;
-	
+  netsnmp_index oid_index;
+  int nDel = 0;
+  oid IndexOid[1 + 7 * 2];
+  char pMacDummy[6];
+  struct matrixSDTable_entry *pSD = NULL;
+  struct matrixDSTable_entry *pDS = NULL;
+  oid_index.len = MakeMtxIndex(1, pMac, pMacDummy, IndexOid);
+  oid_index.oids = IndexOid;
+  memset(pMacDummy, 0, sizeof(pMacDummy));
+  while (pSD = CONTAINER_NEXT(pMtxSDContainer, &oid_index))
+  {
+    pDS = pSD->pMtxDS;
+    if (pDS)
+    {
+      matrixDSTable_removeEntry(pMtxDSContainer, pDS);
+    }
+    matrixSDTable_removeEntry(pMtxSDContainer, pSD);
+    nDel++;
+  }
+  while (pDS = CONTAINER_NEXT(pMtxDSContainer, &oid_index))
+  {
+    pSD = pDS->pMtxSD;
+    if (pSD)
+    {
+      matrixSDTable_removeEntry(pMtxSDContainer, pSD);
+    }
+    matrixDSTable_removeEntry(pMtxDSContainer, pDS);
+    nDel++;
+  }
+  if (nDel > 0)
+  {
+    pMtxCntEnt->matrixControlLastDeleteTime = netsnmp_get_agent_uptime();
+  }
+  return;
 }
 
-static int nList =0;
-static void **ppList= NULL;
+static int nList = 0;
+static void **ppList = NULL;
 
 void MakeList(void *oah, void *p)
 {
-	ppList[nList++] = (void *) oah;
-	return;
+  ppList[nList++] = (void *)oah;
+  return;
 }
 
-int CmpLogTime(const void *p1,const void *p2)
+int CmpLogTime(const void *p1, const void *p2)
 {
-	struct logTable_entry *pLog1 = (struct logTable_entry *)p1;
-	struct logTable_entry *pLog2 = (struct logTable_entry *)p2;
-	if( p1 == NULL || p2 == NULL ) return(0);
-	if( pLog1->logTime < pLog2->logTime) return(-1);
-	if( pLog1->logTime > pLog2->logTime) return(1);
-	return(0);
+  struct logTable_entry *pLog1 = (struct logTable_entry *)p1;
+  struct logTable_entry *pLog2 = (struct logTable_entry *)p2;
+  if (p1 == NULL || p2 == NULL)
+    return (0);
+  if (pLog1->logTime < pLog2->logTime)
+    return (-1);
+  if (pLog1->logTime > pLog2->logTime)
+    return (1);
+  return (0);
 }
 
-
-
-
-//ÉeÅ[ÉuÉãÇÃç≈ëÂílÇÉ`ÉFÉbÉNÇ∑ÇÈïKóvÇÃÇ†ÇÈÇ‡ÇÃ
+//ÔøΩeÔøΩ[ÔøΩuÔøΩÔøΩÔøΩÃç≈ëÔøΩlÔøΩÔøΩÔøΩ`ÔøΩFÔøΩbÔøΩNÔøΩÔøΩÔøΩÔøΩKÔøΩvÔøΩÃÇÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ
 void CheckMaxTableSize(void)
 {
-	size_t nSize;
-	int i;
-    int nDel;
-//netsnmp_container               *pEthHistContainer = NULL;
-	nSize = CONTAINER_SIZE(pEthHistContainer);
-	if(nSize > (size_t)(pEthHistCntEnt->historyControlBucketsGranted)) {
-	    struct etherHistoryTable_entry *pEH;
-		nDel = (int)(nSize - (pEthHistCntEnt->historyControlBucketsGranted*9)/10);
-		while( nDel > 0 && (pEH = CONTAINER_FIRST(pEthHistContainer) )) {
-			etherHistoryTable_removeEntry(pEthHistContainer,pEH);
-			nDel--;
-		}
-	}
+  size_t nSize;
+  int i;
+  int nDel;
+  // netsnmp_container               *pEthHistContainer = NULL;
+  nSize = CONTAINER_SIZE(pEthHistContainer);
+  if (nSize > (size_t)(pEthHistCntEnt->historyControlBucketsGranted))
+  {
+    struct etherHistoryTable_entry *pEH;
+    nDel = (int)(nSize - (pEthHistCntEnt->historyControlBucketsGranted * 9) / 10);
+    while (nDel > 0 && (pEH = CONTAINER_FIRST(pEthHistContainer)))
+    {
+      etherHistoryTable_removeEntry(pEthHistContainer, pEH);
+      nDel--;
+    }
+  }
 
-//netsnmp_container               *pEthHistHCContainer = NULL;
-	nSize = CONTAINER_SIZE(pEthHistHCContainer);
-	if(nSize > (size_t)(pEthHistCntEnt->historyControlBucketsGranted)) {
-		struct etherHistoryHighCapacityTable_entry *pEHHC;
-		nDel = (int)(nSize - (pEthHistCntEnt->historyControlBucketsGranted*9)/10);
-		while(nDel > 0 && ( pEHHC = CONTAINER_FIRST(pEthHistHCContainer)) ) {
-			etherHistoryHighCapacityTable_removeEntry(pEthHistHCContainer,pEHHC);
-			nDel--;
-		}
-	}
+  // netsnmp_container               *pEthHistHCContainer = NULL;
+  nSize = CONTAINER_SIZE(pEthHistHCContainer);
+  if (nSize > (size_t)(pEthHistCntEnt->historyControlBucketsGranted))
+  {
+    struct etherHistoryHighCapacityTable_entry *pEHHC;
+    nDel = (int)(nSize - (pEthHistCntEnt->historyControlBucketsGranted * 9) / 10);
+    while (nDel > 0 && (pEHHC = CONTAINER_FIRST(pEthHistHCContainer)))
+    {
+      etherHistoryHighCapacityTable_removeEntry(pEthHistHCContainer, pEHHC);
+      nDel--;
+    }
+  }
 
-//netsnmp_container               *pHostContainer=NULL;
-//netsnmp_container               *pHostTimeContainer =NULL;
-	nSize = CONTAINER_SIZE(pHostTimeContainer);
-	if(nSize > (size_t)MAX_HOST ) {
-		nDel = (int)(nSize - (MAX_HOST*9)/10);
-		struct hostTimeTable_entry *pHT=NULL;
-		while(nDel > 0 && ( pHT = CONTAINER_FIRST(pHostTimeContainer)) ) {
-    		struct hostTable_entry *pH = pHT->pHostEnt;
-			DeleteMtx(pH->hostAddress);
-			if( pH ) {
-				hostTable_removeEntry(pHostContainer,pH);
-			}
-			hostTimeTable_removeEntry(pHostTimeContainer,pHT);
-			nDel--;
-		}
-	    pHostCntEnt->hostControlLastDeleteTime=netsnmp_get_agent_uptime();
-	}
-    pHostCntEnt->hostControlTableSize =  CONTAINER_SIZE(pHostTimeContainer);
+  // netsnmp_container               *pHostContainer=NULL;
+  // netsnmp_container               *pHostTimeContainer =NULL;
+  nSize = CONTAINER_SIZE(pHostTimeContainer);
+  if (nSize > (size_t)MAX_HOST)
+  {
+    nDel = (int)(nSize - (MAX_HOST * 9) / 10);
+    struct hostTimeTable_entry *pHT = NULL;
+    while (nDel > 0 && (pHT = CONTAINER_FIRST(pHostTimeContainer)))
+    {
+      struct hostTable_entry *pH = pHT->pHostEnt;
+      DeleteMtx(pH->hostAddress);
+      if (pH)
+      {
+        hostTable_removeEntry(pHostContainer, pH);
+      }
+      hostTimeTable_removeEntry(pHostTimeContainer, pHT);
+      nDel--;
+    }
+    pHostCntEnt->hostControlLastDeleteTime = netsnmp_get_agent_uptime();
+  }
+  pHostCntEnt->hostControlTableSize = CONTAINER_SIZE(pHostTimeContainer);
 
-//netsnmp_container               *pMtxSDContainer =NULL;
-//netsnmp_container               *pMtxDSContainer =NULL;
-//ÉzÉXÉgÇè¡Ç∑éûÇ…è¡Ç∑ÅB
+  // netsnmp_container               *pMtxSDContainer =NULL;
+  // netsnmp_container               *pMtxDSContainer =NULL;
+  //ÔøΩzÔøΩXÔøΩgÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ…èÔøΩÔøΩÔøΩÔøΩB
 
-   pMtxCntEnt->matrixControlTableSize =  CONTAINER_SIZE(pMtxSDContainer);
+  pMtxCntEnt->matrixControlTableSize = CONTAINER_SIZE(pMtxSDContainer);
 
+  // netsnmp_container               *pLogContainer =NULL;
+  nSize = CONTAINER_SIZE(pLogContainer);
+  if (nSize > (size_t)MAX_EVENT_LOG)
+  {
+    nList = 0;
+    ppList = (void **)calloc(nSize, sizeof(void *));
+    if (ppList)
+    {
+      CONTAINER_FOR_EACH(pLogContainer, MakeList, NULL);
+      qsort(ppList, nList, sizeof(void *), CmpLogTime);
+      for (i = 0; i < MAX_EVENT_LOG / 2; i++)
+      {
+        logTable_removeEntry(pLogContainer, ppList[i]);
+      }
+      free(ppList);
+      ppList = NULL;
+    }
+  }
 
-//netsnmp_container               *pLogContainer =NULL;
-	nSize = CONTAINER_SIZE(pLogContainer);
-	if(nSize > (size_t)MAX_EVENT_LOG ) {
-		nList = 0;
-		ppList = (void **)calloc(nSize,sizeof(void*));
-		if( ppList ) {
-			CONTAINER_FOR_EACH(pLogContainer,MakeList,NULL);
-			qsort(ppList,nList,sizeof(void*),CmpLogTime);
-			for( i = 0; i <MAX_EVENT_LOG/2;i++ ) {
-				logTable_removeEntry(pLogContainer,ppList[i]);
-			}
-			free(ppList);
-			ppList = NULL;
-		}
-	}
+  // netsnmp_container               *pProtDistContainer=NULL;
+  //ÔøΩ@ÔøΩÔøΩÔøΩÔøΩÕÅAÔøΩÔøΩÔøΩÔøΩÔøΩKÔøΩvÔøΩ»ÇÔøΩÔøΩB
 
+  // netsnmp_container               *pAddrMapContainer =NULL;
+  nSize = CONTAINER_SIZE(pAddrMapMib);
+  if (nSize > (size_t)nAddrMapMaxDE)
+  {
+    nDel = (int)(nSize - (nAddrMapMaxDE * 8) / 10);
+    struct addressMapTable_entry *pAM;
+    while (nDel > 0 && (pAM = CONTAINER_FIRST(pAddrMapMib)))
+    {
+      if (pAM->pAddrMap)
+      {
+        addressMapTable_removeEntry(pAddrMapContainer, pAM->pAddrMap);
+      }
+      addressMapTable_removeEntry(pAddrMapMib, pAM);
+      nDel--;
+      nAddrMapDel++;
+    }
+  }
 
-//netsnmp_container               *pProtDistContainer=NULL;
-//Å@Ç±ÇÍÇÕÅAè¡Ç∑ïKóvÇ»ÇµÅB
+  // netsnmp_container               *pNlHostContainer = NULL;
+  nSize = CONTAINER_SIZE(pNlHostMib);
+  if (nSize > (size_t)pHlHostCntEnt->hlHostControlNlMaxDesiredEntries)
+  {
+    nDel = (int)(nSize - (pHlHostCntEnt->hlHostControlNlMaxDesiredEntries * 9) / 10);
+    struct nlHostTable_entry *pNH;
+    while (nDel > 0 && (pNH = CONTAINER_FIRST(pNlHostMib)))
+    {
+      if (pNH->pNlHost)
+      {
+        nlHostTable_removeEntry(pNlHostContainer, pNH->pNlHost);
+      }
+      nlHostTable_removeEntry(pNlHostMib, pNH);
+      nDel--;
+      //ÔøΩÌèúÔøΩÔøΩÔøΩÃÉJÔøΩEÔøΩÔøΩÔøΩgÔøΩtÔøΩo
+      pHlHostCntEnt->hlHostControlNlDeletes++;
+    }
+  }
 
-//netsnmp_container               *pAddrMapContainer =NULL;
-	nSize = CONTAINER_SIZE(pAddrMapMib);
-	if(nSize > (size_t)nAddrMapMaxDE ) {
-		nDel = (int)(nSize - (nAddrMapMaxDE*8)/10);
-		struct addressMapTable_entry *pAM;
-		while(nDel > 0 && ( pAM = CONTAINER_FIRST(pAddrMapMib)) ) {
-			if( pAM->pAddrMap ) {
-				addressMapTable_removeEntry(pAddrMapContainer,pAM->pAddrMap);
-			}
-			addressMapTable_removeEntry(pAddrMapMib,pAM);
-			nDel--;
-			nAddrMapDel++;
-		}
-	}
+  // netsnmp_container               *pNlMtxSDContainer=NULL;
+  nSize = CONTAINER_SIZE(pNlMtxSDMib);
+  if (nSize > (size_t)pHlMtxCntEnt->hlMatrixControlNlMaxDesiredEntries)
+  {
+    nDel = (int)(nSize - (pHlMtxCntEnt->hlMatrixControlNlMaxDesiredEntries * 9) / 10);
+    struct nlMatrixSDTable_entry *pNM;
+    while (nDel > 0 && (pNM = CONTAINER_FIRST(pNlMtxSDMib)))
+    {
+      if (pNM->pNlMtxSD)
+      {
+        nlMatrixSDTable_removeEntry(pNlMtxSDContainer, pNM->pNlMtxSD);
+      }
+      nlMatrixSDTable_removeEntry(pNlMtxSDMib, pNM);
+      nDel--;
+      //ÔøΩÌèúÔøΩÔøΩÔøΩÃÉJÔøΩEÔøΩÔøΩÔøΩgÔøΩtÔøΩo
+      pHlMtxCntEnt->hlMatrixControlNlDeletes++;
+    }
+  }
 
+  // netsnmp_container               *pNlMtxDSContainer =NULL;
+  nSize = CONTAINER_SIZE(pNlMtxDSMib);
+  if (nSize > (size_t)pHlMtxCntEnt->hlMatrixControlNlMaxDesiredEntries)
+  {
+    nDel = (int)(nSize - (pHlMtxCntEnt->hlMatrixControlNlMaxDesiredEntries * 9) / 10);
+    struct nlMatrixDSTable_entry *pNM;
+    while (nDel > 0 && (pNM = CONTAINER_FIRST(pNlMtxDSMib)))
+    {
+      if (pNM->pNlMtxDS)
+      {
+        nlMatrixDSTable_removeEntry(pNlMtxDSContainer, pNM->pNlMtxDS);
+      }
+      nlMatrixDSTable_removeEntry(pNlMtxDSMib, pNM);
+      nDel--;
+    }
+  }
+  // netsnmp_container               *pAlHostContainer=NULL;
+  nSize = CONTAINER_SIZE(pAlHostMib);
+  if (nSize > (size_t)pHlHostCntEnt->hlHostControlAlMaxDesiredEntries)
+  {
+    nDel = (int)(nSize - (pHlHostCntEnt->hlHostControlAlMaxDesiredEntries * 9) / 10);
+    struct alHostTable_entry *pAH;
+    while (nDel > 0 && (pAH = CONTAINER_FIRST(pAlHostMib)))
+    {
+      if (pAH->pAlHost)
+      {
+        alHostTable_removeEntry(pAlHostContainer, pAH->pAlHost);
+      }
+      alHostTable_removeEntry(pAlHostMib, pAH);
+      nDel--;
+      //ÔøΩÌèúÔøΩÔøΩÔøΩÃÉJÔøΩEÔøΩÔøΩÔøΩgÔøΩtÔøΩo
+      pHlHostCntEnt->hlHostControlAlDeletes++;
+    }
+  }
 
-//netsnmp_container               *pNlHostContainer = NULL;
-	nSize = CONTAINER_SIZE(pNlHostMib);
-	if(nSize > (size_t)    pHlHostCntEnt->hlHostControlNlMaxDesiredEntries ) {
-		nDel = (int)(nSize - (pHlHostCntEnt->hlHostControlNlMaxDesiredEntries*9)/10);
-		struct nlHostTable_entry *pNH;
-		while(nDel > 0 && ( pNH = CONTAINER_FIRST(pNlHostMib)) ) {
-			if( pNH->pNlHost ) {
-				nlHostTable_removeEntry(pNlHostContainer,pNH->pNlHost);
-			}
-			nlHostTable_removeEntry(pNlHostMib,pNH);
-			nDel--;
-			//çÌèúêîÇÃÉJÉEÉìÉgÇtÇo
-			pHlHostCntEnt->hlHostControlNlDeletes++;
-		}
-	}
+  // netsnmp_container               *pAlMtxSDContainer =NULL;
+  nSize = CONTAINER_SIZE(pAlMtxSDMib);
+  if (nSize > (size_t)pHlMtxCntEnt->hlMatrixControlAlMaxDesiredEntries)
+  {
+    nDel = (int)(nSize - (pHlMtxCntEnt->hlMatrixControlAlMaxDesiredEntries * 9) / 10);
+    struct alMatrixSDTable_entry *pAM;
+    while (nDel > 0 && (pAM = CONTAINER_FIRST(pAlMtxSDMib)))
+    {
+      if (pAM->pAlMtxSD)
+      {
+        alMatrixSDTable_removeEntry(pAlMtxSDContainer, pAM->pAlMtxSD);
+      }
+      alMatrixSDTable_removeEntry(pAlMtxSDMib, pAM);
+      nDel--;
+      //ÔøΩÌèúÔøΩÔøΩÔøΩÃÉJÔøΩEÔøΩÔøΩÔøΩgÔøΩtÔøΩo
+      pHlMtxCntEnt->hlMatrixControlAlDeletes++;
+    }
+  }
 
-//netsnmp_container               *pNlMtxSDContainer=NULL;
-	nSize = CONTAINER_SIZE(pNlMtxSDMib);
-	if(nSize > (size_t)    pHlMtxCntEnt->hlMatrixControlNlMaxDesiredEntries ) {
-		nDel = (int)(nSize - (pHlMtxCntEnt->hlMatrixControlNlMaxDesiredEntries*9)/10);
-		struct nlMatrixSDTable_entry *pNM;
-		while(nDel > 0 && ( pNM = CONTAINER_FIRST(pNlMtxSDMib)) ) {
-			if( pNM->pNlMtxSD ) {
-				nlMatrixSDTable_removeEntry(pNlMtxSDContainer,pNM->pNlMtxSD);
-			}
-			nlMatrixSDTable_removeEntry(pNlMtxSDMib,pNM);
-			nDel--;
-			//çÌèúêîÇÃÉJÉEÉìÉgÇtÇo
-			pHlMtxCntEnt->hlMatrixControlNlDeletes++;
-		}
-	}
-
-//netsnmp_container               *pNlMtxDSContainer =NULL;
-	nSize = CONTAINER_SIZE(pNlMtxDSMib);
-	if(nSize > (size_t)    pHlMtxCntEnt->hlMatrixControlNlMaxDesiredEntries ) {
-		nDel = (int)(nSize - (pHlMtxCntEnt->hlMatrixControlNlMaxDesiredEntries*9)/10);
-		struct nlMatrixDSTable_entry *pNM;
-		while(nDel > 0 && ( pNM = CONTAINER_FIRST(pNlMtxDSMib)) ) {
-			if( pNM->pNlMtxDS ) {
-				nlMatrixDSTable_removeEntry(pNlMtxDSContainer,pNM->pNlMtxDS);
-			}
-			nlMatrixDSTable_removeEntry(pNlMtxDSMib,pNM);
-			nDel--;
-		}
-	}
-//netsnmp_container               *pAlHostContainer=NULL;
-	nSize = CONTAINER_SIZE(pAlHostMib);
-	if(nSize > (size_t)    pHlHostCntEnt->hlHostControlAlMaxDesiredEntries ) {
-		nDel = (int)(nSize - (pHlHostCntEnt->hlHostControlAlMaxDesiredEntries*9)/10);
-		struct alHostTable_entry *pAH;
-		while(nDel > 0 && ( pAH = CONTAINER_FIRST(pAlHostMib)) ) {
-			if( pAH->pAlHost ) {
-				alHostTable_removeEntry(pAlHostContainer,pAH->pAlHost);
-			}
-			alHostTable_removeEntry(pAlHostMib,pAH);
-			nDel--;
-			//çÌèúêîÇÃÉJÉEÉìÉgÇtÇo
-			pHlHostCntEnt->hlHostControlAlDeletes++;
-		}
-	}
-
-//netsnmp_container               *pAlMtxSDContainer =NULL;
-	nSize = CONTAINER_SIZE(pAlMtxSDMib);
-	if(nSize > (size_t)    pHlMtxCntEnt->hlMatrixControlAlMaxDesiredEntries ) {
-		nDel = (int)(nSize - (pHlMtxCntEnt->hlMatrixControlAlMaxDesiredEntries*9)/10);
-		struct alMatrixSDTable_entry *pAM;
-		while(nDel > 0 && ( pAM = CONTAINER_FIRST(pAlMtxSDMib)) ) {
-			if( pAM->pAlMtxSD ) {
-				alMatrixSDTable_removeEntry(pAlMtxSDContainer,pAM->pAlMtxSD);
-			}
-			alMatrixSDTable_removeEntry(pAlMtxSDMib,pAM);
-			nDel--;
-			//çÌèúêîÇÃÉJÉEÉìÉgÇtÇo
-			pHlMtxCntEnt->hlMatrixControlAlDeletes++;
-		}
-	}
-
-//netsnmp_container               *pAlMtxDSContainer = NULL;
-	
-	
+  // netsnmp_container               *pAlMtxDSContainer = NULL;
 }
 
-
-// à»â∫ÇÕÅATimeMarkÇÃÇΩÇﬂÇ…íËä˙ìIÇ…é¿çsÇ∑ÇÈèàóùÇ≈Ç∑ÅBäTÇÀÇPÇOïbñàÇ…åƒÇŒÇÍÇÈÅH
+// ÔøΩ»âÔøΩÔøΩÕÅATimeMarkÔøΩÃÇÔøΩÔøΩﬂÇ…íÔøΩÔøΩÔøΩIÔøΩ…éÔøΩÔøΩsÔøΩÔøΩÔøΩÈèàÔøΩÔøΩÔøΩ≈ÇÔøΩÔøΩBÔøΩTÔøΩÀÇPÔøΩOÔøΩbÔøΩÔøΩÔøΩ…åƒÇŒÇÔøΩÔøΩH
 void UpdateAddrMapMib(void *p1, void *p2)
 {
-	struct addressMapTable_entry *p;
-	struct addressMapTable_entry *pAM =(struct addressMapTable_entry *) p1;
-	if( pAM == NULL ) return;
-	if( pAM->nLastTM == pAM->nNewTM) return;
-	if (  pAM->pAddrMap ) {
-		addressMapTable_removeEntry(pAddrMapMib,pAM->pAddrMap);
-	}
-	p = addressMapTable_createEntry(pAddrMapMib,pAM->nNewTM,pAM->protocolDirLocalIndex
-		,pAM->addressMapNetworkAddress,pAM->addressMapNetworkAddress_len,pAM->addressMapSource,pAM->addressMapSource_len);
-	if( p == NULL ) return;
-	memcpy(p->addressMapPhysicalAddress,pAM->addressMapPhysicalAddress,6);
-	p->addressMapPhysicalAddress_len =6;
-	p->addressMapLastChange=pAM->addressMapLastChange;
-	p->nLastTM =pAM->nNewTM;
-	p->valid = 1;
-	p->pAddrMap = pAM;
-	pAM->pAddrMap = p;
-	pAM->nLastTM = pAM->nNewTM;
-	return;
+  struct addressMapTable_entry *p;
+  struct addressMapTable_entry *pAM = (struct addressMapTable_entry *)p1;
+  if (pAM == NULL)
+    return;
+  if (pAM->nLastTM == pAM->nNewTM)
+    return;
+  if (pAM->pAddrMap)
+  {
+    addressMapTable_removeEntry(pAddrMapMib, pAM->pAddrMap);
+  }
+  p = addressMapTable_createEntry(pAddrMapMib, pAM->nNewTM, pAM->protocolDirLocalIndex, pAM->addressMapNetworkAddress, pAM->addressMapNetworkAddress_len, pAM->addressMapSource, pAM->addressMapSource_len);
+  if (p == NULL)
+    return;
+  memcpy(p->addressMapPhysicalAddress, pAM->addressMapPhysicalAddress, 6);
+  p->addressMapPhysicalAddress_len = 6;
+  p->addressMapLastChange = pAM->addressMapLastChange;
+  p->nLastTM = pAM->nNewTM;
+  p->valid = 1;
+  p->pAddrMap = pAM;
+  pAM->pAddrMap = p;
+  pAM->nLastTM = pAM->nNewTM;
+  return;
 }
 
 void CheckAddrMapTime(void)
 {
-	CONTAINER_FOR_EACH(pAddrMapContainer,UpdateAddrMapMib,NULL);
-	return;
+  CONTAINER_FOR_EACH(pAddrMapContainer, UpdateAddrMapMib, NULL);
+  return;
 }
 
 void UpdateNlHostMib(void *p1, void *p2)
 {
-	struct nlHostTable_entry *p;
-	struct nlHostTable_entry *pNH =(struct nlHostTable_entry *) p1;
-	if( pNH == NULL ) return;
-	if( pNH->nLastTM == pNH->nNewTM) return;
-	if (  pNH->pNlHost ) {
-		nlHostTable_removeEntry(pNlHostMib,pNH->pNlHost);
-	}
-	p = nlHostTable_createEntry(pNlHostMib,1,pNH->nNewTM,pNH->protocolDirLocalIndex
-	             , pNH->nlHostAddress
-                 , pNH->nlHostAddress_len);
-	if( p == NULL ) return;
-    p->nlHostInPkts =    pNH->nlHostInPkts;
-    p->nlHostOutPkts =   pNH->nlHostOutPkts;
-    p->nlHostInOctets =  pNH->nlHostInOctets;
-    p->nlHostOutOctets = pNH->nlHostOutOctets;
-    p->nlHostOutMacNonUnicastPkts =   pNH->nlHostOutMacNonUnicastPkts;
-    p->nlHostCreateTime =  pNH->nlHostCreateTime;
-	p->nLastTM =pNH->nNewTM;
-	p->valid = 1;
-	p->pNlHost = pNH;
-	pNH->pNlHost = p;
-	pNH->nLastTM = pNH->nNewTM;
-	return;
+  struct nlHostTable_entry *p;
+  struct nlHostTable_entry *pNH = (struct nlHostTable_entry *)p1;
+  if (pNH == NULL)
+    return;
+  if (pNH->nLastTM == pNH->nNewTM)
+    return;
+  if (pNH->pNlHost)
+  {
+    nlHostTable_removeEntry(pNlHostMib, pNH->pNlHost);
+  }
+  p = nlHostTable_createEntry(pNlHostMib, 1, pNH->nNewTM, pNH->protocolDirLocalIndex, pNH->nlHostAddress, pNH->nlHostAddress_len);
+  if (p == NULL)
+    return;
+  p->nlHostInPkts = pNH->nlHostInPkts;
+  p->nlHostOutPkts = pNH->nlHostOutPkts;
+  p->nlHostInOctets = pNH->nlHostInOctets;
+  p->nlHostOutOctets = pNH->nlHostOutOctets;
+  p->nlHostOutMacNonUnicastPkts = pNH->nlHostOutMacNonUnicastPkts;
+  p->nlHostCreateTime = pNH->nlHostCreateTime;
+  p->nLastTM = pNH->nNewTM;
+  p->valid = 1;
+  p->pNlHost = pNH;
+  pNH->pNlHost = p;
+  pNH->nLastTM = pNH->nNewTM;
+  return;
 }
-
 
 void CheckNlHostTime(void)
 {
-	CONTAINER_FOR_EACH(pNlHostContainer,UpdateNlHostMib,NULL);
-	return;
+  CONTAINER_FOR_EACH(pNlHostContainer, UpdateNlHostMib, NULL);
+  return;
 }
 
 void UpdateNlMtxSDMib(void *p1, void *p2)
 {
-	struct nlMatrixSDTable_entry *p;
-	struct nlMatrixSDTable_entry *pNM =(struct nlMatrixSDTable_entry *) p1;
-	if( pNM == NULL ) return;
-	if( pNM->nLastTM == pNM->nNewTM) return;
-	if (  pNM->pNlMtxSD ) {
-		nlMatrixSDTable_removeEntry(pNlMtxSDMib,pNM->pNlMtxSD);
-	}
-	p = nlMatrixSDTable_createEntry(pNlMtxSDMib,1,pNM->nNewTM,pNM->protocolDirLocalIndex
-	             , pNM->nlMatrixSDSourceAddress,pNM->nlMatrixSDSourceAddress_len
-                 , pNM->nlMatrixSDDestAddress,pNM->nlMatrixSDDestAddress_len);
-	if( p == NULL ) return;
-    p->nlMatrixSDPkts =   pNM->nlMatrixSDPkts;
-    p->nlMatrixSDOctets = pNM->nlMatrixSDOctets;
-    p->nlMatrixSDCreateTime =  pNM->nlMatrixSDCreateTime;
-	p->nLastTM =pNM->nNewTM;
-	p->valid = 1;
-	p->pNlMtxSD = pNM;
-	pNM->pNlMtxSD = p;
-	pNM->nLastTM = pNM->nNewTM;
-	return;
+  struct nlMatrixSDTable_entry *p;
+  struct nlMatrixSDTable_entry *pNM = (struct nlMatrixSDTable_entry *)p1;
+  if (pNM == NULL)
+    return;
+  if (pNM->nLastTM == pNM->nNewTM)
+    return;
+  if (pNM->pNlMtxSD)
+  {
+    nlMatrixSDTable_removeEntry(pNlMtxSDMib, pNM->pNlMtxSD);
+  }
+  p = nlMatrixSDTable_createEntry(pNlMtxSDMib, 1, pNM->nNewTM, pNM->protocolDirLocalIndex, pNM->nlMatrixSDSourceAddress, pNM->nlMatrixSDSourceAddress_len, pNM->nlMatrixSDDestAddress, pNM->nlMatrixSDDestAddress_len);
+  if (p == NULL)
+    return;
+  p->nlMatrixSDPkts = pNM->nlMatrixSDPkts;
+  p->nlMatrixSDOctets = pNM->nlMatrixSDOctets;
+  p->nlMatrixSDCreateTime = pNM->nlMatrixSDCreateTime;
+  p->nLastTM = pNM->nNewTM;
+  p->valid = 1;
+  p->pNlMtxSD = pNM;
+  pNM->pNlMtxSD = p;
+  pNM->nLastTM = pNM->nNewTM;
+  return;
 }
 
 void UpdateNlMtxDSMib(void *p1, void *p2)
 {
-	struct nlMatrixDSTable_entry *p;
-	struct nlMatrixDSTable_entry *pNM =(struct nlMatrixDSTable_entry *) p1;
-	if( pNM == NULL ) return;
-	if( pNM->nLastTM == pNM->nNewTM) return;
-	if (  pNM->pNlMtxDS ) {
-		nlMatrixDSTable_removeEntry(pNlMtxDSMib,pNM->pNlMtxDS);
-	}
-	p = nlMatrixDSTable_createEntry(pNlMtxDSMib,1,pNM->nNewTM,pNM->protocolDirLocalIndex
-                 , pNM->nlMatrixDSDestAddress,pNM->nlMatrixDSDestAddress_len
-	             , pNM->nlMatrixDSSourceAddress,pNM->nlMatrixDSSourceAddress_len);
-	if( p == NULL ) return;
-    p->nlMatrixDSPkts =   pNM->nlMatrixDSPkts;
-    p->nlMatrixDSOctets = pNM->nlMatrixDSOctets;
-    p->nlMatrixDSCreateTime =  pNM->nlMatrixDSCreateTime;
-	p->nLastTM =pNM->nNewTM;
-	p->valid = 1;
-	p->pNlMtxDS = pNM;
-	pNM->pNlMtxDS = p;
-	pNM->nLastTM = pNM->nNewTM;
-	return;
+  struct nlMatrixDSTable_entry *p;
+  struct nlMatrixDSTable_entry *pNM = (struct nlMatrixDSTable_entry *)p1;
+  if (pNM == NULL)
+    return;
+  if (pNM->nLastTM == pNM->nNewTM)
+    return;
+  if (pNM->pNlMtxDS)
+  {
+    nlMatrixDSTable_removeEntry(pNlMtxDSMib, pNM->pNlMtxDS);
+  }
+  p = nlMatrixDSTable_createEntry(pNlMtxDSMib, 1, pNM->nNewTM, pNM->protocolDirLocalIndex, pNM->nlMatrixDSDestAddress, pNM->nlMatrixDSDestAddress_len, pNM->nlMatrixDSSourceAddress, pNM->nlMatrixDSSourceAddress_len);
+  if (p == NULL)
+    return;
+  p->nlMatrixDSPkts = pNM->nlMatrixDSPkts;
+  p->nlMatrixDSOctets = pNM->nlMatrixDSOctets;
+  p->nlMatrixDSCreateTime = pNM->nlMatrixDSCreateTime;
+  p->nLastTM = pNM->nNewTM;
+  p->valid = 1;
+  p->pNlMtxDS = pNM;
+  pNM->pNlMtxDS = p;
+  pNM->nLastTM = pNM->nNewTM;
+  return;
 }
-
 
 void CheckNlMtxTime(void)
 {
-	CONTAINER_FOR_EACH(pNlMtxSDContainer,UpdateNlMtxSDMib,NULL);
-	CONTAINER_FOR_EACH(pNlMtxDSContainer,UpdateNlMtxDSMib,NULL);
-	return;
+  CONTAINER_FOR_EACH(pNlMtxSDContainer, UpdateNlMtxSDMib, NULL);
+  CONTAINER_FOR_EACH(pNlMtxDSContainer, UpdateNlMtxDSMib, NULL);
+  return;
 }
 
 void UpdateAlHostMib(void *p1, void *p2)
 {
-	struct alHostTable_entry *p;
-	struct alHostTable_entry *pAH =(struct alHostTable_entry *) p1;
-	if( pAH == NULL ) return;
-	if( pAH->nLastTM == pAH->nNewTM) return;
-	if (  pAH->pAlHost ) {
-		alHostTable_removeEntry(pAlHostMib,pAH->pAlHost);
-	}
-	p = alHostTable_createEntry(pAlHostMib,1,pAH->nNewTM
-	             , pAH->protocolDirLocalIndexNl
-                 , pAH->nlHostAddress
-                 , pAH->nlHostAddress_len
-                 , pAH->protocolDirLocalIndexAl);
-	if( p == NULL ) return;
-    p->alHostInPkts =    pAH->alHostInPkts;
-    p->alHostOutPkts =   pAH->alHostOutPkts;
-    p->alHostInOctets =  pAH->alHostInOctets;
-    p->alHostOutOctets = pAH->alHostOutOctets;
-    p->alHostCreateTime =  pAH->alHostCreateTime;
-	p->nLastTM =pAH->nNewTM;
-	p->valid = 1;
-	p->pAlHost = pAH;
-	pAH->pAlHost = p;
-	pAH->nLastTM = pAH->nNewTM;
-	return;
+  struct alHostTable_entry *p;
+  struct alHostTable_entry *pAH = (struct alHostTable_entry *)p1;
+  if (pAH == NULL)
+    return;
+  if (pAH->nLastTM == pAH->nNewTM)
+    return;
+  if (pAH->pAlHost)
+  {
+    alHostTable_removeEntry(pAlHostMib, pAH->pAlHost);
+  }
+  p = alHostTable_createEntry(pAlHostMib, 1, pAH->nNewTM, pAH->protocolDirLocalIndexNl, pAH->nlHostAddress, pAH->nlHostAddress_len, pAH->protocolDirLocalIndexAl);
+  if (p == NULL)
+    return;
+  p->alHostInPkts = pAH->alHostInPkts;
+  p->alHostOutPkts = pAH->alHostOutPkts;
+  p->alHostInOctets = pAH->alHostInOctets;
+  p->alHostOutOctets = pAH->alHostOutOctets;
+  p->alHostCreateTime = pAH->alHostCreateTime;
+  p->nLastTM = pAH->nNewTM;
+  p->valid = 1;
+  p->pAlHost = pAH;
+  pAH->pAlHost = p;
+  pAH->nLastTM = pAH->nNewTM;
+  return;
 }
 
 void CheckAlHostTime(void)
 {
-	CONTAINER_FOR_EACH(pAlHostContainer,UpdateAlHostMib,NULL);
-	return;
+  CONTAINER_FOR_EACH(pAlHostContainer, UpdateAlHostMib, NULL);
+  return;
 }
 
 void UpdateAlMtxSDMib(void *p1, void *p2)
 {
-	struct alMatrixSDTable_entry *p;
-	struct alMatrixSDTable_entry *pAM =(struct alMatrixSDTable_entry *) p1;
-	if( pAM == NULL ) return;
-	if( pAM->nLastTM == pAM->nNewTM) return;
-	if (  pAM->pAlMtxSD ) {
-		alMatrixSDTable_removeEntry(pAlMtxSDMib,pAM->pAlMtxSD);
-	}
-	p = alMatrixSDTable_createEntry(pAlMtxSDMib,1,pAM->nNewTM
-                 , pAM->protocolDirLocalIndexNl
-                 , pAM->nlMatrixSDSourceAddress
-                 , pAM->nlMatrixSDSourceAddress_len
-                 , pAM->nlMatrixSDDestAddress
-                 , pAM->nlMatrixSDDestAddress_len
-                 , pAM->protocolDirLocalIndexAl);
-	if( p == NULL ) return;
-    p->alMatrixSDPkts =   pAM->alMatrixSDPkts;
-    p->alMatrixSDOctets = pAM->alMatrixSDOctets;
-    p->alMatrixSDCreateTime =  pAM->alMatrixSDCreateTime;
-	p->nLastTM =pAM->nNewTM;
-	p->valid = 1;
-	p->pAlMtxSD = pAM;
-	pAM->pAlMtxSD = p;
-	pAM->nLastTM = pAM->nNewTM;
-	return;
+  struct alMatrixSDTable_entry *p;
+  struct alMatrixSDTable_entry *pAM = (struct alMatrixSDTable_entry *)p1;
+  if (pAM == NULL)
+    return;
+  if (pAM->nLastTM == pAM->nNewTM)
+    return;
+  if (pAM->pAlMtxSD)
+  {
+    alMatrixSDTable_removeEntry(pAlMtxSDMib, pAM->pAlMtxSD);
+  }
+  p = alMatrixSDTable_createEntry(pAlMtxSDMib, 1, pAM->nNewTM, pAM->protocolDirLocalIndexNl, pAM->nlMatrixSDSourceAddress, pAM->nlMatrixSDSourceAddress_len, pAM->nlMatrixSDDestAddress, pAM->nlMatrixSDDestAddress_len, pAM->protocolDirLocalIndexAl);
+  if (p == NULL)
+    return;
+  p->alMatrixSDPkts = pAM->alMatrixSDPkts;
+  p->alMatrixSDOctets = pAM->alMatrixSDOctets;
+  p->alMatrixSDCreateTime = pAM->alMatrixSDCreateTime;
+  p->nLastTM = pAM->nNewTM;
+  p->valid = 1;
+  p->pAlMtxSD = pAM;
+  pAM->pAlMtxSD = p;
+  pAM->nLastTM = pAM->nNewTM;
+  return;
 }
 
 void UpdateAlMtxDSMib(void *p1, void *p2)
 {
-	struct alMatrixDSTable_entry *p;
-	struct alMatrixDSTable_entry *pAM =(struct alMatrixDSTable_entry *) p1;
-	if( pAM == NULL ) return;
-	if( pAM->nLastTM == pAM->nNewTM) return;
-	if (  pAM->pAlMtxDS ) {
-		alMatrixDSTable_removeEntry(pAlMtxDSMib,pAM->pAlMtxDS);
-	}
-	p = alMatrixDSTable_createEntry(pAlMtxDSMib,1,pAM->nNewTM
-                 , pAM->protocolDirLocalIndexNl
-                 , pAM->nlMatrixDSDestAddress
-                 , pAM->nlMatrixDSDestAddress_len
-                 , pAM->nlMatrixDSSourceAddress
-                 , pAM->nlMatrixDSSourceAddress_len
-                 , pAM->protocolDirLocalIndexAl);
-	if( p == NULL ) return;
-    p->alMatrixDSPkts =   pAM->alMatrixDSPkts;
-    p->alMatrixDSOctets = pAM->alMatrixDSOctets;
-    p->alMatrixDSCreateTime =  pAM->alMatrixDSCreateTime;
-	p->nLastTM =pAM->nNewTM;
-	p->valid = 1;
-	p->pAlMtxDS = pAM;
-	pAM->pAlMtxDS = p;
-	pAM->nLastTM = pAM->nNewTM;
-	return;
+  struct alMatrixDSTable_entry *p;
+  struct alMatrixDSTable_entry *pAM = (struct alMatrixDSTable_entry *)p1;
+  if (pAM == NULL)
+    return;
+  if (pAM->nLastTM == pAM->nNewTM)
+    return;
+  if (pAM->pAlMtxDS)
+  {
+    alMatrixDSTable_removeEntry(pAlMtxDSMib, pAM->pAlMtxDS);
+  }
+  p = alMatrixDSTable_createEntry(pAlMtxDSMib, 1, pAM->nNewTM, pAM->protocolDirLocalIndexNl, pAM->nlMatrixDSDestAddress, pAM->nlMatrixDSDestAddress_len, pAM->nlMatrixDSSourceAddress, pAM->nlMatrixDSSourceAddress_len, pAM->protocolDirLocalIndexAl);
+  if (p == NULL)
+    return;
+  p->alMatrixDSPkts = pAM->alMatrixDSPkts;
+  p->alMatrixDSOctets = pAM->alMatrixDSOctets;
+  p->alMatrixDSCreateTime = pAM->alMatrixDSCreateTime;
+  p->nLastTM = pAM->nNewTM;
+  p->valid = 1;
+  p->pAlMtxDS = pAM;
+  pAM->pAlMtxDS = p;
+  pAM->nLastTM = pAM->nNewTM;
+  return;
 }
-
 
 void CheckAlMtxTime(void)
 {
-	CONTAINER_FOR_EACH(pAlMtxSDContainer,UpdateAlMtxSDMib,NULL);
-	CONTAINER_FOR_EACH(pAlMtxDSContainer,UpdateAlMtxDSMib,NULL);
-	return;	
+  CONTAINER_FOR_EACH(pAlMtxSDContainer, UpdateAlMtxSDMib, NULL);
+  CONTAINER_FOR_EACH(pAlMtxDSContainer, UpdateAlMtxDSMib, NULL);
+  return;
 }
 
-void DoEvent(int nMode,struct alarmTable_entry *pAlarm)
+void DoEvent(int nMode, struct alarmTable_entry *pAlarm)
 {
-    struct eventTable_entry *p;
-    netsnmp_index oid_index;
-    long nIndex;
-    if( nMode == 1 ) {
-		nIndex = pAlarm->alarmRisingEventIndex;
-	} else {
-		nIndex = pAlarm->alarmFallingEventIndex;
-	}
-    oid_index.len  = 1;
-    oid_index.oids = (oid*)&nIndex;
-   	p =  CONTAINER_FIND(pEventContainer, &oid_index);
-   	if( p == NULL ) return;
-   	if( p->eventType > 2 ) {
-   		SendRmonTrap(nMode,pAlarm);
-   	}
-   	if( p->eventType == 2 || p->eventType == 4) {
-	    struct logTable_entry *pLog = logTable_createEntry(pLogContainer,p->eventIndex,p->nLogID++);
-	    if( pLog == NULL ) return;
-		pLog->logTime=netsnmp_get_agent_uptime();
-    	memcpy(pLog->logDescription,p->eventDescription,p->eventDescription_len);
-    	pLog->logDescription_len = p->eventDescription_len;
-		pLog->valid=1;
-	}
+  struct eventTable_entry *p;
+  netsnmp_index oid_index;
+  long nIndex;
+  if (nMode == 1)
+  {
+    nIndex = pAlarm->alarmRisingEventIndex;
+  }
+  else
+  {
+    nIndex = pAlarm->alarmFallingEventIndex;
+  }
+  oid_index.len = 1;
+  oid_index.oids = (oid *)&nIndex;
+  p = CONTAINER_FIND(pEventContainer, &oid_index);
+  if (p == NULL)
+    return;
+  if (p->eventType > 2)
+  {
+    SendRmonTrap(nMode, pAlarm);
+  }
+  if (p->eventType == 2 || p->eventType == 4)
+  {
+    struct logTable_entry *pLog = logTable_createEntry(pLogContainer, p->eventIndex, p->nLogID++);
+    if (pLog == NULL)
+      return;
+    pLog->logTime = netsnmp_get_agent_uptime();
+    memcpy(pLog->logDescription, p->eventDescription, p->eventDescription_len);
+    pLog->logDescription_len = p->eventDescription_len;
+    pLog->valid = 1;
+  }
 }
 
 unsigned long GetAlarmObjVal(int nID)
 {
-   switch (nID) {
-   case COLUMN_ETHERSTATSDROPEVENTS:
-		return(pEthStatEnt->etherStatsDropEvents);
-   case COLUMN_ETHERSTATSOCTETS:
-		return(pEthStatEnt->etherStatsOctets);
-   case COLUMN_ETHERSTATSPKTS:
-		return(pEthStatEnt->etherStatsPkts);
-   case COLUMN_ETHERSTATSBROADCASTPKTS:
-		return(pEthStatEnt->etherStatsBroadcastPkts);
-   case COLUMN_ETHERSTATSMULTICASTPKTS:
-		return(pEthStatEnt->etherStatsMulticastPkts);
-   case COLUMN_ETHERSTATSCRCALIGNERRORS:
-		return(pEthStatEnt->etherStatsCRCAlignErrors);
-   case COLUMN_ETHERSTATSUNDERSIZEPKTS:
-		return(pEthStatEnt->etherStatsUndersizePkts);
-   case COLUMN_ETHERSTATSOVERSIZEPKTS:
-		return(pEthStatEnt->etherStatsOversizePkts);
-   case COLUMN_ETHERSTATSFRAGMENTS:
-		return(pEthStatEnt->etherStatsFragments);
-   case COLUMN_ETHERSTATSJABBERS:
-		return(pEthStatEnt->etherStatsJabbers);
-   case COLUMN_ETHERSTATSCOLLISIONS:
-		return(pEthStatEnt->etherStatsCollisions);
-   case COLUMN_ETHERSTATSPKTS64OCTETS:
-		return(pEthStatEnt->etherStatsPkts64Octets);
-   case COLUMN_ETHERSTATSPKTS65TO127OCTETS:
-		return(pEthStatEnt->etherStatsPkts65to127Octets);
-   case COLUMN_ETHERSTATSPKTS128TO255OCTETS:
-		return(pEthStatEnt->etherStatsPkts128to255Octets);
-   case COLUMN_ETHERSTATSPKTS256TO511OCTETS:
-		return(pEthStatEnt->etherStatsPkts256to511Octets);
-   case COLUMN_ETHERSTATSPKTS512TO1023OCTETS:
-		return(pEthStatEnt->etherStatsPkts512to1023Octets);
-   case COLUMN_ETHERSTATSPKTS1024TO1518OCTETS:
-		return(pEthStatEnt->etherStatsPkts1024to1518Octets);
-   default:
-		return(0);
-   }
-   return(0);
+  switch (nID)
+  {
+  case COLUMN_ETHERSTATSDROPEVENTS:
+    return (pEthStatEnt->etherStatsDropEvents);
+  case COLUMN_ETHERSTATSOCTETS:
+    return (pEthStatEnt->etherStatsOctets);
+  case COLUMN_ETHERSTATSPKTS:
+    return (pEthStatEnt->etherStatsPkts);
+  case COLUMN_ETHERSTATSBROADCASTPKTS:
+    return (pEthStatEnt->etherStatsBroadcastPkts);
+  case COLUMN_ETHERSTATSMULTICASTPKTS:
+    return (pEthStatEnt->etherStatsMulticastPkts);
+  case COLUMN_ETHERSTATSCRCALIGNERRORS:
+    return (pEthStatEnt->etherStatsCRCAlignErrors);
+  case COLUMN_ETHERSTATSUNDERSIZEPKTS:
+    return (pEthStatEnt->etherStatsUndersizePkts);
+  case COLUMN_ETHERSTATSOVERSIZEPKTS:
+    return (pEthStatEnt->etherStatsOversizePkts);
+  case COLUMN_ETHERSTATSFRAGMENTS:
+    return (pEthStatEnt->etherStatsFragments);
+  case COLUMN_ETHERSTATSJABBERS:
+    return (pEthStatEnt->etherStatsJabbers);
+  case COLUMN_ETHERSTATSCOLLISIONS:
+    return (pEthStatEnt->etherStatsCollisions);
+  case COLUMN_ETHERSTATSPKTS64OCTETS:
+    return (pEthStatEnt->etherStatsPkts64Octets);
+  case COLUMN_ETHERSTATSPKTS65TO127OCTETS:
+    return (pEthStatEnt->etherStatsPkts65to127Octets);
+  case COLUMN_ETHERSTATSPKTS128TO255OCTETS:
+    return (pEthStatEnt->etherStatsPkts128to255Octets);
+  case COLUMN_ETHERSTATSPKTS256TO511OCTETS:
+    return (pEthStatEnt->etherStatsPkts256to511Octets);
+  case COLUMN_ETHERSTATSPKTS512TO1023OCTETS:
+    return (pEthStatEnt->etherStatsPkts512to1023Octets);
+  case COLUMN_ETHERSTATSPKTS1024TO1518OCTETS:
+    return (pEthStatEnt->etherStatsPkts1024to1518Octets);
+  default:
+    return (0);
+  }
+  return (0);
 }
 
-
-void CheckAlarmEntry( void *p1,void *p2)
+void CheckAlarmEntry(void *p1, void *p2)
 {
-	time_t nNow  = (time_t) p2;
-    struct alarmTable_entry *p=(struct alarmTable_entry *)p1;
-    unsigned long nNewVal;
-    long  nCmpVal;
-    int   nNewStat =0;
-    if( p1 == NULL ) return;
-	if( (p->alarmStatus == 4 || !p->valid )&& ppList ) {
-		ppList[nList++] = p;
-		return;
-	}
-	if( p->nAlarmObjID < 0 ) return;
-    if( p->nAlarmObjID == 0 ) {
-		p->nAlarmObjID = GetAlarmObjID(p->alarmVariable,p->alarmVariable_len/sizeof(oid));
-	}
-	if( (p->nLastTime+p->alarmInterval) > nNow ) return;
-	nNewVal = GetAlarmObjVal(p->nAlarmObjID);
-	if( p->alarmSampleType == 2 ) {
-		// Delta
-		if( p->nLastTime != 0 ) {
-			nCmpVal = nNewVal - p->nLastVal;
-			if( nCmpVal >=p->alarmRisingThreshold) {
-				nNewStat = 1;
-			} else if (nCmpVal <= p->alarmFallingThreshold) {
-				nNewStat = -1;
-			}
-		}
-		p->nLastVal = nNewVal;
-	} else {
-		// ABS
-		nCmpVal = (long) nNewVal;
-		if( nCmpVal >=p->alarmRisingThreshold) {
-			nNewStat = 1;
-		} else if (nCmpVal <= p->alarmFallingThreshold) {
-			nNewStat = -1;
-		}
-	}
-	if( p->nLastStat != nNewStat ) {
-		if( nNewStat == 1 ) {
-			if( p->bFirst ){
-				p->bFirst = 0;
-				if( p->alarmStartupAlarm ==1 || p->alarmStartupAlarm == 3){
-					DoEvent(1,p);
-				} 
-			} else {
-				DoEvent(1,p);
-			}
-		} else if( nNewStat == -1 ) {
-			if( p->bFirst ){
-				p->bFirst = 0;
-				if( p->alarmStartupAlarm ==2 || p->alarmStartupAlarm == 3){
-					DoEvent(0,p);
-				} 
-			} else {
-				DoEvent(0,p);
-			}
-		}
-	}
-	p->nLastStat = nNewStat;
-	p->nLastTime = nNow;
-	return;
+  time_t nNow = (time_t)p2;
+  struct alarmTable_entry *p = (struct alarmTable_entry *)p1;
+  unsigned long nNewVal;
+  long nCmpVal;
+  int nNewStat = 0;
+  if (p1 == NULL)
+    return;
+  if ((p->alarmStatus == 4 || !p->valid) && ppList)
+  {
+    ppList[nList++] = p;
+    return;
+  }
+  if (p->nAlarmObjID < 0)
+    return;
+  if (p->nAlarmObjID == 0)
+  {
+    p->nAlarmObjID = GetAlarmObjID(p->alarmVariable, p->alarmVariable_len / sizeof(oid));
+  }
+  if ((p->nLastTime + p->alarmInterval) > nNow)
+    return;
+  nNewVal = GetAlarmObjVal(p->nAlarmObjID);
+  if (p->alarmSampleType == 2)
+  {
+    // Delta
+    if (p->nLastTime != 0)
+    {
+      nCmpVal = nNewVal - p->nLastVal;
+      if (nCmpVal >= p->alarmRisingThreshold)
+      {
+        nNewStat = 1;
+      }
+      else if (nCmpVal <= p->alarmFallingThreshold)
+      {
+        nNewStat = -1;
+      }
+    }
+    p->nLastVal = nNewVal;
+  }
+  else
+  {
+    // ABS
+    nCmpVal = (long)nNewVal;
+    if (nCmpVal >= p->alarmRisingThreshold)
+    {
+      nNewStat = 1;
+    }
+    else if (nCmpVal <= p->alarmFallingThreshold)
+    {
+      nNewStat = -1;
+    }
+  }
+  if (p->nLastStat != nNewStat)
+  {
+    if (nNewStat == 1)
+    {
+      if (p->bFirst)
+      {
+        p->bFirst = 0;
+        if (p->alarmStartupAlarm == 1 || p->alarmStartupAlarm == 3)
+        {
+          DoEvent(1, p);
+        }
+      }
+      else
+      {
+        DoEvent(1, p);
+      }
+    }
+    else if (nNewStat == -1)
+    {
+      if (p->bFirst)
+      {
+        p->bFirst = 0;
+        if (p->alarmStartupAlarm == 2 || p->alarmStartupAlarm == 3)
+        {
+          DoEvent(0, p);
+        }
+      }
+      else
+      {
+        DoEvent(0, p);
+      }
+    }
+  }
+  p->nLastStat = nNewStat;
+  p->nLastTime = nNow;
+  return;
 }
 
-void CheckEventEntry( void *p1,void *p2)
+void CheckEventEntry(void *p1, void *p2)
 {
-    struct eventTable_entry *p=(struct eventTable_entry *)p1;
-    if( p1 == NULL ) return;
-	if( (p->eventStatus == 4 || !p->valid )&& ppList ) {
-		ppList[nList++] = p;
-	}
-	return;
+  struct eventTable_entry *p = (struct eventTable_entry *)p1;
+  if (p1 == NULL)
+    return;
+  if ((p->eventStatus == 4 || !p->valid) && ppList)
+  {
+    ppList[nList++] = p;
+  }
+  return;
 }
 void CheckAlarm(void)
 {
-	int i;
-	nList = 0;
-	int nSize;
-	nSize = CONTAINER_SIZE(pAlarmContainer);
-	if( nSize == 0 ) nSize = 10;
-	nList = 0;
-	ppList = (void **)calloc(nSize,sizeof(void*));
-	CONTAINER_FOR_EACH(pAlarmContainer,CheckAlarmEntry,(void*)time(0));
-	for( i = 0; i < nList;i++ ) {
-		if( ppList[i] == NULL ) break;
-		alarmTable_removeEntry(pAlarmContainer,ppList[i]);
-	}
-	free(ppList);
-	ppList = NULL;
-	// Check Event Free
-	nSize = CONTAINER_SIZE(pEventContainer);
-	if( nSize == 0 ) return;
-	nList = 0;
-	ppList = (void **)calloc(nSize,sizeof(void*));
-	CONTAINER_FOR_EACH(pEventContainer,CheckEventEntry,(void*)NULL);
-	for( i = 0; i < nList;i++ ) {
-		if( ppList[i] == NULL ) break;
-		eventTable_removeEntry(pEventContainer,ppList[i]);
-	}
-	free(ppList);
-	ppList = NULL;
-	return;
+  int i;
+  nList = 0;
+  int nSize;
+  nSize = CONTAINER_SIZE(pAlarmContainer);
+  if (nSize == 0)
+    nSize = 10;
+  nList = 0;
+  ppList = (void **)calloc(nSize, sizeof(void *));
+  CONTAINER_FOR_EACH(pAlarmContainer, CheckAlarmEntry, (void *)time(0));
+  for (i = 0; i < nList; i++)
+  {
+    if (ppList[i] == NULL)
+      break;
+    alarmTable_removeEntry(pAlarmContainer, ppList[i]);
+  }
+  free(ppList);
+  ppList = NULL;
+  // Check Event Free
+  nSize = CONTAINER_SIZE(pEventContainer);
+  if (nSize == 0)
+    return;
+  nList = 0;
+  ppList = (void **)calloc(nSize, sizeof(void *));
+  CONTAINER_FOR_EACH(pEventContainer, CheckEventEntry, (void *)NULL);
+  for (i = 0; i < nList; i++)
+  {
+    if (ppList[i] == NULL)
+      break;
+    eventTable_removeEntry(pEventContainer, ppList[i]);
+  }
+  free(ppList);
+  ppList = NULL;
+  return;
 }
 
-
-
-void SaveEventEntry( void *p1,void *p2)
+void SaveEventEntry(void *p1, void *p2)
 {
-	FILE *fp  = (FILE*) p2;
-    struct eventTable_entry *p=(struct eventTable_entry *)p1;
-  	if( fp == NULL || p1== NULL ) return;
-	fprintf(fp,"EVENT %d %d  \t%s\t%s\t%s\n",p->eventIndex
-    ,p->eventType
-    ,p->eventCommunity
-    ,p->eventOwner
-	,p->eventDescription);
-	return;
+  FILE *fp = (FILE *)p2;
+  struct eventTable_entry *p = (struct eventTable_entry *)p1;
+  if (fp == NULL || p1 == NULL)
+    return;
+  fprintf(fp, "EVENT %ld %ld  \t%s\t%s\t%s\n", p->eventIndex, p->eventType, p->eventCommunity, p->eventOwner, p->eventDescription);
+  return;
 }
 
-void AddEventEntry( char *s)
+void AddEventEntry(char *s)
 {
-   struct eventTable_entry *p;
-   char szKey[256];
-   long nIndex;
-   long nType;
-   char *pCom;
-   char *pOwner;
-   char *pDescr;
-   char *pTmp;
-   pTmp = strchr(s,'\n');
-   if( pTmp != NULL ) *pTmp = '\0';
-   pCom = strchr(s,'\t');
-	if( pCom == NULL ) {
-		pCom ="";
-		pOwner = "";
-		pDescr = "";
-	} else {
-		*pCom = '\0';
-		pCom++;
-		pOwner = strchr(pCom,'\t');
-		if( pOwner == NULL) {
-			pOwner = "";
-			pDescr = "";
-		} else {
-			*pOwner ='\0';
-			pOwner++;
-			pDescr =strchr(pOwner,'\t');
-			if( pDescr == NULL ) {
-				pDescr ="";
-			} else {
-				*pDescr ='\0';
-				pDescr++;
-			}
-		}
-	}
-	if(sscanf(s,"%s %d %d",szKey,&nIndex,&nType) < 3 ) return;
-	p = eventTable_createEntry(pEventContainer,nIndex);
-	if( p == NULL ) return;
-    p->eventType =nType;
-    strcpy(p->eventCommunity,pCom);
-    p->eventCommunity_len = strlen(pCom);
-    strcpy(p->eventOwner,pOwner);
-    p->eventOwner_len = strlen(pOwner);
-	strcpy(p->eventDescription,pDescr);
-	p->eventDescription_len = strlen(pDescr);
-	p->valid = 1;
-	p->eventStatus = 1;
-	return;
+  struct eventTable_entry *p;
+  char szKey[256];
+  long nIndex;
+  long nType;
+  char *pCom;
+  char *pOwner;
+  char *pDescr;
+  char *pTmp;
+  pTmp = strchr(s, '\n');
+  if (pTmp != NULL)
+    *pTmp = '\0';
+  pCom = strchr(s, '\t');
+  if (pCom == NULL)
+  {
+    pCom = "";
+    pOwner = "";
+    pDescr = "";
+  }
+  else
+  {
+    *pCom = '\0';
+    pCom++;
+    pOwner = strchr(pCom, '\t');
+    if (pOwner == NULL)
+    {
+      pOwner = "";
+      pDescr = "";
+    }
+    else
+    {
+      *pOwner = '\0';
+      pOwner++;
+      pDescr = strchr(pOwner, '\t');
+      if (pDescr == NULL)
+      {
+        pDescr = "";
+      }
+      else
+      {
+        *pDescr = '\0';
+        pDescr++;
+      }
+    }
+  }
+  if (sscanf(s, "%s %ld %ld", szKey, &nIndex, &nType) < 3)
+    return;
+  p = eventTable_createEntry(pEventContainer, nIndex);
+  if (p == NULL)
+    return;
+  p->eventType = nType;
+  strcpy(p->eventCommunity, pCom);
+  p->eventCommunity_len = strlen(pCom);
+  strcpy(p->eventOwner, pOwner);
+  p->eventOwner_len = strlen(pOwner);
+  strcpy(p->eventDescription, pDescr);
+  p->eventDescription_len = strlen(pDescr);
+  p->valid = 1;
+  p->eventStatus = 1;
+  return;
 }
 
-
-void SaveAlarmEntry( void *p1,void *p2)
+void SaveAlarmEntry(void *p1, void *p2)
 {
-	FILE *fp  = (FILE*) p2;
-    struct alarmTable_entry *p=(struct alarmTable_entry *)p1;
-  	if( fp == NULL || p1== NULL ) return;
-  	if( p->nAlarmObjID < 1 ) return;
-	fprintf(fp,"ALARM %d %d %d %d %d %d %d %d %d\t%s\n",p->alarmIndex,p->alarmInterval,p->nAlarmObjID,p->alarmSampleType,
-    	p->alarmStartupAlarm,p->alarmRisingThreshold,p->alarmFallingThreshold,
-    	p->alarmRisingEventIndex,p->alarmFallingEventIndex,p->alarmOwner);
-	return;
+  FILE *fp = (FILE *)p2;
+  struct alarmTable_entry *p = (struct alarmTable_entry *)p1;
+  if (fp == NULL || p1 == NULL)
+    return;
+  if (p->nAlarmObjID < 1)
+    return;
+  fprintf(fp, "ALARM %ld %ld %d %ld %ld %ld %ld %ld %ld\t%s\n", p->alarmIndex, p->alarmInterval, p->nAlarmObjID, p->alarmSampleType,
+          p->alarmStartupAlarm, p->alarmRisingThreshold, p->alarmFallingThreshold,
+          p->alarmRisingEventIndex, p->alarmFallingEventIndex, p->alarmOwner);
+  return;
 }
 
 void AddAlarmEntry(char *s)
 {
-    struct alarmTable_entry *p;
-    static oid etherStatsTable_oid[] = {1,3,6,1,2,1,16,1,1,1,0,1};
-    size_t etherStatsTable_oid_len   = OID_LENGTH(etherStatsTable_oid);
-    long nIndex;
-    long nInt;
-    long nObjID;
-    long nType;
-    long nSA;
-    long nRT;
-    long nFT;
-    long nRE;
-    long nFE;
-    char szKey[256];
-    char *szOwner;
-    char *pTmp;
-    pTmp = strchr(s,'\n');
-    if( pTmp != NULL ) *pTmp = '\0';
-    szOwner = strchr(s,'\t');
-    if( szOwner == NULL ) {
-		szOwner ="";
-	}
-	if(sscanf(s,"%s %d %d %d %d %d %d %d %d %d",szKey,&nIndex,&nInt,&nObjID,&nType,&nSA,&nRT,&nFT,&nRE,&nFE) <10 ) return;
-	p = alarmTable_createEntry(pAlarmContainer,nIndex);
-	if( p == NULL) return;
-	if( nObjID < 1 ) return;
-	p->alarmInterval=nInt;
-	p->nAlarmObjID=nObjID;
-	etherStatsTable_oid[etherStatsTable_oid_len-2] = nObjID;
-	memcpy(p->alarmVariable,etherStatsTable_oid,sizeof(etherStatsTable_oid));
-	p->alarmVariable_len = sizeof(etherStatsTable_oid);
-	p->alarmSampleType=nType;
-	p->alarmStartupAlarm=nSA;
-	p->alarmRisingThreshold=nRT;
-	p->alarmFallingThreshold=nFT;
-	p->alarmRisingEventIndex=nRE;
-	p->alarmFallingEventIndex=nFE;
-	strcpy(p->alarmOwner,szOwner);
-	p->alarmOwner_len = strlen(szOwner);
-	p->alarmStatus = 1;
-	p->valid = 1;
-	return;
+  struct alarmTable_entry *p;
+  static oid etherStatsTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 1, 1, 1, 0, 1};
+  size_t etherStatsTable_oid_len = OID_LENGTH(etherStatsTable_oid);
+  long nIndex;
+  long nInt;
+  long nObjID;
+  long nType;
+  long nSA;
+  long nRT;
+  long nFT;
+  long nRE;
+  long nFE;
+  char szKey[256];
+  char *szOwner;
+  char *pTmp;
+  pTmp = strchr(s, '\n');
+  if (pTmp != NULL)
+    *pTmp = '\0';
+  szOwner = strchr(s, '\t');
+  if (szOwner == NULL)
+  {
+    szOwner = "";
+  }
+  if (sscanf(s, "%s %ld %ld %ld %ld %ld %ld %ld %ld %ld", szKey, &nIndex, &nInt, &nObjID, &nType, &nSA, &nRT, &nFT, &nRE, &nFE) < 10)
+    return;
+  p = alarmTable_createEntry(pAlarmContainer, nIndex);
+  if (p == NULL)
+    return;
+  if (nObjID < 1)
+    return;
+  p->alarmInterval = nInt;
+  p->nAlarmObjID = nObjID;
+  etherStatsTable_oid[etherStatsTable_oid_len - 2] = nObjID;
+  memcpy(p->alarmVariable, etherStatsTable_oid, sizeof(etherStatsTable_oid));
+  p->alarmVariable_len = sizeof(etherStatsTable_oid);
+  p->alarmSampleType = nType;
+  p->alarmStartupAlarm = nSA;
+  p->alarmRisingThreshold = nRT;
+  p->alarmFallingThreshold = nFT;
+  p->alarmRisingEventIndex = nRE;
+  p->alarmFallingEventIndex = nFE;
+  strcpy(p->alarmOwner, szOwner);
+  p->alarmOwner_len = strlen(szOwner);
+  p->alarmStatus = 1;
+  p->valid = 1;
+  return;
 }
-
 
 void SaveTwRmonConf(void)
 {
-	FILE *fp;
-	fp= fopen("/etc/twrmond.conf","w");
-	if( fp == NULL ) return;
-	fprintf(fp,"MAX_ETHER_HIST %d\n",pEthHistCntEnt->historyControlBucketsGranted);
-	fprintf(fp,"ETHER_HIST_INT %d\n",pEthHistCntEnt->historyControlInterval);
+  FILE *fp;
+  fp = fopen("/etc/twrmond.conf", "w");
+  if (fp == NULL)
+    return;
+  fprintf(fp, "MAX_ETHER_HIST %ld\n", pEthHistCntEnt->historyControlBucketsGranted);
+  fprintf(fp, "ETHER_HIST_INT %ld\n", pEthHistCntEnt->historyControlInterval);
 
-	fprintf(fp,"MAX_NLHOST %d\n",pHlHostCntEnt->hlHostControlNlMaxDesiredEntries);
-	fprintf(fp,"MAX_ALHOST %d\n",pHlHostCntEnt->hlHostControlAlMaxDesiredEntries);
-	fprintf(fp,"MAX_NLMTX %d\n",pHlMtxCntEnt->hlMatrixControlNlMaxDesiredEntries);
-	fprintf(fp,"MAX_ALMTX %d\n",pHlMtxCntEnt->hlMatrixControlAlMaxDesiredEntries);
-	fprintf(fp,"MAX_ADDMAP %d\n",nAddrMapMaxDE);
-	CONTAINER_FOR_EACH(pEventContainer,SaveEventEntry,(void*)fp);
-	CONTAINER_FOR_EACH(pAlarmContainer,SaveAlarmEntry,(void*)fp);
-	fclose(fp);
-	return;
+  fprintf(fp, "MAX_NLHOST %ld\n", pHlHostCntEnt->hlHostControlNlMaxDesiredEntries);
+  fprintf(fp, "MAX_ALHOST %ld\n", pHlHostCntEnt->hlHostControlAlMaxDesiredEntries);
+  fprintf(fp, "MAX_NLMTX %ld\n", pHlMtxCntEnt->hlMatrixControlNlMaxDesiredEntries);
+  fprintf(fp, "MAX_ALMTX %ld\n", pHlMtxCntEnt->hlMatrixControlAlMaxDesiredEntries);
+  fprintf(fp, "MAX_ADDMAP %ld\n", nAddrMapMaxDE);
+  CONTAINER_FOR_EACH(pEventContainer, SaveEventEntry, (void *)fp);
+  CONTAINER_FOR_EACH(pAlarmContainer, SaveAlarmEntry, (void *)fp);
+  fclose(fp);
+  return;
 }
-
 
 void LoadTwRmonConf(void)
 {
-	FILE *fp;
-	char szLine[1024];
-	char szKey[256];
-	unsigned long nTmp;
-	fp= fopen("/etc/twrmond.conf","r");
-	if( fp == NULL ) return;
-	while( fgets(szLine,sizeof(szLine),fp)) {
-		if( sscanf(szLine,"%s %u",szKey,&nTmp) != 2 ) continue;
-		if( szKey[0] == '#' ) continue;
-		if( strcasecmp(szKey,"MAX_ETHER_HIST") == 0 ) {
-			if( nTmp < 10 || nTmp > 24*30*60 ) continue;
-			pEthHistCntEnt->historyControlBucketsGranted = nTmp;
-		} else if( strcasecmp(szKey,"ETHER_HIST_INT") == 0 ) {
-			if( nTmp < 60 || nTmp > 10000 ) continue;
-			pEthHistCntEnt->historyControlInterval = nTmp;
-		} else if( strcasecmp(szKey,"MAX_NLHOST") == 0 ) {
-			if( nTmp < 100 || nTmp > 20000 ) continue;
-			pHlHostCntEnt->hlHostControlAlMaxDesiredEntries = nTmp;
-		} else if( strcasecmp(szKey,"MAX_ALHOST") == 0 ) {
-			if( nTmp < 100 || nTmp > 20000 ) continue;
-			pHlHostCntEnt->hlHostControlAlMaxDesiredEntries = nTmp;
-		} else if( strcasecmp(szKey,"MAX_NLMTX") == 0 ) {
-			if( nTmp < 100 || nTmp > 20000 ) continue;
-			pHlMtxCntEnt->hlMatrixControlNlMaxDesiredEntries = nTmp;
-		} else if( strcasecmp(szKey,"MAX_ALMTX") == 0 ) {
-			if( nTmp < 100 || nTmp > 20000 ) continue;
-			pHlMtxCntEnt->hlMatrixControlAlMaxDesiredEntries = nTmp;
-		} else if( strcasecmp(szKey,"MAX_ADDRMAP") == 0 ) {
-			if( nTmp < 100 || nTmp > 20000 ) continue;
-			nAddrMapMaxDE = nTmp;
-		} else if( strcasecmp(szKey,"ALARM") == 0 ) {
-			AddAlarmEntry(szLine);
-		} else if( strcasecmp(szKey,"EVENT") == 0 ) {
-			AddEventEntry(szLine);
-		}
-	}
-	fclose(fp);
-	return;
+  FILE *fp;
+  char szLine[1024];
+  char szKey[256];
+  unsigned long nTmp;
+  fp = fopen("/etc/twrmond.conf", "r");
+  if (fp == NULL)
+    return;
+  while (fgets(szLine, sizeof(szLine), fp))
+  {
+    if (sscanf(szLine, "%s %lu", szKey, &nTmp) != 2)
+      continue;
+    if (szKey[0] == '#')
+      continue;
+    if (strcasecmp(szKey, "MAX_ETHER_HIST") == 0)
+    {
+      if (nTmp < 10 || nTmp > 24 * 30 * 60)
+        continue;
+      pEthHistCntEnt->historyControlBucketsGranted = nTmp;
+    }
+    else if (strcasecmp(szKey, "ETHER_HIST_INT") == 0)
+    {
+      if (nTmp < 60 || nTmp > 10000)
+        continue;
+      pEthHistCntEnt->historyControlInterval = nTmp;
+    }
+    else if (strcasecmp(szKey, "MAX_NLHOST") == 0)
+    {
+      if (nTmp < 100 || nTmp > 20000)
+        continue;
+      pHlHostCntEnt->hlHostControlAlMaxDesiredEntries = nTmp;
+    }
+    else if (strcasecmp(szKey, "MAX_ALHOST") == 0)
+    {
+      if (nTmp < 100 || nTmp > 20000)
+        continue;
+      pHlHostCntEnt->hlHostControlAlMaxDesiredEntries = nTmp;
+    }
+    else if (strcasecmp(szKey, "MAX_NLMTX") == 0)
+    {
+      if (nTmp < 100 || nTmp > 20000)
+        continue;
+      pHlMtxCntEnt->hlMatrixControlNlMaxDesiredEntries = nTmp;
+    }
+    else if (strcasecmp(szKey, "MAX_ALMTX") == 0)
+    {
+      if (nTmp < 100 || nTmp > 20000)
+        continue;
+      pHlMtxCntEnt->hlMatrixControlAlMaxDesiredEntries = nTmp;
+    }
+    else if (strcasecmp(szKey, "MAX_ADDRMAP") == 0)
+    {
+      if (nTmp < 100 || nTmp > 20000)
+        continue;
+      nAddrMapMaxDE = nTmp;
+    }
+    else if (strcasecmp(szKey, "ALARM") == 0)
+    {
+      AddAlarmEntry(szLine);
+    }
+    else if (strcasecmp(szKey, "EVENT") == 0)
+    {
+      AddEventEntry(szLine);
+    }
+  }
+  fclose(fp);
+  return;
 }
-
 
 /* TW Functions */
 void ResetRmonTable(void)
 {
-	void *pTmp;
-	if( nProbeReset == 2 ) {
-		SaveTwRmonConf();
-	}
-	if( pEthStatEnt ) {
-		struct etherStatsTable_entry *p;
-		p = pEthStatEnt;
-    	p->etherStatsDropEvents=0;
-    	p->etherStatsOctets=0;
-    	p->etherStatsPkts=0;
-    	p->etherStatsBroadcastPkts=0;
-    	p->etherStatsMulticastPkts=0;
-    	p->etherStatsCRCAlignErrors=0;
-    	p->etherStatsUndersizePkts=0;
-    	p->etherStatsOversizePkts=0;
-    	p->etherStatsFragments=0;
-    	p->etherStatsJabbers=0;
-    	p->etherStatsCollisions=0;
-    	p->etherStatsPkts64Octets=0;
-    	p->etherStatsPkts65to127Octets=0;
-    	p->etherStatsPkts128to255Octets=0;
-    	p->etherStatsPkts256to511Octets=0;
-    	p->etherStatsPkts512to1023Octets=0;
-    	p->etherStatsPkts1024to1518Octets=0;
+  void *pTmp;
+  if (nProbeReset == 2)
+  {
+    SaveTwRmonConf();
+  }
+  if (pEthStatEnt)
+  {
+    struct etherStatsTable_entry *p;
+    p = pEthStatEnt;
+    p->etherStatsDropEvents = 0;
+    p->etherStatsOctets = 0;
+    p->etherStatsPkts = 0;
+    p->etherStatsBroadcastPkts = 0;
+    p->etherStatsMulticastPkts = 0;
+    p->etherStatsCRCAlignErrors = 0;
+    p->etherStatsUndersizePkts = 0;
+    p->etherStatsOversizePkts = 0;
+    p->etherStatsFragments = 0;
+    p->etherStatsJabbers = 0;
+    p->etherStatsCollisions = 0;
+    p->etherStatsPkts64Octets = 0;
+    p->etherStatsPkts65to127Octets = 0;
+    p->etherStatsPkts128to255Octets = 0;
+    p->etherStatsPkts256to511Octets = 0;
+    p->etherStatsPkts512to1023Octets = 0;
+    p->etherStatsPkts1024to1518Octets = 0;
+  }
+  if (pEthStat2Ent)
+  {
+    pEthStat2Ent->etherStatsDroppedFrames = 0;
+    ;
+  }
+  if (pEthStatHCEnt)
+  {
+    struct etherStatsHighCapacityTable_entry *p;
+    p = pEthStatHCEnt;
+    zeroU64(&p->etherStatsHighCapacityPkts);
+    zeroU64(&p->etherStatsHighCapacityOctets);
+    zeroU64(&p->etherStatsHighCapacityPkts64Octets);
+    zeroU64(&p->etherStatsHighCapacityPkts65to127Octets);
+    zeroU64(&p->etherStatsHighCapacityPkts128to255Octets);
+    zeroU64(&p->etherStatsHighCapacityPkts256to511Octets);
+    zeroU64(&p->etherStatsHighCapacityPkts512to1023Octets);
+    zeroU64(&p->etherStatsHighCapacityPkts1024to1518Octets);
+  }
+  nLastEthHist = 0;
+  pEthHistCnt2Ent->historyControlDroppedFrames = 0;
+
+  pHostCntEnt->hostControlTableSize = 0;
+  pHostCntEnt->hostControlLastDeleteTime = 0;
+  pHostCnt2Ent->hostControlDroppedFrames = 0;
+  pMtxCntEnt->matrixControlTableSize = 0;
+  pMtxCntEnt->matrixControlLastDeleteTime = 0;
+  pMtxCnt2Ent->matrixControlDroppedFrames = 0;
+  pProtDistCntEnt->protocolDistControlDroppedFrames = 0;
+  pAddrMapCntEnt->addressMapControlDroppedFrames = 0;
+  pHlHostCntEnt->hlHostControlNlDroppedFrames = 0;
+  pHlHostCntEnt->hlHostControlNlInserts = 0;
+  pHlHostCntEnt->hlHostControlNlDeletes = 0;
+  pHlHostCntEnt->hlHostControlAlDroppedFrames = 0;
+  pHlHostCntEnt->hlHostControlAlInserts = 0;
+  pHlHostCntEnt->hlHostControlAlDeletes = 0;
+
+  pHlMtxCntEnt->hlMatrixControlNlDroppedFrames = 0;
+  pHlMtxCntEnt->hlMatrixControlNlInserts = 0;
+  pHlMtxCntEnt->hlMatrixControlNlDeletes = 0;
+  pHlMtxCntEnt->hlMatrixControlAlDroppedFrames = 0;
+  pHlMtxCntEnt->hlMatrixControlAlInserts = 0;
+  pHlMtxCntEnt->hlMatrixControlAlDeletes = 0;
+
+  while (pTmp = CONTAINER_FIRST(pMtxSDContainer))
+  {
+    matrixSDTable_removeEntry(pMtxSDContainer, pTmp);
+  }
+  while (pTmp = CONTAINER_FIRST(pMtxDSContainer))
+  {
+    matrixDSTable_removeEntry(pMtxDSContainer, pTmp);
+  }
+  while (pTmp = CONTAINER_FIRST(pEthHistContainer))
+  {
+    etherHistoryTable_removeEntry(pEthHistContainer, pTmp);
+  }
+  while (pTmp = CONTAINER_FIRST(pEthHistHCContainer))
+  {
+    etherHistoryHighCapacityTable_removeEntry(pEthHistHCContainer, pTmp);
+  }
+  while (pTmp = CONTAINER_FIRST(pHostTimeContainer))
+  {
+    hostTimeTable_removeEntry(pHostTimeContainer, pTmp);
+  }
+  while (pTmp = CONTAINER_FIRST(pHostContainer))
+  {
+    hostTable_removeEntry(pHostContainer, pTmp);
+  }
+  while (pTmp = CONTAINER_FIRST(pLogContainer))
+  {
+    logTable_removeEntry(pLogContainer, pTmp);
+  }
+
+  while (pTmp = CONTAINER_FIRST(pProtDistContainer))
+  {
+    logTable_removeEntry(pProtDistContainer, pTmp);
+  }
+  while (pTmp = CONTAINER_FIRST(pAddrMapMib))
+  {
+    addressMapTable_removeEntry(pAddrMapMib, pTmp);
+  }
+  while (pTmp = CONTAINER_FIRST(pAddrMapContainer))
+  {
+    addressMapTable_removeEntry(pAddrMapContainer, pTmp);
+  }
+
+  while (pTmp = CONTAINER_FIRST(pNlHostMib))
+  {
+    nlHostTable_removeEntry(pNlHostMib, pTmp);
+  }
+  while (pTmp = CONTAINER_FIRST(pNlHostContainer))
+  {
+    nlHostTable_removeEntry(pNlHostContainer, pTmp);
+  }
+
+  while (pTmp = CONTAINER_FIRST(pNlMtxSDMib))
+  {
+    nlMatrixSDTable_removeEntry(pNlMtxSDMib, pTmp);
+  }
+
+  while (pTmp = CONTAINER_FIRST(pNlMtxSDContainer))
+  {
+    nlMatrixSDTable_removeEntry(pNlMtxSDContainer, pTmp);
+  }
+
+  while (pTmp = CONTAINER_FIRST(pNlMtxDSMib))
+  {
+    nlMatrixDSTable_removeEntry(pNlMtxDSMib, pTmp);
+  }
+
+  while (pTmp = CONTAINER_FIRST(pNlMtxDSContainer))
+  {
+    nlMatrixDSTable_removeEntry(pNlMtxDSContainer, pTmp);
+  }
+
+  while (pTmp = CONTAINER_FIRST(pAlHostMib))
+  {
+    alHostTable_removeEntry(pAlHostMib, pTmp);
+  }
+  while (pTmp = CONTAINER_FIRST(pAlHostContainer))
+  {
+    alHostTable_removeEntry(pAlHostContainer, pTmp);
+  }
+
+  while (pTmp = CONTAINER_FIRST(pAlMtxSDMib))
+  {
+    alMatrixSDTable_removeEntry(pAlMtxSDMib, pTmp);
+  }
+
+  while (pTmp = CONTAINER_FIRST(pAlMtxSDContainer))
+  {
+    alMatrixSDTable_removeEntry(pAlMtxSDContainer, pTmp);
+  }
+
+  while (pTmp = CONTAINER_FIRST(pAlMtxDSMib))
+  {
+    alMatrixDSTable_removeEntry(pAlMtxDSMib, pTmp);
+  }
+
+  while (pTmp = CONTAINER_FIRST(pAlMtxDSContainer))
+  {
+    alMatrixDSTable_removeEntry(pAlMtxDSContainer, pTmp);
+  }
+
+  while (pTmp = CONTAINER_FIRST(pProtDistContainer))
+  {
+    protocolDistStatsTable_removeEntry(pProtDistContainer, pTmp);
+  }
+  if (nProbeReset == 3)
+  {
+    while (pTmp = CONTAINER_FIRST(pEventContainer))
+    {
+      eventTable_removeEntry(pEventContainer, pTmp);
     }
-	if( pEthStat2Ent ) {
-    	pEthStat2Ent->etherStatsDroppedFrames =0;;
-	}
-	if( pEthStatHCEnt ) {
-	    struct etherStatsHighCapacityTable_entry *p;
-		p = pEthStatHCEnt;
-	    zeroU64(&p->etherStatsHighCapacityPkts);
-	    zeroU64(&p->etherStatsHighCapacityOctets);
-	    zeroU64(&p->etherStatsHighCapacityPkts64Octets);
-	    zeroU64(&p->etherStatsHighCapacityPkts65to127Octets);
-	    zeroU64(&p->etherStatsHighCapacityPkts128to255Octets);
-	    zeroU64(&p->etherStatsHighCapacityPkts256to511Octets);
-	    zeroU64(&p->etherStatsHighCapacityPkts512to1023Octets);
-	    zeroU64(&p->etherStatsHighCapacityPkts1024to1518Octets);
-	}
-	nLastEthHist =0;
-    pEthHistCnt2Ent->historyControlDroppedFrames =0;
-
-    pHostCntEnt->hostControlTableSize=0;
-    pHostCntEnt->hostControlLastDeleteTime=0;
-    pHostCnt2Ent->hostControlDroppedFrames=0;
-    pMtxCntEnt->matrixControlTableSize=0;
-    pMtxCntEnt->matrixControlLastDeleteTime=0;
-    pMtxCnt2Ent->matrixControlDroppedFrames=0;
-    pProtDistCntEnt->protocolDistControlDroppedFrames=0;
-    pAddrMapCntEnt->addressMapControlDroppedFrames =0;
-    pHlHostCntEnt->hlHostControlNlDroppedFrames =0;
-    pHlHostCntEnt->hlHostControlNlInserts=0;
-    pHlHostCntEnt->hlHostControlNlDeletes=0;
-    pHlHostCntEnt->hlHostControlAlDroppedFrames=0;
-    pHlHostCntEnt->hlHostControlAlInserts=0;
-    pHlHostCntEnt->hlHostControlAlDeletes=0;
-
-    pHlMtxCntEnt->hlMatrixControlNlDroppedFrames =0;
-    pHlMtxCntEnt->hlMatrixControlNlInserts=0;
-    pHlMtxCntEnt->hlMatrixControlNlDeletes=0;
-    pHlMtxCntEnt->hlMatrixControlAlDroppedFrames=0;
-    pHlMtxCntEnt->hlMatrixControlAlInserts=0;
-    pHlMtxCntEnt->hlMatrixControlAlDeletes=0;
-
-	while(pTmp = CONTAINER_FIRST(pMtxSDContainer) ) {
-		matrixSDTable_removeEntry(pMtxSDContainer,pTmp);
-	}
-	while(pTmp = CONTAINER_FIRST(pMtxDSContainer) ) {
-		matrixDSTable_removeEntry(pMtxDSContainer,pTmp);
-	}
-	while( pTmp= CONTAINER_FIRST(pEthHistContainer)) {
-		etherHistoryTable_removeEntry(pEthHistContainer,pTmp);
-	}
-	while( pTmp = CONTAINER_FIRST(pEthHistHCContainer) ) {
-		etherHistoryHighCapacityTable_removeEntry(pEthHistHCContainer,pTmp);
-	}
-	while( pTmp = CONTAINER_FIRST(pHostTimeContainer) ) {
-		hostTimeTable_removeEntry(pHostTimeContainer,pTmp);
-	}
-	while( pTmp = CONTAINER_FIRST(pHostContainer) ) {
-		hostTable_removeEntry(pHostContainer,pTmp);
-	}
-	while( pTmp = CONTAINER_FIRST(pLogContainer) ) {
-		logTable_removeEntry(pLogContainer,pTmp);
-	}
-	
-
-	while( pTmp = CONTAINER_FIRST(pProtDistContainer) ) {
-		logTable_removeEntry(pProtDistContainer,pTmp);
-	}
-	while( pTmp = CONTAINER_FIRST(pAddrMapMib) ) {
-		addressMapTable_removeEntry(pAddrMapMib,pTmp);
-	}
-	while( pTmp = CONTAINER_FIRST(pAddrMapContainer) ) {
-		addressMapTable_removeEntry(pAddrMapContainer,pTmp);
-	}
-	
-	while( pTmp = CONTAINER_FIRST(pNlHostMib) ) {
-		nlHostTable_removeEntry(pNlHostMib,pTmp);
-	}
-	while( pTmp = CONTAINER_FIRST(pNlHostContainer) ) {
-		nlHostTable_removeEntry(pNlHostContainer,pTmp);
-	}
-	
-	while( pTmp = CONTAINER_FIRST(pNlMtxSDMib) ) {
-		nlMatrixSDTable_removeEntry(pNlMtxSDMib,pTmp);
-	}
-
-	while( pTmp = CONTAINER_FIRST(pNlMtxSDContainer) ) {
-		nlMatrixSDTable_removeEntry(pNlMtxSDContainer,pTmp);
-	}
-	
-	while( pTmp = CONTAINER_FIRST(pNlMtxDSMib) ) {
-		nlMatrixDSTable_removeEntry(pNlMtxDSMib,pTmp);
-	}
-
-	while( pTmp = CONTAINER_FIRST(pNlMtxDSContainer) ) {
-		nlMatrixDSTable_removeEntry(pNlMtxDSContainer,pTmp);
-	}
-
-	while( pTmp = CONTAINER_FIRST(pAlHostMib) ) {
-		alHostTable_removeEntry(pAlHostMib,pTmp);
-	}
-	while( pTmp = CONTAINER_FIRST(pAlHostContainer) ) {
-		alHostTable_removeEntry(pAlHostContainer,pTmp);
-	}
-	
-	while( pTmp = CONTAINER_FIRST(pAlMtxSDMib) ) {
-		alMatrixSDTable_removeEntry(pAlMtxSDMib,pTmp);
-	}
-
-	while( pTmp = CONTAINER_FIRST(pAlMtxSDContainer) ) {
-		alMatrixSDTable_removeEntry(pAlMtxSDContainer,pTmp);
-	}
-	
-	while( pTmp = CONTAINER_FIRST(pAlMtxDSMib) ) {
-		alMatrixDSTable_removeEntry(pAlMtxDSMib,pTmp);
-	}
-
-	while( pTmp = CONTAINER_FIRST(pAlMtxDSContainer) ) {
-		alMatrixDSTable_removeEntry(pAlMtxDSContainer,pTmp);
-	}
-
-	while( pTmp = CONTAINER_FIRST(pProtDistContainer) ) {
-		protocolDistStatsTable_removeEntry(pProtDistContainer,pTmp);
-	}
-	if( nProbeReset == 3 ) {
-		while( pTmp = CONTAINER_FIRST(pEventContainer) ) {
-			eventTable_removeEntry(pEventContainer,pTmp);
-		}
-		while( pTmp = CONTAINER_FIRST(pAlarmContainer) ) {
-			alarmTable_removeEntry(pAlarmContainer,pTmp);
-		}
-		LoadTwRmonConf();
-	}
-	nProbeReset = 1;
-	return;
+    while (pTmp = CONTAINER_FIRST(pAlarmContainer))
+    {
+      alarmTable_removeEntry(pAlarmContainer, pTmp);
+    }
+    LoadTwRmonConf();
+  }
+  nProbeReset = 1;
+  return;
 }

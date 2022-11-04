@@ -12,23 +12,24 @@ TWRMOND_H=twrmond.h rmon.h  rmonTable.h
 TWRMOND_C=twrmond.c rmon.c  rmonTable.c
 
 SNMP_CF = -W -O2 -I. `net-snmp-config --cflags`
-SNMP_AGENT_LIBS=`net-snmp-config --agent-libs`
-PCAP_LIB =  -lpcap
+SNMP_AGENT_LIBS = `net-snmp-config --agent-libs`
+PCAP_LIB = -lpcap -pthread
+CC ?= gcc
 
 all:  $(DIST)/twrmond
 
 #Agentx for RMON MIB
 twrmond.o: twrmond.c $(TWRMOND_H)
-	gcc $(SNMP_CF) -c $*.c
+	$(CC) $(SNMP_CF) -D 'VERSION=$(VERSION)' -D 'GITCOMMIT="$(COMMIT)"' -c $*.c
 
 rmon.o: rmon.c $(TWRMOND_H)
-	gcc $(SNMP_CF) -c $*.c
+	$(CC) $(SNMP_CF) -c $*.c
 
 rmonTable.o: rmonTable.c $(TWRMOND_H)
-	gcc $(SNMP_CF) -c $*.c
+	$(CC) $(SNMP_CF) -c $*.c
 
 $(DIST)/twrmond: $(TWRMOND_OBJS)
-	gcc -o dist/twrmond $(TWRMOND_OBJS)  $(SNMP_AGENT_LIBS) $(PCAP_LIB)
+	$(CC) -o dist/twrmond $(TWRMOND_OBJS)  $(SNMP_AGENT_LIBS) $(PCAP_LIB)
 
 docker:  $(DIST)/twrmon Docker/Dockerfile
 	cp dist/twrmon Docker/
@@ -46,5 +47,5 @@ $(DIST)/twrmon.arm64: $(TWRMOND_C) $(TWRMOND_H)
 	docker run --rm -v "$(WD)":/twrmon -w /twrmon debian:bullseye-slim /twrmon/mkarm64.sh $(DIST) $(VERSION) $(COMMIT)
 
 clean:
-	rm -f *.o dist/twrmond
+	rm -f *.o dist/twrmond*
 	mkdir -p dist

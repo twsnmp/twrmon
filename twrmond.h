@@ -14,6 +14,10 @@
 
 #define MAX_IP_FRAG 128
 
+#ifndef  U64
+        typedef struct counter64 U64;
+#endif
+
 /* Ethernet header */
 struct tw_eth {
         u_char  ether_dhost[ETHER_ADDR_LEN];    /* destination host address */
