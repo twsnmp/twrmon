@@ -497,33 +497,6 @@ int etherStatsTable_handler(
       switch (table_info->colnum)
       {
       case COLUMN_ETHERSTATSDATASOURCE:
-#if 0            
-                /* or possibly 'netsnmp_check_vb_type_and_max_size' */
-                ret = netsnmp_check_vb_type_and_size(
-                          request->requestvb, ASN_OBJECT_ID, 16 );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_ETHERSTATSOWNER:
-                /* or possibly 'netsnmp_check_vb_type_and_max_size' */
-                ret = netsnmp_check_vb_type_and_size(
-                          request->requestvb, ASN_OCTET_STR, NNN );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_ETHERSTATSSTATUS:
-                /* or possibly 'netsnmp_check_vb_int_range' */
-                ret = netsnmp_check_vb_int( request->requestvb );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-#endif
       default:
         netsnmp_set_request_error(reqinfo, request,
                                   SNMP_ERR_NOTWRITABLE);
@@ -1209,17 +1182,6 @@ int historyControlTable_handler(
       }
       switch (table_info->colnum)
       {
-#if 0
-            case COLUMN_HISTORYCONTROLDATASOURCE:
-                /* or possibly 'netsnmp_check_vb_type_and_max_size' */
-                ret = netsnmp_check_vb_type_and_size(
-                          request->requestvb, ASN_OBJECT_ID, NNN );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-#endif
       case COLUMN_HISTORYCONTROLBUCKETSREQUESTED:
         /* or possibly 'netsnmp_check_vb_int_range' */
         ret = netsnmp_check_vb_int_range(request->requestvb, 10, 1440);
@@ -1238,25 +1200,6 @@ int historyControlTable_handler(
           return SNMP_ERR_NOERROR;
         }
         break;
-#if 0
-            case COLUMN_HISTORYCONTROLOWNER:
-                /* or possibly 'netsnmp_check_vb_type_and_max_size' */
-                ret = netsnmp_check_vb_type_and_size(
-                          request->requestvb, ASN_OCTET_STR, NNN );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_HISTORYCONTROLSTATUS:
-                /* or possibly 'netsnmp_check_vb_int_range' */
-                ret = netsnmp_check_vb_int( request->requestvb );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-#endif
       default:
         netsnmp_set_request_error(reqinfo, request,
                                   SNMP_ERR_NOTWRITABLE);
@@ -1344,22 +1287,6 @@ int historyControlTable_handler(
 
       switch (table_info->colnum)
       {
-#if 0
-            case COLUMN_HISTORYCONTROLDATASOURCE:
-                memcpy( table_entry->old_historyControlDataSource,
-                        table_entry->historyControlDataSource,
-                        sizeof(table_entry->historyControlDataSource));
-                table_entry->old_historyControlDataSource_len =
-                        table_entry->historyControlDataSource_len;
-                memset( table_entry->historyControlDataSource, 0,
-                        sizeof(table_entry->historyControlDataSource));
-                memcpy( table_entry->historyControlDataSource,
-                        request->requestvb->val.string,
-                        request->requestvb->val_len);
-                table_entry->historyControlDataSource_len =
-                        request->requestvb->val_len;
-                break;
-#endif
       case COLUMN_HISTORYCONTROLBUCKETSREQUESTED:
         table_entry->old_historyControlBucketsRequested = table_entry->historyControlBucketsRequested;
         table_entry->historyControlBucketsRequested = *request->requestvb->val.integer;
@@ -1368,26 +1295,6 @@ int historyControlTable_handler(
         table_entry->old_historyControlInterval = table_entry->historyControlInterval;
         table_entry->historyControlInterval = *request->requestvb->val.integer;
         break;
-#if 0
-            case COLUMN_HISTORYCONTROLOWNER:
-                memcpy( table_entry->old_historyControlOwner,
-                        table_entry->historyControlOwner,
-                        sizeof(table_entry->historyControlOwner));
-                table_entry->old_historyControlOwner_len =
-                        table_entry->historyControlOwner_len;
-                memset( table_entry->historyControlOwner, 0,
-                        sizeof(table_entry->historyControlOwner));
-                memcpy( table_entry->historyControlOwner,
-                        request->requestvb->val.string,
-                        request->requestvb->val_len);
-                table_entry->historyControlOwner_len =
-                        request->requestvb->val_len;
-                break;
-            case COLUMN_HISTORYCONTROLSTATUS:
-                table_entry->old_historyControlStatus = table_entry->historyControlStatus;
-                table_entry->historyControlStatus     = *request->requestvb->val.integer;
-                break;
-#endif
       }
     }
     break;
@@ -2758,34 +2665,6 @@ int hostControlTable_handler(
       }
       switch (table_info->colnum)
       {
-#if 0				
-            case COLUMN_HOSTCONTROLDATASOURCE:
-                /* or possibly 'netsnmp_check_vb_type_and_max_size' */
-                ret = netsnmp_check_vb_type_and_size(
-                          request->requestvb, ASN_OBJECT_ID, NNN );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_HOSTCONTROLOWNER:
-                /* or possibly 'netsnmp_check_vb_type_and_max_size' */
-                ret = netsnmp_check_vb_type_and_size(
-                          request->requestvb, ASN_OCTET_STR, NNN );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_HOSTCONTROLSTATUS:
-                /* or possibly 'netsnmp_check_vb_int_range' */
-                ret = netsnmp_check_vb_int( request->requestvb );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-#endif
       default:
         netsnmp_set_request_error(reqinfo, request,
                                   SNMP_ERR_NOTWRITABLE);
@@ -3632,34 +3511,6 @@ int matrixControlTable_handler(
       table_info = netsnmp_extract_table_info(request);
       switch (table_info->colnum)
       {
-#if 0				
-            case COLUMN_MATRIXCONTROLDATASOURCE:
-                /* or possibly 'netsnmp_check_vb_type_and_max_size' */
-                ret = netsnmp_check_vb_type_and_size(
-                          request->requestvb, ASN_OBJECT_ID, NNN );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_MATRIXCONTROLOWNER:
-                /* or possibly 'netsnmp_check_vb_type_and_max_size' */
-                ret = netsnmp_check_vb_type_and_size(
-                          request->requestvb, ASN_OCTET_STR, NNN );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_MATRIXCONTROLSTATUS:
-                /* or possibly 'netsnmp_check_vb_int_range' */
-                ret = netsnmp_check_vb_int( request->requestvb );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-#endif
       default:
         netsnmp_set_request_error(reqinfo, request,
                                   SNMP_ERR_NOTWRITABLE);
@@ -5144,58 +4995,6 @@ int protocolDirTable_handler(
         continue;
       switch (table_info->colnum)
       {
-#if 0
-            case COLUMN_PROTOCOLDIRDESCR:
-                /* or possibly 'netsnmp_check_vb_type_and_max_size' */
-                ret = netsnmp_check_vb_type_and_size(
-                          request->requestvb, ASN_OCTET_STR, NNN );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_PROTOCOLDIRADDRESSMAPCONFIG:
-                /* or possibly 'netsnmp_check_vb_int_range' */
-                ret = netsnmp_check_vb_int( request->requestvb );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_PROTOCOLDIRHOSTCONFIG:
-                /* or possibly 'netsnmp_check_vb_int_range' */
-                ret = netsnmp_check_vb_int( request->requestvb );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_PROTOCOLDIRMATRIXCONFIG:
-                /* or possibly 'netsnmp_check_vb_int_range' */
-                ret = netsnmp_check_vb_int( request->requestvb );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_PROTOCOLDIROWNER:
-                /* or possibly 'netsnmp_check_vb_type_and_max_size' */
-                ret = netsnmp_check_vb_type_and_size(
-                          request->requestvb, ASN_OCTET_STR, NNN );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_PROTOCOLDIRSTATUS:
-                ret = netsnmp_check_vb_rowstatus(request->requestvb,
-                         (table_entry ? RS_ACTIVE : RS_NONEXISTENT ));
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-#endif
       default:
         netsnmp_set_request_error(reqinfo, request,
                                   SNMP_ERR_NOTWRITABLE);
@@ -5328,13 +5127,6 @@ int protocolDirTable_handler(
         {
         case RS_ACTIVE:
         case RS_CREATEANDGO:
-#if 0                
-                    if (/* XXX */) {
-                        netsnmp_set_request_error( reqinfo, request,
-                                                   SNMP_ERR_INCONSISTENTVALUE );
-                        return SNMP_ERR_NOERROR;
-                    }
-#endif
           break;
         }
       }
@@ -5601,34 +5393,6 @@ int protocolDistControlTable_handler(
 
       switch (table_info->colnum)
       {
-#if 0
-            case COLUMN_PROTOCOLDISTCONTROLDATASOURCE:
-                /* or possibly 'netsnmp_check_vb_type_and_max_size' */
-                ret = netsnmp_check_vb_type_and_size(
-                          request->requestvb, ASN_OBJECT_ID, NNN );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_PROTOCOLDISTCONTROLOWNER:
-                /* or possibly 'netsnmp_check_vb_type_and_max_size' */
-                ret = netsnmp_check_vb_type_and_size(
-                          request->requestvb, ASN_OCTET_STR, NNN );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_PROTOCOLDISTCONTROLSTATUS:
-                ret = netsnmp_check_vb_rowstatus(request->requestvb,
-                         (table_entry ? RS_ACTIVE : RS_NONEXISTENT ));
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-#endif
       default:
         netsnmp_set_request_error(reqinfo, request,
                                   SNMP_ERR_NOTWRITABLE);
@@ -6131,34 +5895,6 @@ int addressMapControlTable_handler(
 
       switch (table_info->colnum)
       {
-#if 0
-            case COLUMN_ADDRESSMAPCONTROLDATASOURCE:
-                /* or possibly 'netsnmp_check_vb_type_and_max_size' */
-                ret = netsnmp_check_vb_type_and_size(
-                          request->requestvb, ASN_OBJECT_ID, NNN );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_ADDRESSMAPCONTROLOWNER:
-                /* or possibly 'netsnmp_check_vb_type_and_max_size' */
-                ret = netsnmp_check_vb_type_and_size(
-                          request->requestvb, ASN_OCTET_STR, NNN );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_ADDRESSMAPCONTROLSTATUS:
-                ret = netsnmp_check_vb_rowstatus(request->requestvb,
-                         (table_entry ? RS_ACTIVE : RS_NONEXISTENT ));
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-#endif
       default:
         netsnmp_set_request_error(reqinfo, request,
                                   SNMP_ERR_NOTWRITABLE);
@@ -6283,13 +6019,6 @@ int addressMapControlTable_handler(
         {
         case RS_ACTIVE:
         case RS_CREATEANDGO:
-#if 0
-                    if (/* XXX */) {
-                        netsnmp_set_request_error( reqinfo, request,
-                                                   SNMP_ERR_INCONSISTENTVALUE );
-                        return SNMP_ERR_NOERROR;
-                    }
-#endif
           break;
         }
       }
@@ -6398,14 +6127,6 @@ oid addressMapTable_variables_oid[] = {1, 3, 6, 1, 2, 1, 16, 13, 5};
 
 struct variable4 addressMapTable_variables[] = {
 /*  magic number        , variable type , ro/rw , callback fn  , L, oidsuffix */
-#if 0
-#define ADDRESSMAPTIMEMARK 1
-{ADDRESSMAPTIMEMARK,  ASN_TIMETICKS,  RONLY,   var_addressMapTable, 2,  { , 1, 1 }},
-#define ADDRESSMAPNETWORKADDRESS 2
-{ADDRESSMAPNETWORKADDRESS,  ASN_OCTET_STR,  RONLY,   var_addressMapTable, 2,  { , 1, 2 }},
-#define ADDRESSMAPSOURCE 3
-{ADDRESSMAPSOURCE,  ASN_OBJECT_ID,  RONLY,   var_addressMapTable, 2,  { , 1, 3 }},
-#endif
 
 #define ADDRESSMAPPHYSICALADDRESS 4
     {ADDRESSMAPPHYSICALADDRESS, ASN_OCTET_STR, RONLY, var_addressMapTable, 2, {1, 4}},
@@ -6615,7 +6336,6 @@ struct addressMapTable_entry *FindAddrMapEntry(struct variable *vp,
   }
   if (exact)
   {
-    // GET�̏ꍇ
     if (4 + 4 + IfDataSource_oid_len != (*length - vp->namelen))
       return (NULL);
     nReqTM = (unsigned long)name[vp->namelen];
@@ -6628,7 +6348,6 @@ struct addressMapTable_entry *FindAddrMapEntry(struct variable *vp,
     name[vp->namelen] = nReqTM;
     return (p);
   }
-  // GET NEXT�̏ꍇ
   if ((*length - vp->namelen) > 0)
   {
     nReqTM = (unsigned long)name[vp->namelen];
@@ -6654,7 +6373,6 @@ struct addressMapTable_entry *FindAddrMapEntry(struct variable *vp,
       break;
     p = CONTAINER_NEXT(pAddrMapContainer, &p->oid_index);
   }
-  // �����C���f�b�N�X�ȏ�ŁA���������ꍇ�B
   if (p)
   {
     *length = p->oid_index.len + vp->namelen;
@@ -6668,7 +6386,6 @@ struct addressMapTable_entry *FindAddrMapEntry(struct variable *vp,
     }
     return (p);
   }
-  //�ł��Ȃ������ꍇ�́A�^�C���}�[�N���X�V���čŏ�����T���B
   nReqTM++;
   if (nTimeMarkMode == 3)
   {
@@ -6703,7 +6420,6 @@ struct addressMapTable_entry *FindAddrMapEntry(struct variable *vp,
     }
     return (p);
   }
-  //�Ō�́A�I�u�W�F�N�g��ς��āA�擪��Ԃ��B
   p = CONTAINER_FIRST(pAddrMapContainer);
   if (p)
   {
@@ -6743,17 +6459,6 @@ var_addressMapTable(struct variable *vp,
    */
   switch (vp->magic)
   {
-#if 0		
-    case ADDRESSMAPTIMEMARK:
-        VAR = VALUE;	/* XXX */
-        return (u_char*) &VAR;
-    case ADDRESSMAPNETWORKADDRESS:
-        VAR = VALUE;	/* XXX */
-        return (u_char*) &VAR;
-    case ADDRESSMAPSOURCE:
-        VAR = VALUE;	/* XXX */
-        return (u_char*) &VAR;
-#endif
   case ADDRESSMAPPHYSICALADDRESS:
     *var_len = table_entry->addressMapPhysicalAddress_len;
     return (u_char *)table_entry->addressMapPhysicalAddress;
@@ -6981,35 +6686,6 @@ int hlHostControlTable_handler(
           return SNMP_ERR_NOERROR;
         }
         break;
-
-#if 0
-            case COLUMN_HLHOSTCONTROLDATASOURCE:
-                /* or possibly 'netsnmp_check_vb_type_and_max_size' */
-                ret = netsnmp_check_vb_type_and_size(
-                          request->requestvb, ASN_OBJECT_ID, NNN );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_HLHOSTCONTROLOWNER:
-                /* or possibly 'netsnmp_check_vb_type_and_max_size' */
-                ret = netsnmp_check_vb_type_and_size(
-                          request->requestvb, ASN_OCTET_STR, NNN );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_HLHOSTCONTROLSTATUS:
-                ret = netsnmp_check_vb_rowstatus(request->requestvb,
-                         (table_entry ? RS_ACTIVE : RS_NONEXISTENT ));
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-#endif
       default:
         netsnmp_set_request_error(reqinfo, request,
                                   SNMP_ERR_NOTWRITABLE);
@@ -7142,13 +6818,6 @@ int hlHostControlTable_handler(
         {
         case RS_ACTIVE:
         case RS_CREATEANDGO:
-#if 0
-                    if (/* XXX */) {
-                        netsnmp_set_request_error( reqinfo, request,
-                                                   SNMP_ERR_INCONSISTENTVALUE );
-                        return SNMP_ERR_NOERROR;
-                    }
-#endif
           break;
         }
       }
@@ -7347,7 +7016,7 @@ struct nlHostTable_entry
   long hlHostControlIndex;
   u_long nlHostTimeMark;
   long protocolDirLocalIndex;
-  char nlHostAddress[16]; // �ꉞ�AIPv6�Ή�
+  char nlHostAddress[16];
   size_t nlHostAddress_len;
 
   oid IndexOid[22];
@@ -7496,7 +7165,6 @@ struct nlHostTable_entry *FindNlHostEntry(struct variable *vp,
   }
   if (exact)
   {
-    // GET�̏ꍇ
     if (4 + 4 != (*length - vp->namelen))
       return (NULL);
     nReqTM = (unsigned long)name[vp->namelen + 1];
@@ -7509,7 +7177,6 @@ struct nlHostTable_entry *FindNlHostEntry(struct variable *vp,
     name[vp->namelen + 1] = nReqTM;
     return (p);
   }
-  // GET NEXT�̏ꍇ
   if ((*length - vp->namelen) > 1)
   {
     nReqTM = (unsigned long)name[vp->namelen + 1];
@@ -7535,7 +7202,6 @@ struct nlHostTable_entry *FindNlHostEntry(struct variable *vp,
       break;
     p = CONTAINER_NEXT(pNlHostContainer, &p->oid_index);
   }
-  // �����C���f�b�N�X�ȏ�ŁA���������ꍇ�B
   if (p)
   {
     *length = p->oid_index.len + vp->namelen;
@@ -7549,7 +7215,6 @@ struct nlHostTable_entry *FindNlHostEntry(struct variable *vp,
     }
     return (p);
   }
-  //�ł��Ȃ������ꍇ�́A�^�C���}�[�N���X�V���čŏ�����T���B
   nReqTM++;
   if (nTimeMarkMode == 3)
   {
@@ -7584,7 +7249,6 @@ struct nlHostTable_entry *FindNlHostEntry(struct variable *vp,
     }
     return (p);
   }
-  //�Ō�́A�I�u�W�F�N�g��ς��āA�擪��Ԃ��B
   p = CONTAINER_FIRST(pNlHostContainer);
   if (p)
   {
@@ -7624,14 +7288,6 @@ var_nlHostTable(struct variable *vp,
    */
   switch (vp->magic)
   {
-#if 0
-    case NLHOSTTIMEMARK:
-        VAR = VALUE;	/* XXX */
-        return (u_char*) &VAR;
-    case NLHOSTADDRESS:
-        VAR = VALUE;	/* XXX */
-        return (u_char*) &VAR;
-#endif
   case NLHOSTINPKTS:
     *var_len = sizeof(long);
     return (u_char *)&table_entry->nlHostInPkts;
@@ -7865,34 +7521,6 @@ int hlMatrixControlTable_handler(
           return SNMP_ERR_NOERROR;
         }
         break;
-#if 0
-            case COLUMN_HLMATRIXCONTROLDATASOURCE:
-                /* or possibly 'netsnmp_check_vb_type_and_max_size' */
-                ret = netsnmp_check_vb_type_and_size(
-                          request->requestvb, ASN_OBJECT_ID, NNN );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_HLMATRIXCONTROLOWNER:
-                /* or possibly 'netsnmp_check_vb_type_and_max_size' */
-                ret = netsnmp_check_vb_type_and_size(
-                          request->requestvb, ASN_OCTET_STR, NNN );
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-            case COLUMN_HLMATRIXCONTROLSTATUS:
-                ret = netsnmp_check_vb_rowstatus(request->requestvb,
-                         (table_entry ? RS_ACTIVE : RS_NONEXISTENT ));
-                if ( ret != SNMP_ERR_NOERROR ) {
-                    netsnmp_set_request_error( reqinfo, request, ret );
-                    return SNMP_ERR_NOERROR;
-                }
-                break;
-#endif
       default:
         netsnmp_set_request_error(reqinfo, request,
                                   SNMP_ERR_NOTWRITABLE);
@@ -8023,13 +7651,6 @@ int hlMatrixControlTable_handler(
         {
         case RS_ACTIVE:
         case RS_CREATEANDGO:
-#if 0                
-                    if (/* XXX */) {
-                        netsnmp_set_request_error( reqinfo, request,
-                                                   SNMP_ERR_INCONSISTENTVALUE );
-                        return SNMP_ERR_NOERROR;
-                    }
-#endif
           break;
         }
       }
@@ -8367,7 +7988,6 @@ struct nlMatrixSDTable_entry *FindNlMtxSDEntry(struct variable *vp,
   }
   if (exact)
   {
-    // GET�̏ꍇ
     if (5 + 8 != (*length - vp->namelen))
       return (NULL);
     nReqTM = (unsigned long)name[vp->namelen + 1];
@@ -8380,7 +8000,6 @@ struct nlMatrixSDTable_entry *FindNlMtxSDEntry(struct variable *vp,
     name[vp->namelen + 1] = nReqTM;
     return (p);
   }
-  // GET NEXT�̏ꍇ
   if ((*length - vp->namelen) > 1)
   {
     nReqTM = (unsigned long)name[vp->namelen + 1];
@@ -8406,7 +8025,6 @@ struct nlMatrixSDTable_entry *FindNlMtxSDEntry(struct variable *vp,
       break;
     p = CONTAINER_NEXT(pNlMtxSDContainer, &p->oid_index);
   }
-  // �����C���f�b�N�X�ȏ�ŁA���������ꍇ�B
   if (p)
   {
     *length = p->oid_index.len + vp->namelen;
@@ -8420,7 +8038,6 @@ struct nlMatrixSDTable_entry *FindNlMtxSDEntry(struct variable *vp,
     }
     return (p);
   }
-  //�ł��Ȃ������ꍇ�́A�^�C���}�[�N���X�V���čŏ�����T���B
   nReqTM++;
   if (nTimeMarkMode == 3)
   {
@@ -8455,7 +8072,6 @@ struct nlMatrixSDTable_entry *FindNlMtxSDEntry(struct variable *vp,
     }
     return (p);
   }
-  //�Ō�́A�I�u�W�F�N�g��ς��āA�擪��Ԃ��B
   p = CONTAINER_FIRST(pNlMtxSDContainer);
   if (p)
   {
@@ -8539,14 +8155,6 @@ oid nlMatrixDSTable_variables_oid[] = {1, 3, 6, 1, 2, 1, 16, 15, 3};
 
 struct variable4 nlMatrixDSTable_variables[] = {
 /*  magic number        , variable type , ro/rw , callback fn  , L, oidsuffix */
-#if 0
-#define NLMATRIXDSTIMEMARK 1
-{NLMATRIXDSTIMEMARK,  ASN_TIMETICKS,  RONLY,   var_nlMatrixDSTable, 2,  { , 1, 1 }},
-#define NLMATRIXDSSOURCEADDRESS 2
-{NLMATRIXDSSOURCEADDRESS,  ASN_OCTET_STR,  RONLY,   var_nlMatrixDSTable, 2,  { , 1, 2 }},
-#define NLMATRIXDSDESTADDRESS 3
-{NLMATRIXDSDESTADDRESS,  ASN_OCTET_STR,  RONLY,   var_nlMatrixDSTable, 2,  { , 1, 3 }},
-#endif
 
 #define NLMATRIXDSPKTS 4
     {NLMATRIXDSPKTS, ASN_GAUGE, RONLY, var_nlMatrixDSTable, 2, {1, 4}},
@@ -8742,7 +8350,6 @@ struct nlMatrixDSTable_entry *FindNlMtxDSEntry(struct variable *vp,
   }
   if (exact)
   {
-    // GET�̏ꍇ
     if (5 + 8 != (*length - vp->namelen))
       return (NULL);
     nReqTM = (unsigned long)name[vp->namelen + 1];
@@ -8755,7 +8362,6 @@ struct nlMatrixDSTable_entry *FindNlMtxDSEntry(struct variable *vp,
     name[vp->namelen + 1] = nReqTM;
     return (p);
   }
-  // GET NEXT�̏ꍇ
   if ((*length - vp->namelen) > 1)
   {
     nReqTM = (unsigned long)name[vp->namelen + 1];
@@ -8781,7 +8387,6 @@ struct nlMatrixDSTable_entry *FindNlMtxDSEntry(struct variable *vp,
       break;
     p = CONTAINER_NEXT(pNlMtxDSContainer, &p->oid_index);
   }
-  // �����C���f�b�N�X�ȏ�ŁA���������ꍇ�B
   if (p)
   {
     *length = p->oid_index.len + vp->namelen;
@@ -8795,7 +8400,6 @@ struct nlMatrixDSTable_entry *FindNlMtxDSEntry(struct variable *vp,
     }
     return (p);
   }
-  //�ł��Ȃ������ꍇ�́A�^�C���}�[�N���X�V���čŏ�����T���B
   nReqTM++;
   if (nTimeMarkMode == 3)
   {
@@ -8830,7 +8434,6 @@ struct nlMatrixDSTable_entry *FindNlMtxDSEntry(struct variable *vp,
     }
     return (p);
   }
-  //�Ō�́A�I�u�W�F�N�g��ς��āA�擪��Ԃ��B
   p = CONTAINER_FIRST(pNlMtxDSContainer);
   if (p)
   {
@@ -8870,17 +8473,6 @@ var_nlMatrixDSTable(struct variable *vp,
    */
   switch (vp->magic)
   {
-#if 0		
-    case NLMATRIXDSTIMEMARK:
-        VAR = VALUE;	/* XXX */
-        return (u_char*) &VAR;
-    case NLMATRIXDSSOURCEADDRESS:
-        VAR = VALUE;	/* XXX */
-        return (u_char*) &VAR;
-    case NLMATRIXDSDESTADDRESS:
-        VAR = VALUE;	/* XXX */
-        return (u_char*) &VAR;
-#endif
   case NLMATRIXDSPKTS:
     *var_len = sizeof(long);
     return (u_char *)&table_entry->nlMatrixDSPkts;
@@ -8995,10 +8587,10 @@ struct alHostTable_entry
   /* Index values */
   long hlHostControlIndex;
   u_long alHostTimeMark;
-  long protocolDirLocalIndexNl; //������́A�l�b�g���[�N�w�̎��ʁA��ɂh�o
+  long protocolDirLocalIndexNl;
   char nlHostAddress[16];
   size_t nlHostAddress_len;
-  long protocolDirLocalIndexAl; //������́A�|�[�g�܂Ŋ܂߂��`�o�w�̎���
+  long protocolDirLocalIndexAl;
 
   oid IndexOid[22];
 
@@ -9181,7 +8773,6 @@ struct alHostTable_entry *FindAlHostEntry(struct variable *vp,
       break;
     p = CONTAINER_NEXT(pAlHostContainer, &p->oid_index);
   }
-  // �����C���f�b�N�X�ȏ�ŁA���������ꍇ�B
   if (p)
   {
     *length = p->oid_index.len + vp->namelen;
@@ -9195,7 +8786,6 @@ struct alHostTable_entry *FindAlHostEntry(struct variable *vp,
     }
     return (p);
   }
-  //�ł��Ȃ������ꍇ�́A�^�C���}�[�N���X�V���čŏ�����T���B
   nReqTM++;
   if (nTimeMarkMode == 3)
   {
@@ -9230,7 +8820,6 @@ struct alHostTable_entry *FindAlHostEntry(struct variable *vp,
     }
     return (p);
   }
-  //�Ō�́A�I�u�W�F�N�g��ς��āA�擪��Ԃ��B
   p = CONTAINER_FIRST(pAlHostContainer);
   if (p)
   {
@@ -9577,7 +9166,6 @@ struct alMatrixSDTable_entry *FindAlMtxSDEntry(struct variable *vp,
       break;
     p = CONTAINER_NEXT(pAlMtxSDContainer, &p->oid_index);
   }
-  // �����C���f�b�N�X�ȏ�ŁA���������ꍇ�B
   if (p)
   {
     *length = p->oid_index.len + vp->namelen;
@@ -9591,7 +9179,6 @@ struct alMatrixSDTable_entry *FindAlMtxSDEntry(struct variable *vp,
     }
     return (p);
   }
-  //�ł��Ȃ������ꍇ�́A�^�C���}�[�N���X�V���čŏ�����T���B
   nReqTM++;
   if (nTimeMarkMode == 3)
   {
@@ -9626,7 +9213,6 @@ struct alMatrixSDTable_entry *FindAlMtxSDEntry(struct variable *vp,
     }
     return (p);
   }
-  //�Ō�́A�I�u�W�F�N�g��ς��āA�擪��Ԃ��B
   p = CONTAINER_FIRST(pAlMtxSDContainer);
   if (p)
   {
@@ -9949,7 +9535,6 @@ struct alMatrixDSTable_entry *FindAlMtxDSEntry(struct variable *vp,
       break;
     p = CONTAINER_NEXT(pAlMtxDSContainer, &p->oid_index);
   }
-  // �����C���f�b�N�X�ȏ�ŁA���������ꍇ�B
   if (p)
   {
     *length = p->oid_index.len + vp->namelen;
@@ -10680,14 +10265,6 @@ int SendRmonTrap(int nMode, struct alarmTable_entry *p)
                               alarmRisingThreshold_oid, OID_LENGTH(alarmRisingThreshold_oid),
                               ASN_INTEGER, (char *)&p->alarmRisingThreshold, sizeof(long));
   }
-  /*
-   * Add any extra (optional) objects here
-   */
-
-  /*
-   * Send the trap to the list of configured destinations
-   *  and clean up
-   */
   send_v2trap(var_list);
   snmp_free_varbind(var_list);
 
@@ -10861,8 +10438,6 @@ void UpdateProtDist(long nPLI, int nLen)
 
 void UpdateRmonEth(struct tw_eth *pEth, int nLen)
 {
-  //���v�O���[�v�i�p�P�b�g���A�o�C�g���A���Đ�ʁA�p�P�b�g�T�C�Y�ʁj
-  //�����O���[�v
   int nSMode = 0;
   if (pEthStatEnt == NULL)
     return;
@@ -10928,10 +10503,8 @@ void UpdateRmonEth(struct tw_eth *pEth, int nLen)
     pEthStatEnt->etherStatsOversizePkts++;
     CurrentEthHistEnt.etherHistoryOversizePkts++;
   }
-  //�z�X�g�O���[�v
   UpdateHost(0, nSMode, pEth->ether_dhost, nLen);
   UpdateHost(1, nSMode, pEth->ether_shost, nLen);
-  //�}�g���b�N�X�O���[�v
   UpdateMtx(pEth, nLen);
   if (pEth->ether_type == 0x0608)
   {
@@ -10971,13 +10544,11 @@ void UpdateAddrMap(char *szMac, unsigned long nIP)
 
 void UpdateRmonIP(struct tw_eth *pEth, struct tw_ip *pIP, int nLen)
 {
-  //�v���g�R���ʂ�IP,ICMP������
   UpdateProtDist(nProtDirLIIP, nLen);
   if (pIP->ip_p == 1)
   {
     UpdateProtDist(nProtDirLIICMP, nLen);
   }
-  //�A�h���X�l�`�o������
   UpdateAddrMap(pEth->ether_shost, pIP->ip_src);
   UpdateAddrMap(pEth->ether_dhost, pIP->ip_dst);
   return;
@@ -11168,7 +10739,6 @@ void UpdateRmonFlow(struct tw_flow *pFlow, int nLen)
 {
   long nPLIS;
   long nPLID;
-  //�v���g�R���ʂ�TCP,UDP,AL�̏���
   pFlow->sport = ntohs(pFlow->sport);
   pFlow->dport = ntohs(pFlow->dport);
   if (pFlow->ip_p == 6)

@@ -102,25 +102,6 @@ void FreeCapFIFO()
   return;
 }
 
-int CheckTwpcd()
-{
-  FILE *fp;
-  int bOK = 0;
-  char szTmp[256];
-  fp = popen("ps", "r");
-  if (fp == NULL)
-    return (bOK);
-  while (fgets(szTmp, sizeof(szTmp), fp))
-  {
-    if (strstr(szTmp, "twpcd") != NULL)
-    {
-      bOK = 1;
-      break;
-    }
-  }
-  pclose(fp);
-  return (bOK);
-}
 
 void GotPacket(u_char *args, const struct pcap_pkthdr *header, const u_char *packet)
 {
@@ -406,22 +387,30 @@ int tw_agent_check_and_process()
   return count;
 }
 
+int loopMax = 500;
+
 int CheckCapFIFO()
 {
   int f;
   int i;
   time_t nT = time(0);
-  for (i = 0; i < 1000; i++)
+  for (i = 0; i < loopMax; i++)
   {
     f = GetCapFIFO();
-    if (f < 0)
+    if (f < 0) {
       return (i);
+    }
     CheckPacket(CapFIFO[f].pCap, CapFIFO[f].nPLen);
     FreeCapFIFO();
   }
   if ((time(0) - nT) > 1)
   {
-    printf("Long Process =%ld\n", time(0) - nT);
+    printf("Long Process time=%ld nCapFIFOSize=%d\n", time(0) - nT,nCapFIFOSize);
+    if (loopMax > 100) {
+      loopMax--;
+    }
+  } else {
+    loopMax++;
   }
   return (i);
 }
@@ -590,16 +579,6 @@ int main(int argc, char **argv)
   {
     CheckCapFIFO();
     tw_agent_check_and_process(); // Time Out 1Sec
-    if (!background)
-      continue;
-    if (time(0) > (nLastTime + 120))
-    {
-      nLastTime = time(0);
-      if (!CheckTwpcd())
-      {
-        keep_running = 0;
-      }
-    }
   }
   SaveTwRmonConf();
   /* at shutdown time */
