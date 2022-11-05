@@ -215,6 +215,9 @@ int InitPcap(char *pDev)
   return (1);
 }
 
+// Scan Level 0:Data Link(Ether) 1:Network(IP)  2:Application
+int scanLevel = 0;
+
 /*
  */
 void CheckPacket(u_char *p, int nPLen)
@@ -236,6 +239,9 @@ void CheckPacket(u_char *p, int nPLen)
   pEth = (struct tw_eth *)(p);
   nEType = ntohs(pEth->ether_type);
   UpdateRmonEth(pEth, nPLen); // Host And Matrix
+  if (scanLevel < 1) {
+    return;
+  }
   p += SIZE_ETHERNET;
   if (nEType == 0x8100)
   {
@@ -292,6 +298,9 @@ void CheckPacket(u_char *p, int nPLen)
     return;
   }
   UpdateRmonIP(pEth, pIP, nPLen);
+  if(scanLevel < 2 ) {
+    return;
+  }
   nIPFrag = htons(pIP->ip_off);
   p += nIPSize;
   if ((nIPFrag & (IP_OFFMASK | IP_MF)) != 0)
@@ -426,7 +435,7 @@ int main(int argc, char **argv)
   char *pDev = NULL;
   time_t nLastTime = time(0);
 
-  while ((ch = getopt(argc, argv, "vi:D:fHLMx:T:")) != EOF)
+  while ((ch = getopt(argc, argv, "vi:D:fHLMx:T:s:")) != EOF)
     switch (ch)
     {
     case 'D':
@@ -462,6 +471,9 @@ int main(int argc, char **argv)
       nTimeMarkMode = atoi(optarg);
       if (nTimeMarkMode < 0 || nTimeMarkMode > 3)
         nTimeMarkMode = 0;
+      break;
+    case 's':
+      scanLevel = atoi(optarg);
       break;
     case 'v':
       printf("twrmon version:%s  commit:%s\n",VERSION,GITCOMMIT);

@@ -5513,13 +5513,6 @@ int protocolDistControlTable_handler(
         {
         case RS_ACTIVE:
         case RS_CREATEANDGO:
-#if 0                
-                    if (/* XXX */) {
-                        netsnmp_set_request_error( reqinfo, request,
-                                                   SNMP_ERR_INCONSISTENTVALUE );
-                        return SNMP_ERR_NOERROR;
-                    }
-#endif
           break;
         }
       }
@@ -6934,13 +6927,6 @@ oid nlHostTable_variables_oid[] = {1, 3, 6, 1, 2, 1, 16, 14, 2};
 struct variable4 nlHostTable_variables[] = {
 /*  magic number        , variable type , ro/rw , callback fn  , L, oidsuffix */
 
-#if 0
-#define NLHOSTTIMEMARK 1
-{NLHOSTTIMEMARK,  ASN_TIMETICKS,  RONLY,   var_nlHostTable, 2,  { , 1, 1 }},
-#define NLHOSTADDRESS 2
-{NLHOSTADDRESS,  ASN_OCTET_STR,  RONLY,   var_nlHostTable, 2,  { , 1, 2 }},
-#endif
-
 #define NLHOSTINPKTS 3
     {NLHOSTINPKTS, ASN_GAUGE, RONLY, var_nlHostTable, 2, {1, 3}},
 #define NLHOSTOUTPKTS 4
@@ -7766,14 +7752,6 @@ oid nlMatrixSDTable_variables_oid[] = {1, 3, 6, 1, 2, 1, 16, 15, 2};
 
 struct variable4 nlMatrixSDTable_variables[] = {
 /*  magic number        , variable type , ro/rw , callback fn  , L, oidsuffix */
-#if 0
-#define NLMATRIXSDTIMEMARK 1
-{NLMATRIXSDTIMEMARK,  ASN_TIMETICKS,  RONLY,   var_nlMatrixSDTable, 2,  { , 1, 1 }},
-#define NLMATRIXSDSOURCEADDRESS 2
-{NLMATRIXSDSOURCEADDRESS,  ASN_OCTET_STR,  RONLY,   var_nlMatrixSDTable, 2,  { , 1, 2 }},
-#define NLMATRIXSDDESTADDRESS 3
-{NLMATRIXSDDESTADDRESS,  ASN_OCTET_STR,  RONLY,   var_nlMatrixSDTable, 2,  { , 1, 3 }},
-#endif
 
 #define NLMATRIXSDPKTS 4
     {NLMATRIXSDPKTS, ASN_GAUGE, RONLY, var_nlMatrixSDTable, 2, {1, 4}},
@@ -8111,17 +8089,6 @@ var_nlMatrixSDTable(struct variable *vp,
    */
   switch (vp->magic)
   {
-#if 0		
-    case NLMATRIXSDTIMEMARK:
-        VAR = VALUE;	/* XXX */
-        return (u_char*) &VAR;
-    case NLMATRIXSDSOURCEADDRESS:
-        VAR = VALUE;	/* XXX */
-        return (u_char*) &VAR;
-    case NLMATRIXSDDESTADDRESS:
-        VAR = VALUE;	/* XXX */
-        return (u_char*) &VAR;
-#endif
   case NLMATRIXSDPKTS:
     *var_len = sizeof(long);
     return (u_char *)&table_entry->nlMatrixSDPkts;
@@ -8507,10 +8474,6 @@ oid alHostTable_variables_oid[] = {1, 3, 6, 1, 2, 1, 16, 16, 1};
 
 struct variable4 alHostTable_variables[] = {
 /*  magic number        , variable type , ro/rw , callback fn  , L, oidsuffix */
-#if 0
-#define ALHOSTTIMEMARK 1
-{ALHOSTTIMEMARK,  ASN_TIMETICKS,  RONLY,   var_alHostTable, 2,  { , 1, 1 }},
-#endif
 
 #define ALHOSTINPKTS 2
     {ALHOSTINPKTS, ASN_GAUGE, RONLY, var_alHostTable, 2, {1, 2}},
@@ -8859,11 +8822,6 @@ var_alHostTable(struct variable *vp,
    */
   switch (vp->magic)
   {
-#if 0		
-    case ALHOSTTIMEMARK:
-        VAR = VALUE;	/* XXX */
-        return (u_char*) &VAR;
-#endif
   case ALHOSTINPKTS:
     *var_len = sizeof(long);
     return (u_char *)&table_entry->alHostInPkts;
@@ -8904,10 +8862,6 @@ oid alMatrixSDTable_variables_oid[] = {1, 3, 6, 1, 2, 1, 16, 17, 1};
 
 struct variable4 alMatrixSDTable_variables[] = {
 /*  magic number        , variable type , ro/rw , callback fn  , L, oidsuffix */
-#if 0
-#define ALMATRIXSDTIMEMARK 1
-{ALMATRIXSDTIMEMARK,  ASN_TIMETICKS,  RONLY,   var_alMatrixSDTable, 2,  { , 1, 1 }},
-#endif
 
 #define ALMATRIXSDPKTS 2
     {ALMATRIXSDPKTS, ASN_GAUGE, RONLY, var_alMatrixSDTable, 2, {1, 2}},
@@ -9127,7 +9081,6 @@ struct alMatrixSDTable_entry *FindAlMtxSDEntry(struct variable *vp,
   }
   if (exact)
   {
-    // GET�̏ꍇ
     if (6 + 8 != (*length - vp->namelen))
       return (NULL);
     nReqTM = (unsigned long)name[vp->namelen + 1];
@@ -9252,11 +9205,6 @@ var_alMatrixSDTable(struct variable *vp,
    */
   switch (vp->magic)
   {
-#if 0
-    case ALMATRIXSDTIMEMARK:
-        VAR = VALUE;	/* XXX */
-        return (u_char*) &VAR;
-#endif
   case ALMATRIXSDPKTS:
     *var_len = sizeof(long);
     return (u_char *)&table_entry->alMatrixSDPkts;
@@ -9291,11 +9239,6 @@ oid alMatrixDSTable_variables_oid[] = {1, 3, 6, 1, 2, 1, 16, 17, 2};
 
 struct variable4 alMatrixDSTable_variables[] = {
 /*  magic number        , variable type , ro/rw , callback fn  , L, oidsuffix */
-
-#if 0
-#define ALMATRIXDSTIMEMARK 1
-{ALMATRIXDSTIMEMARK,  ASN_TIMETICKS,  RONLY,   var_alMatrixDSTable, 2,  { , 1, 1 }},
-#endif
 
 #define ALMATRIXDSPKTS 2
     {ALMATRIXDSPKTS, ASN_GAUGE, RONLY, var_alMatrixDSTable, 2, {1, 2}},
@@ -9496,7 +9439,6 @@ struct alMatrixDSTable_entry *FindAlMtxDSEntry(struct variable *vp,
   }
   if (exact)
   {
-    // GET�̏ꍇ
     if (6 + 8 != (*length - vp->namelen))
       return (NULL);
     nReqTM = (unsigned long)name[vp->namelen + 1];
@@ -9509,7 +9451,6 @@ struct alMatrixDSTable_entry *FindAlMtxDSEntry(struct variable *vp,
     name[vp->namelen + 1] = nReqTM;
     return (p);
   }
-  // GET NEXT�̏ꍇ
   if ((*length - vp->namelen) > 1)
   {
     nReqTM = (unsigned long)name[vp->namelen + 1];
@@ -9548,7 +9489,6 @@ struct alMatrixDSTable_entry *FindAlMtxDSEntry(struct variable *vp,
     }
     return (p);
   }
-  //�ł��Ȃ������ꍇ�́A�^�C���}�[�N���X�V���čŏ�����T���B
   nReqTM++;
   if (nTimeMarkMode == 3)
   {
@@ -9583,7 +9523,6 @@ struct alMatrixDSTable_entry *FindAlMtxDSEntry(struct variable *vp,
     }
     return (p);
   }
-  //�Ō�́A�I�u�W�F�N�g��ς��āA�擪��Ԃ��B
   p = CONTAINER_FIRST(pAlMtxDSContainer);
   if (p)
   {
@@ -9623,11 +9562,6 @@ var_alMatrixDSTable(struct variable *vp,
    */
   switch (vp->magic)
   {
-#if 0
-    case ALMATRIXSDTIMEMARK:
-        VAR = VALUE;	/* XXX */
-        return (u_char*) &VAR;
-#endif
   case ALMATRIXDSPKTS:
     *var_len = sizeof(long);
     return (u_char *)&table_entry->alMatrixDSPkts;
@@ -10340,7 +10274,7 @@ void UpdateHost(int nDir, int nSMode, char *szMac, int nLen)
     nLastHostCreateTime++;
   }
   if (nDir == 1)
-  { //����M���t�ł����BYMI 2007.7.5
+  { 
     p->hostOutPkts++;
     p->hostOutOctets += nLen;
     if (nSMode == 2)
@@ -10785,14 +10719,17 @@ void SetDataSource(char *szDev)
   char szLine[1024];
   int i = 1;
   fp = fopen("/proc/net/dev", "r");
-  if (fp == NULL)
+  if (fp == NULL){
     return;
+  }
   while (fgets(szLine, sizeof(szLine) - 1, fp))
   {
-    if (strchr(szLine, ':') == NULL)
-      continue; // eth1:�̂悤�Ȍ`���̂݃J�E���g
-    if (strstr(szLine, szDev) != NULL)
+    if (strchr(szLine, ':') == NULL) {
+      continue;
+    }
+    if (strstr(szLine, szDev) != NULL){
       break;
+    }
     i++;
   }
   fclose(fp);
