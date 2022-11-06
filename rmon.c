@@ -712,18 +712,15 @@ static void GetDefGw(void)
   char szDefGW[64];
   int c;
   nDefGW = 0;
-  fp = popen("route", "r");
-  if (fp == NULL)
-    return;
+  fp = popen("route -n", "r");
+  if (fp == NULL) return;
   while (fgets(szLine, sizeof(szLine), fp))
   {
-    char *p = strstr(szLine, "default");
-    if (p == NULL)
-      continue;
-    p += strlen("default");
+    char *p = strstr(szLine, "0.0.0.0");
+    if (p != szLine )continue;
+    p += strlen("0.0.0.0");
     c = sscanf(p, "%s %s", szTmp, szDefGW);
-    if (c != 2)
-      continue;
+    if (c != 2) continue;
     nDefGW = inet_addr(szDefGW);
     break;
   }
