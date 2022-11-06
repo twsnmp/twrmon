@@ -290,6 +290,7 @@ struct etherStatsTable_entry
 
   /* Index values */
   int32_t etherStatsIndex;
+  oid IndexOid[1];
 
   /* Column values */
   oid etherStatsDataSource[16];
@@ -334,8 +335,9 @@ etherStatsTable_createEntry(netsnmp_container *container, int32_t etherStatsInde
     return NULL;
 
   entry->etherStatsIndex = etherStatsIndex;
+  entry->IndexOid[0] = etherStatsIndex;
   entry->oid_index.len = 1;
-  entry->oid_index.oids = (oid *)&entry->etherStatsIndex;
+  entry->oid_index.oids = entry->IndexOid;
   CONTAINER_INSERT(container, entry);
   return entry;
 }
@@ -735,6 +737,7 @@ struct etherStats2Table_entry
 
   /* Index values */
   int32_t etherStatsIndex;
+  oid IndexOid[1];
 
   /* Column values */
   u_int32_t etherStatsDroppedFrames;
@@ -754,8 +757,9 @@ etherStats2Table_createEntry(netsnmp_container *container, int32_t etherStatsInd
     return NULL;
 
   entry->etherStatsIndex = etherStatsIndex;
+  entry->IndexOid[0] = etherStatsIndex;
   entry->oid_index.len = 1;
-  entry->oid_index.oids = (oid *)&entry->etherStatsIndex;
+  entry->oid_index.oids = entry->IndexOid;
   CONTAINER_INSERT(container, entry);
   return entry;
 }
@@ -860,6 +864,7 @@ struct etherStatsHighCapacityTable_entry
 
   /* Index values */
   int etherStatsIndex;
+  oid IndexOid[1];
 
   /* Column values */
   // u_int32_t etherStatsHighCapacityOverflowPkts;
@@ -893,8 +898,9 @@ etherStatsHighCapacityTable_createEntry(netsnmp_container *container, int etherS
     return NULL;
 
   entry->etherStatsIndex = etherStatsIndex;
+  entry->IndexOid[0] = etherStatsIndex;
   entry->oid_index.len = 1;
-  entry->oid_index.oids = (oid *)&entry->etherStatsIndex;
+  entry->oid_index.oids = entry->IndexOid;
   CONTAINER_INSERT(container, entry);
   return entry;
 }
@@ -1045,6 +1051,7 @@ struct historyControlTable_entry
 
   /* Index values */
   int32_t historyControlIndex;
+  oid IndexOid[1];
 
   /* Column values */
   oid historyControlDataSource[16];
@@ -1077,8 +1084,9 @@ historyControlTable_createEntry(netsnmp_container *container, int32_t historyCon
     return NULL;
 
   entry->historyControlIndex = historyControlIndex;
+  entry->IndexOid[0] = historyControlIndex;
   entry->oid_index.len = 1;
-  entry->oid_index.oids = (oid *)&entry->historyControlIndex;
+  entry->oid_index.oids = entry->IndexOid;
   CONTAINER_INSERT(container, entry);
   return entry;
 }
@@ -1452,6 +1460,7 @@ struct etherHistoryTable_entry
   /* Index values */
   int32_t etherHistoryIndex;
   int32_t etherHistorySampleIndex;
+  oid IndexOid[2];
 
   /* Column values */
   u_int32_t etherHistoryIntervalStart;
@@ -1483,8 +1492,10 @@ etherHistoryTable_createEntry(netsnmp_container *container, int32_t etherHistory
 
   entry->etherHistoryIndex = etherHistoryIndex;
   entry->etherHistorySampleIndex = etherHistorySampleIndex;
+  entry->IndexOid[0] = etherHistoryIndex;
+  entry->IndexOid[1] = etherHistorySampleIndex;
   entry->oid_index.len = 2;
-  entry->oid_index.oids = (oid *)&entry->etherHistoryIndex;
+  entry->oid_index.oids = entry->IndexOid;
   CONTAINER_INSERT(container, entry);
   return entry;
 }
@@ -1641,6 +1652,7 @@ struct historyControl2Table_entry
 
   /* Index values */
   int32_t historyControlIndex;
+  oid IndexOid[1];
 
   /* Column values */
   u_int32_t historyControlDroppedFrames;
@@ -1659,8 +1671,9 @@ historyControl2Table_createEntry(netsnmp_container *container, int32_t historyCo
     return NULL;
 
   entry->historyControlIndex = historyControlIndex;
+  entry->IndexOid[0] = historyControlIndex;
   entry->oid_index.len = 1;
-  entry->oid_index.oids = (oid *)&entry->historyControlIndex;
+  entry->oid_index.oids = entry->IndexOid;
   CONTAINER_INSERT(container, entry);
   return entry;
 }
@@ -1761,6 +1774,7 @@ struct etherHistoryHighCapacityTable_entry
   /* Index values */
   int32_t etherHistoryIndex;
   int32_t etherHistorySampleIndex;
+  oid IndexOid[2];
 
   /* Column values */
   //    u_int32_t etherHistoryHighCapacityOverflowPkts;
@@ -1782,8 +1796,10 @@ struct etherHistoryHighCapacityTable_entry *etherHistoryHighCapacityTable_create
 
   entry->etherHistoryIndex = etherHistoryIndex;
   entry->etherHistorySampleIndex = etherHistorySampleIndex;
+  entry->IndexOid[0] = etherHistoryIndex;
+  entry->IndexOid[1] = etherHistorySampleIndex;
   entry->oid_index.len = 2;
-  entry->oid_index.oids = (oid *)&entry->etherHistoryIndex;
+  entry->oid_index.oids = entry->IndexOid;
   CONTAINER_INSERT(container, entry);
   return entry;
 }
@@ -1893,6 +1909,7 @@ struct alarmTable_entry
 
   /* Index values */
   int32_t alarmIndex;
+  oid IndexOid[1];
 
   /* Column values */
   int32_t alarmInterval;
@@ -1941,8 +1958,9 @@ alarmTable_createEntry(netsnmp_container *container, int32_t alarmIndex)
     return NULL;
 
   entry->alarmIndex = alarmIndex;
+  entry->IndexOid[0] = alarmIndex;
   entry->oid_index.len = 1;
-  entry->oid_index.oids = (oid *)&entry->alarmIndex;
+  entry->oid_index.oids = entry->IndexOid;
   entry->nLastTime = 0;
   entry->nLastStat = 0;
   entry->nLastVal = 0;
@@ -2534,6 +2552,7 @@ struct hostControlTable_entry
 
   /* Index values */
   int32_t hostControlIndex;
+  oid IndexOid[1];
 
   /* Column values */
   oid hostControlDataSource[16];
@@ -2563,8 +2582,9 @@ hostControlTable_createEntry(netsnmp_container *container, int32_t hostControlIn
     return NULL;
 
   entry->hostControlIndex = hostControlIndex;
+  entry->IndexOid[0] = hostControlIndex;
   entry->oid_index.len = 1;
-  entry->oid_index.oids = (oid *)&entry->hostControlIndex;
+  entry->oid_index.oids = entry->IndexOid;
   CONTAINER_INSERT(container, entry);
   return entry;
 }
@@ -3086,6 +3106,7 @@ struct hostTimeTable_entry
   /* Index values */
   int32_t hostTimeIndex;
   int32_t hostTimeCreationOrder;
+  oid IndexOid[2];
 
   /* Column values */
   // Link ToHostEnt
@@ -3118,8 +3139,10 @@ hostTimeTable_createEntry(netsnmp_container *container, int32_t hostTimeIndex, i
 
   entry->hostTimeIndex = hostTimeIndex;
   entry->hostTimeCreationOrder = hostTimeCreationOrder;
+  entry->IndexOid[0] = hostTimeIndex;
+  entry->IndexOid[1] = hostTimeCreationOrder;
   entry->oid_index.len = 2;
-  entry->oid_index.oids = (oid *)&entry->hostTimeIndex;
+  entry->oid_index.oids = entry->IndexOid;
   CONTAINER_INSERT(container, entry);
   return entry;
 }
@@ -3260,6 +3283,7 @@ struct hostControl2Table_entry
 
   /* Index values */
   int32_t hostControlIndex;
+  oid IndexOid[1];
 
   /* Column values */
   u_int32_t hostControlDroppedFrames;
@@ -3279,8 +3303,9 @@ hostControl2Table_createEntry(netsnmp_container *container, int32_t hostControlI
     return NULL;
 
   entry->hostControlIndex = hostControlIndex;
+  entry->IndexOid[0] = hostControlIndex;
   entry->oid_index.len = 1;
-  entry->oid_index.oids = (oid *)&entry->hostControlIndex;
+  entry->oid_index.oids = entry->IndexOid;
   CONTAINER_INSERT(container, entry);
   return entry;
 }
@@ -3385,6 +3410,7 @@ struct matrixControlTable_entry
 
   /* Index values */
   int32_t matrixControlIndex;
+  oid IndexOid[1];
 
   /* Column values */
   oid matrixControlDataSource[16];
@@ -3414,8 +3440,9 @@ matrixControlTable_createEntry(netsnmp_container *container, int32_t matrixContr
     return NULL;
 
   entry->matrixControlIndex = matrixControlIndex;
+  entry->IndexOid[0] = matrixControlIndex;
   entry->oid_index.len = 1;
-  entry->oid_index.oids = (oid *)&entry->matrixControlIndex;
+  entry->oid_index.oids = entry->IndexOid;
   CONTAINER_INSERT(container, entry);
   return entry;
 }
@@ -4066,6 +4093,7 @@ struct matrixControl2Table_entry
 
   /* Index values */
   int32_t matrixControlIndex;
+  oid IndexOid[1];
 
   /* Column values */
   u_int32_t matrixControlDroppedFrames;
@@ -4085,8 +4113,9 @@ matrixControl2Table_createEntry(netsnmp_container *container, int32_t matrixCont
     return NULL;
 
   entry->matrixControlIndex = matrixControlIndex;
+  entry->IndexOid[0] = matrixControlIndex;
   entry->oid_index.len = 1;
-  entry->oid_index.oids = (oid *)&entry->matrixControlIndex;
+  entry->oid_index.oids = entry->IndexOid;
   CONTAINER_INSERT(container, entry);
   return entry;
 }
@@ -4190,6 +4219,7 @@ struct eventTable_entry
 
   /* Index values */
   int32_t eventIndex;
+  oid IndexOid[1];
 
   /* Column values */
   char eventDescription[256];
@@ -4225,8 +4255,9 @@ eventTable_createEntry(netsnmp_container *container, int32_t eventIndex)
     return NULL;
 
   entry->eventIndex = eventIndex;
+  entry->IndexOid[0] = eventIndex;
   entry->oid_index.len = 1;
-  entry->oid_index.oids = (oid *)&entry->eventIndex;
+  entry->oid_index.oids = entry->IndexOid;
   CONTAINER_INSERT(container, entry);
   entry->nLogID = 1;
   return entry;
@@ -4657,6 +4688,7 @@ struct logTable_entry
   /* Index values */
   int32_t logEventIndex;
   int32_t logIndex;
+  oid IndexOid[2];
 
   /* Column values */
   u_int32_t logTime;
@@ -4678,8 +4710,10 @@ logTable_createEntry(netsnmp_container *container, int32_t logEventIndex, int32_
 
   entry->logEventIndex = logEventIndex;
   entry->logIndex = logIndex;
+  entry->IndexOid[0] = logEventIndex;
+  entry->IndexOid[1] = logIndex;
   entry->oid_index.len = 2;
-  entry->oid_index.oids = (oid *)&entry->logEventIndex;
+  entry->oid_index.oids = entry->IndexOid;
   CONTAINER_INSERT(container, entry);
   return entry;
 }
@@ -5264,6 +5298,7 @@ struct protocolDistControlTable_entry
 
   /* Index values */
   int32_t protocolDistControlIndex;
+  oid IndexOid[1];
 
   /* Column values */
   oid protocolDistControlDataSource[16];
@@ -5292,8 +5327,9 @@ protocolDistControlTable_createEntry(netsnmp_container *container, int32_t proto
     return NULL;
 
   entry->protocolDistControlIndex = protocolDistControlIndex;
+  entry->IndexOid[0] = protocolDistControlIndex;
   entry->oid_index.len = 1;
-  entry->oid_index.oids = (oid *)&entry->protocolDistControlIndex;
+  entry->oid_index.oids = entry->IndexOid;
   CONTAINER_INSERT(container, entry);
   return entry;
 }
@@ -5637,6 +5673,7 @@ struct protocolDistStatsTable_entry
   /* Index values */
   int32_t protocolDistControlIndex;
   int32_t protocolDirLocalIndex;
+  oid IndexOid[2];
 
   /* Column values */
   u_int32_t protocolDistStatsPkts;
@@ -5657,8 +5694,10 @@ protocolDistStatsTable_createEntry(netsnmp_container *container, int32_t protoco
 
   entry->protocolDistControlIndex = protocolDistControlIndex;
   entry->protocolDirLocalIndex = protocolDirLocalIndex;
+  entry->IndexOid[0] = protocolDistControlIndex;
+  entry->IndexOid[1] = protocolDirLocalIndex;
   entry->oid_index.len = 2;
-  entry->oid_index.oids = (oid *)&entry->protocolDistControlIndex;
+  entry->oid_index.oids = entry->IndexOid;
   CONTAINER_INSERT(container, entry);
   return entry;
 }
@@ -5764,6 +5803,7 @@ struct addressMapControlTable_entry
 
   /* Index values */
   int32_t addressMapControlIndex;
+  oid IndexOid[1];
 
   /* Column values */
   oid addressMapControlDataSource[16];
@@ -5791,8 +5831,9 @@ addressMapControlTable_createEntry(netsnmp_container *container, int32_t address
     return NULL;
 
   entry->addressMapControlIndex = addressMapControlIndex;
+  entry->IndexOid[0] = addressMapControlIndex;
   entry->oid_index.len = 1;
-  entry->oid_index.oids = (oid *)&entry->addressMapControlIndex;
+  entry->oid_index.oids = entry->IndexOid;
   CONTAINER_INSERT(container, entry);
   return entry;
 }
@@ -6499,6 +6540,7 @@ struct hlHostControlTable_entry
 
   /* Index values */
   int32_t hlHostControlIndex;
+  oid IndexOid[1];
 
   /* Column values */
   oid hlHostControlDataSource[16];
@@ -6535,8 +6577,9 @@ hlHostControlTable_createEntry(netsnmp_container *container, int32_t hlHostContr
     return NULL;
 
   entry->hlHostControlIndex = hlHostControlIndex;
+  entry->IndexOid[0] = hlHostControlIndex;
   entry->oid_index.len = 1;
-  entry->oid_index.oids = (oid *)&entry->hlHostControlIndex;
+  entry->oid_index.oids = entry->IndexOid;
   CONTAINER_INSERT(container, entry);
   return entry;
 }
@@ -7333,6 +7376,7 @@ struct hlMatrixControlTable_entry
 
   /* Index values */
   int32_t hlMatrixControlIndex;
+  oid IndexOid[1];
 
   /* Column values */
   oid hlMatrixControlDataSource[16];
@@ -7369,8 +7413,9 @@ hlMatrixControlTable_createEntry(netsnmp_container *container, int32_t hlMatrixC
     return NULL;
 
   entry->hlMatrixControlIndex = hlMatrixControlIndex;
+  entry->IndexOid[0] = hlMatrixControlIndex;
   entry->oid_index.len = 1;
-  entry->oid_index.oids = (oid *)&entry->hlMatrixControlIndex;
+  entry->oid_index.oids = entry->IndexOid;
   CONTAINER_INSERT(container, entry);
   return entry;
 }
@@ -10264,7 +10309,7 @@ void UpdateHost(int nDir, int nSMode, char *szMac, int nLen)
     p->hostOutErrors = 0;
     p->hostOutBroadcastPkts = 0;
     p->hostOutMulticastPkts = 0;
-    pt = hostTimeTable_createEntry(pHostTimeContainer, 1, nLastHostCreateTime);
+    pt = hostTimeTable_createEntry(pHostTimeContainer, netsnmp_get_agent_uptime(), nLastHostCreateTime);
     if (pt)
     {
       pt->pHostEnt = p;
@@ -10795,7 +10840,6 @@ int CmpLogTime(const void *p1, const void *p2)
   return (0);
 }
 
-//�e�[�u���̍ő�l���`�F�b�N����K�v�̂������
 void CheckMaxTableSize(void)
 {
   size_t nSize;
@@ -10851,7 +10895,6 @@ void CheckMaxTableSize(void)
 
   // netsnmp_container               *pMtxSDContainer =NULL;
   // netsnmp_container               *pMtxDSContainer =NULL;
-  //�z�X�g���������ɏ����B
 
   pMtxCntEnt->matrixControlTableSize = CONTAINER_SIZE(pMtxSDContainer);
 
@@ -11214,7 +11257,7 @@ void DoEvent(int nMode, struct alarmTable_entry *pAlarm)
 {
   struct eventTable_entry *p;
   netsnmp_index oid_index;
-  int32_t nIndex;
+  oid nIndex;
   if (nMode == 1)
   {
     nIndex = pAlarm->alarmRisingEventIndex;
@@ -11224,7 +11267,7 @@ void DoEvent(int nMode, struct alarmTable_entry *pAlarm)
     nIndex = pAlarm->alarmFallingEventIndex;
   }
   oid_index.len = 1;
-  oid_index.oids = (oid *)&nIndex;
+  oid_index.oids = &nIndex;
   p = CONTAINER_FIND(pEventContainer, &oid_index);
   if (p == NULL)
     return;
