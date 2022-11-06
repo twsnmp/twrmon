@@ -13,11 +13,11 @@
 #include "rmon.h"
 #include "rmonTable.h"
 
-extern u_long nProtocoDirLastChange;
-extern u_long nAddrMapIns;
-extern u_long nAddrMapDel;
-extern u_long nAddrMapMaxDE;
-long nProbeReset = 1;
+extern u_int32_t nProtocoDirLastChange;
+extern u_int32_t nAddrMapIns;
+extern u_int32_t nAddrMapDel;
+extern u_int32_t nAddrMapMaxDE;
+int32_t nProbeReset = 1;
 /*
  SYNTAX	BITS {
 etherStats(0), historyControl(1), etherHistory(2), alarm(3), F
@@ -45,11 +45,11 @@ u_char szSmonCap[] = {0x00};
 */
 u_char szHCCap[] = {0x60, 0x00};
 u_char szHCACap[] = {0x00};
-u_char szSoftRev[] = "TwProbe RMON1/2 Agent 1.0.0";
-u_char szHardRev[] = "TwProbe Model 10TI";
+u_char szSoftRev[] = "TWRMON RMON1/2 Agent 1.0.0";
+u_char szHardRev[] = "TWRMON";
 u_char szProbeDateTime[8];
 
-static u_long nDefGW = 0;
+static u_int32_t nDefGW = 0;
 
 /** Initializes the rmon module */
 void init_rmon(void)
@@ -159,7 +159,7 @@ int handle_protocolDirLastChange(netsnmp_mib_handler *handler,
   {
 
   case MODE_GET:
-    snmp_set_var_typed_value(requests->requestvb, ASN_TIMETICKS, (u_char *)&nProtocoDirLastChange, sizeof(long));
+    snmp_set_var_typed_value(requests->requestvb, ASN_TIMETICKS, (u_char *)&nProtocoDirLastChange, sizeof(u_int32_t));
     break;
 
   default:
@@ -185,7 +185,7 @@ int handle_addressMapInserts(netsnmp_mib_handler *handler,
   {
 
   case MODE_GET:
-    snmp_set_var_typed_value(requests->requestvb, ASN_COUNTER, (u_char *)&nAddrMapIns, sizeof(long));
+    snmp_set_var_typed_value(requests->requestvb, ASN_COUNTER, (u_char *)&nAddrMapIns, sizeof(u_int32_t));
     break;
 
   default:
@@ -211,7 +211,7 @@ int handle_addressMapDeletes(netsnmp_mib_handler *handler,
   {
 
   case MODE_GET:
-    snmp_set_var_typed_value(requests->requestvb, ASN_COUNTER, (u_char *)&nAddrMapDel, sizeof(long));
+    snmp_set_var_typed_value(requests->requestvb, ASN_COUNTER, (u_char *)&nAddrMapDel, sizeof(u_int32_t));
     break;
 
   default:
@@ -238,7 +238,7 @@ int handle_addressMapMaxDesiredEntries(netsnmp_mib_handler *handler,
   {
 
   case MODE_GET:
-    snmp_set_var_typed_value(requests->requestvb, ASN_INTEGER, (u_char *)&nAddrMapMaxDE, sizeof(long));
+    snmp_set_var_typed_value(requests->requestvb, ASN_INTEGER, (u_char *)&nAddrMapMaxDE, sizeof(u_int32_t));
     break;
 
   /*
@@ -457,7 +457,7 @@ int handle_probeResetControl(netsnmp_mib_handler *handler,
   {
 
   case MODE_GET:
-    snmp_set_var_typed_value(requests->requestvb, ASN_INTEGER, (u_char *)&nProbeReset, sizeof(long));
+    snmp_set_var_typed_value(requests->requestvb, ASN_INTEGER, (u_char *)&nProbeReset, sizeof(int32_t));
     break;
 
   /*
@@ -623,7 +623,7 @@ int handle_probeDownloadAction(netsnmp_mib_handler *handler,
                                netsnmp_request_info *requests)
 {
   int ret;
-  static int nDA = 1;
+  static int32_t nDA = 1;
   /* We are never called for a GETNEXT if it's registered as a
      "instance", as it's "magically" handled for us.  */
 
@@ -634,7 +634,7 @@ int handle_probeDownloadAction(netsnmp_mib_handler *handler,
   {
 
   case MODE_GET:
-    snmp_set_var_typed_value(requests->requestvb, ASN_INTEGER, (u_char *)&nDA, sizeof(long));
+    snmp_set_var_typed_value(requests->requestvb, ASN_INTEGER, (u_char *)&nDA, sizeof(int32_t));
     break;
 
   /*
@@ -681,7 +681,7 @@ int handle_probeDownloadStatus(netsnmp_mib_handler *handler,
                                netsnmp_agent_request_info *reqinfo,
                                netsnmp_request_info *requests)
 {
-  static int nDS = 2;
+  static int32_t nDS = 2;
   /* We are never called for a GETNEXT if it's registered as a
      "instance", as it's "magically" handled for us.  */
 
@@ -692,7 +692,7 @@ int handle_probeDownloadStatus(netsnmp_mib_handler *handler,
   {
 
   case MODE_GET:
-    snmp_set_var_typed_value(requests->requestvb, ASN_INTEGER, (u_char *)&nDS, sizeof(long));
+    snmp_set_var_typed_value(requests->requestvb, ASN_INTEGER, (u_char *)&nDS, sizeof(int32_t));
     break;
 
   default:
@@ -748,7 +748,7 @@ int handle_netDefaultGateway(netsnmp_mib_handler *handler,
 
   case MODE_GET:
     GetDefGw();
-    snmp_set_var_typed_value(requests->requestvb, ASN_IPADDRESS, (u_char *)&nDefGW, sizeof(long));
+    snmp_set_var_typed_value(requests->requestvb, ASN_IPADDRESS, (u_char *)&nDefGW, sizeof(int32_t));
     break;
 
   /*

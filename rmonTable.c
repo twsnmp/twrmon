@@ -12,12 +12,12 @@
 #define MAX_HOST 2000
 #define MAX_EVENT_LOG 2000
 
-u_long nProtocoDirLastChange = 0;
-u_long nAddrMapIns = 0;
-u_long nAddrMapDel = 0;
-u_long nAddrMapMaxDE = 8000;
-extern long nProbeReset;
-extern int nTimeMarkMode;
+u_int32_t nProtocoDirLastChange = 0;
+u_int32_t nAddrMapIns = 0;
+u_int32_t nAddrMapDel = 0;
+u_int32_t nAddrMapMaxDE = 8000;
+extern int32_t nProbeReset;
+extern int32_t nTimeMarkMode;
 
 /* Internal Data */
 struct etherStatsTable_entry *pEthStatEnt = NULL;
@@ -70,12 +70,12 @@ netsnmp_container *pEventContainer = NULL;
 netsnmp_container *pLogContainer = NULL;
 
 netsnmp_container *pProtDirContainer = NULL;
-long nProtDirLI = 1;
-long nProtDirLIIP = 0;
-long nProtDirLIICMP = 0;
-long nProtDirLIARP = 0;
-long nProtDirLITCP[0x10000];
-long nProtDirLIUDP[0x10000];
+int32_t nProtDirLI = 1;
+int32_t nProtDirLIIP = 0;
+int32_t nProtDirLIICMP = 0;
+int32_t nProtDirLIARP = 0;
+int32_t nProtDirLITCP[0x10000];
+int32_t nProtDirLIUDP[0x10000];
 
 netsnmp_container *pProtDistContainer = NULL;
 netsnmp_container *pAddrMapContainer = NULL;
@@ -94,7 +94,7 @@ netsnmp_container *pAlHostMib = NULL;
 netsnmp_container *pAlMtxSDMib = NULL;
 netsnmp_container *pAlMtxDSMib = NULL;
 
-long nLastHostCreateTime = 1;
+int nLastHostCreateTime = 1;
 
 void CheckEthHistTable(void);
 void LoadProtDir(void);
@@ -106,7 +106,7 @@ void CheckAlMtxTime(void);
 void CheckMaxTableSize(void);
 void CheckAlarm(void);
 
-long GetProtDirLI(long nEType, long nIPPort, long nPort);
+int32_t GetProtDirLI(int32_t nEType, int32_t nIPPort, int32_t nPort);
 
 void CtlTableSort(int bSort)
 {
@@ -138,7 +138,7 @@ int nTimerCount = 0;
 
 void TimerCallBack(unsigned int clientreg, void *clientarg)
 {
-  CheckEthHistTable(); //�����́A���b�`�F�b�N����B
+  CheckEthHistTable();
   CheckAlarm();
   switch (nTimerCount)
   {
@@ -289,43 +289,43 @@ struct etherStatsTable_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long etherStatsIndex;
+  int32_t etherStatsIndex;
 
   /* Column values */
   oid etherStatsDataSource[16];
   size_t etherStatsDataSource_len;
   oid old_etherStatsDataSource[16];
   size_t old_etherStatsDataSource_len;
-  u_long etherStatsDropEvents;
-  u_long etherStatsOctets;
-  u_long etherStatsPkts;
-  u_long etherStatsBroadcastPkts;
-  u_long etherStatsMulticastPkts;
-  u_long etherStatsCRCAlignErrors;
-  u_long etherStatsUndersizePkts;
-  u_long etherStatsOversizePkts;
-  u_long etherStatsFragments;
-  u_long etherStatsJabbers;
-  u_long etherStatsCollisions;
-  u_long etherStatsPkts64Octets;
-  u_long etherStatsPkts65to127Octets;
-  u_long etherStatsPkts128to255Octets;
-  u_long etherStatsPkts256to511Octets;
-  u_long etherStatsPkts512to1023Octets;
-  u_long etherStatsPkts1024to1518Octets;
+  u_int32_t etherStatsDropEvents;
+  u_int32_t etherStatsOctets;
+  u_int32_t etherStatsPkts;
+  u_int32_t etherStatsBroadcastPkts;
+  u_int32_t etherStatsMulticastPkts;
+  u_int32_t etherStatsCRCAlignErrors;
+  u_int32_t etherStatsUndersizePkts;
+  u_int32_t etherStatsOversizePkts;
+  u_int32_t etherStatsFragments;
+  u_int32_t etherStatsJabbers;
+  u_int32_t etherStatsCollisions;
+  u_int32_t etherStatsPkts64Octets;
+  u_int32_t etherStatsPkts65to127Octets;
+  u_int32_t etherStatsPkts128to255Octets;
+  u_int32_t etherStatsPkts256to511Octets;
+  u_int32_t etherStatsPkts512to1023Octets;
+  u_int32_t etherStatsPkts1024to1518Octets;
   char etherStatsOwner[256];
   size_t etherStatsOwner_len;
   char old_etherStatsOwner[256];
   size_t old_etherStatsOwner_len;
-  long etherStatsStatus;
-  long old_etherStatsStatus;
+  int32_t etherStatsStatus;
+  int32_t old_etherStatsStatus;
 
   int valid;
 };
 
 /* create a new row in the table */
 struct etherStatsTable_entry *
-etherStatsTable_createEntry(netsnmp_container *container, long etherStatsIndex)
+etherStatsTable_createEntry(netsnmp_container *container, int32_t etherStatsIndex)
 {
   struct etherStatsTable_entry *entry;
 
@@ -734,18 +734,18 @@ struct etherStats2Table_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long etherStatsIndex;
+  int32_t etherStatsIndex;
 
   /* Column values */
-  u_long etherStatsDroppedFrames;
-  u_long etherStatsCreateTime;
+  u_int32_t etherStatsDroppedFrames;
+  u_int32_t etherStatsCreateTime;
 
   int valid;
 };
 
 /* create a new row in the table */
 struct etherStats2Table_entry *
-etherStats2Table_createEntry(netsnmp_container *container, long etherStatsIndex)
+etherStats2Table_createEntry(netsnmp_container *container, int32_t etherStatsIndex)
 {
   struct etherStats2Table_entry *entry;
 
@@ -859,24 +859,24 @@ struct etherStatsHighCapacityTable_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long etherStatsIndex;
+  int etherStatsIndex;
 
   /* Column values */
-  //    u_long etherStatsHighCapacityOverflowPkts;
+  // u_int32_t etherStatsHighCapacityOverflowPkts;
   U64 etherStatsHighCapacityPkts;
-  //    u_long etherStatsHighCapacityOverflowOctets;
+  //    u_int32_t etherStatsHighCapacityOverflowOctets;
   U64 etherStatsHighCapacityOctets;
-  //    u_long etherStatsHighCapacityOverflowPkts64Octets;
+  //    u_int32_t etherStatsHighCapacityOverflowPkts64Octets;
   U64 etherStatsHighCapacityPkts64Octets;
-  //    u_long etherStatsHighCapacityOverflowPkts65to127Octets;
+  //    u_int32_t etherStatsHighCapacityOverflowPkts65to127Octets;
   U64 etherStatsHighCapacityPkts65to127Octets;
-  //    u_long etherStatsHighCapacityOverflowPkts128to255Octets;
+  //    u_int32_t etherStatsHighCapacityOverflowPkts128to255Octets;
   U64 etherStatsHighCapacityPkts128to255Octets;
-  //    u_long etherStatsHighCapacityOverflowPkts256to511Octets;
+  //    u_int32_t etherStatsHighCapacityOverflowPkts256to511Octets;
   U64 etherStatsHighCapacityPkts256to511Octets;
-  //    u_long etherStatsHighCapacityOverflowPkts512to1023Octets;
+  //    u_int32_t etherStatsHighCapacityOverflowPkts512to1023Octets;
   U64 etherStatsHighCapacityPkts512to1023Octets;
-  //    u_long etherStatsHighCapacityOverflowPkts1024to1518Octets;
+  //    u_int32_t etherStatsHighCapacityOverflowPkts1024to1518Octets;
   U64 etherStatsHighCapacityPkts1024to1518Octets;
 
   int valid;
@@ -884,7 +884,7 @@ struct etherStatsHighCapacityTable_entry
 
 /* create a new row in the table */
 struct etherStatsHighCapacityTable_entry *
-etherStatsHighCapacityTable_createEntry(netsnmp_container *container, long etherStatsIndex)
+etherStatsHighCapacityTable_createEntry(netsnmp_container *container, int etherStatsIndex)
 {
   struct etherStatsHighCapacityTable_entry *entry;
 
@@ -1044,31 +1044,31 @@ struct historyControlTable_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long historyControlIndex;
+  int32_t historyControlIndex;
 
   /* Column values */
   oid historyControlDataSource[16];
   size_t historyControlDataSource_len;
   oid old_historyControlDataSource[16];
   size_t old_historyControlDataSource_len;
-  long historyControlBucketsRequested;
-  long old_historyControlBucketsRequested;
-  long historyControlBucketsGranted;
-  long historyControlInterval;
-  long old_historyControlInterval;
+  int32_t historyControlBucketsRequested;
+  int32_t old_historyControlBucketsRequested;
+  int32_t historyControlBucketsGranted;
+  int32_t historyControlInterval;
+  int32_t old_historyControlInterval;
   char historyControlOwner[256];
   size_t historyControlOwner_len;
   char old_historyControlOwner[256];
   size_t old_historyControlOwner_len;
-  long historyControlStatus;
-  long old_historyControlStatus;
+  int32_t historyControlStatus;
+  int32_t old_historyControlStatus;
 
   int valid;
 };
 
 /* create a new row in the table */
 struct historyControlTable_entry *
-historyControlTable_createEntry(netsnmp_container *container, long historyControlIndex)
+historyControlTable_createEntry(netsnmp_container *container, int32_t historyControlIndex)
 {
   struct historyControlTable_entry *entry;
 
@@ -1450,30 +1450,30 @@ struct etherHistoryTable_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long etherHistoryIndex;
-  long etherHistorySampleIndex;
+  int32_t etherHistoryIndex;
+  int32_t etherHistorySampleIndex;
 
   /* Column values */
-  u_long etherHistoryIntervalStart;
-  u_long etherHistoryDropEvents;
-  u_long etherHistoryOctets;
-  u_long etherHistoryPkts;
-  u_long etherHistoryBroadcastPkts;
-  u_long etherHistoryMulticastPkts;
-  u_long etherHistoryCRCAlignErrors;
-  u_long etherHistoryUndersizePkts;
-  u_long etherHistoryOversizePkts;
-  u_long etherHistoryFragments;
-  u_long etherHistoryJabbers;
-  u_long etherHistoryCollisions;
-  long etherHistoryUtilization;
+  u_int32_t etherHistoryIntervalStart;
+  u_int32_t etherHistoryDropEvents;
+  u_int32_t etherHistoryOctets;
+  u_int32_t etherHistoryPkts;
+  u_int32_t etherHistoryBroadcastPkts;
+  u_int32_t etherHistoryMulticastPkts;
+  u_int32_t etherHistoryCRCAlignErrors;
+  u_int32_t etherHistoryUndersizePkts;
+  u_int32_t etherHistoryOversizePkts;
+  u_int32_t etherHistoryFragments;
+  u_int32_t etherHistoryJabbers;
+  u_int32_t etherHistoryCollisions;
+  int32_t etherHistoryUtilization;
 
   int valid;
 };
 
 /* create a new row in the table */
 struct etherHistoryTable_entry *
-etherHistoryTable_createEntry(netsnmp_container *container, long etherHistoryIndex, long etherHistorySampleIndex)
+etherHistoryTable_createEntry(netsnmp_container *container, int32_t etherHistoryIndex, int32_t etherHistorySampleIndex)
 {
   struct etherHistoryTable_entry *entry;
 
@@ -1640,17 +1640,17 @@ struct historyControl2Table_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long historyControlIndex;
+  int32_t historyControlIndex;
 
   /* Column values */
-  u_long historyControlDroppedFrames;
+  u_int32_t historyControlDroppedFrames;
 
   int valid;
 };
 
 /* create a new row in the table */
 struct historyControl2Table_entry *
-historyControl2Table_createEntry(netsnmp_container *container, long historyControlIndex)
+historyControl2Table_createEntry(netsnmp_container *container, int32_t historyControlIndex)
 {
   struct historyControl2Table_entry *entry;
 
@@ -1759,20 +1759,20 @@ struct etherHistoryHighCapacityTable_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long etherHistoryIndex;
-  long etherHistorySampleIndex;
+  int32_t etherHistoryIndex;
+  int32_t etherHistorySampleIndex;
 
   /* Column values */
-  //    u_long etherHistoryHighCapacityOverflowPkts;
+  //    u_int32_t etherHistoryHighCapacityOverflowPkts;
   U64 etherHistoryHighCapacityPkts;
-  //    u_long etherHistoryHighCapacityOverflowOctets;
+  //    u_int32_t etherHistoryHighCapacityOverflowOctets;
   U64 etherHistoryHighCapacityOctets;
 
   int valid;
 };
 
 /* create a new row in the table */
-struct etherHistoryHighCapacityTable_entry *etherHistoryHighCapacityTable_createEntry(netsnmp_container *container, long etherHistoryIndex, long etherHistorySampleIndex)
+struct etherHistoryHighCapacityTable_entry *etherHistoryHighCapacityTable_createEntry(netsnmp_container *container, int32_t etherHistoryIndex, int32_t etherHistorySampleIndex)
 {
   struct etherHistoryHighCapacityTable_entry *entry;
 
@@ -1892,47 +1892,47 @@ struct alarmTable_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long alarmIndex;
+  int32_t alarmIndex;
 
   /* Column values */
-  long alarmInterval;
-  long old_alarmInterval;
+  int32_t alarmInterval;
+  int32_t old_alarmInterval;
   oid alarmVariable[64];
   size_t alarmVariable_len;
   oid old_alarmVariable[64];
   size_t old_alarmVariable_len;
-  long alarmSampleType;
-  long old_alarmSampleType;
-  long alarmValue;
-  long alarmStartupAlarm;
-  long old_alarmStartupAlarm;
-  long alarmRisingThreshold;
-  long old_alarmRisingThreshold;
-  long alarmFallingThreshold;
-  long old_alarmFallingThreshold;
-  long alarmRisingEventIndex;
-  long old_alarmRisingEventIndex;
-  long alarmFallingEventIndex;
-  long old_alarmFallingEventIndex;
+  int32_t alarmSampleType;
+  int32_t old_alarmSampleType;
+  int32_t alarmValue;
+  int32_t alarmStartupAlarm;
+  int32_t old_alarmStartupAlarm;
+  int32_t alarmRisingThreshold;
+  int32_t old_alarmRisingThreshold;
+  int32_t alarmFallingThreshold;
+  int32_t old_alarmFallingThreshold;
+  int32_t alarmRisingEventIndex;
+  int32_t old_alarmRisingEventIndex;
+  int32_t alarmFallingEventIndex;
+  int32_t old_alarmFallingEventIndex;
   char alarmOwner[256];
   size_t alarmOwner_len;
   char old_alarmOwner[256];
   size_t old_alarmOwner_len;
-  long alarmStatus;
-  long old_alarmStatus;
+  int32_t alarmStatus;
+  int32_t old_alarmStatus;
 
   int valid;
 
   time_t nLastTime;
   int nLastStat;
-  unsigned long nLastVal; // for Delta
+  int32_t nLastVal; // for Delta
   int nAlarmObjID;
   int bFirst;
 };
 
 /* create a new row in the table */
 struct alarmTable_entry *
-alarmTable_createEntry(netsnmp_container *container, long alarmIndex)
+alarmTable_createEntry(netsnmp_container *container, int32_t alarmIndex)
 {
   struct alarmTable_entry *entry;
 
@@ -2533,28 +2533,28 @@ struct hostControlTable_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long hostControlIndex;
+  int32_t hostControlIndex;
 
   /* Column values */
   oid hostControlDataSource[16];
   size_t hostControlDataSource_len;
   oid old_hostControlDataSource[16];
   size_t old_hostControlDataSource_len;
-  long hostControlTableSize;
-  u_long hostControlLastDeleteTime;
+  int32_t hostControlTableSize;
+  u_int32_t hostControlLastDeleteTime;
   char hostControlOwner[256];
   size_t hostControlOwner_len;
   char old_hostControlOwner[256];
   size_t old_hostControlOwner_len;
-  long hostControlStatus;
-  long old_hostControlStatus;
+  int32_t hostControlStatus;
+  int32_t old_hostControlStatus;
 
   int valid;
 };
 
 /* create a new row in the table */
 struct hostControlTable_entry *
-hostControlTable_createEntry(netsnmp_container *container, long hostControlIndex)
+hostControlTable_createEntry(netsnmp_container *container, int32_t hostControlIndex)
 {
   struct hostControlTable_entry *entry;
 
@@ -2900,21 +2900,21 @@ struct hostTable_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long hostIndex;
+  int32_t hostIndex;
   char hostAddress[6];
   size_t hostAddress_len;
 
   oid IndexOid[6 + 1 + 1];
 
   /* Column values */
-  long hostCreationOrder;
-  u_long hostInPkts;
-  u_long hostOutPkts;
-  u_long hostInOctets;
-  u_long hostOutOctets;
-  u_long hostOutErrors;
-  u_long hostOutBroadcastPkts;
-  u_long hostOutMulticastPkts;
+  int32_t hostCreationOrder;
+  u_int32_t hostInPkts;
+  u_int32_t hostOutPkts;
+  u_int32_t hostInOctets;
+  u_int32_t hostOutOctets;
+  u_int32_t hostOutErrors;
+  u_int32_t hostOutBroadcastPkts;
+  u_int32_t hostOutMulticastPkts;
 
   int valid;
 };
@@ -2934,7 +2934,7 @@ static size_t MakeHostIndex(char *hostAddress, oid *pOid)
 }
 /* create a new row in the table */
 struct hostTable_entry *
-hostTable_createEntry(netsnmp_container *container, long hostIndex, char *hostAddress, size_t hostAddress_len)
+hostTable_createEntry(netsnmp_container *container, int32_t hostIndex, char *hostAddress, size_t hostAddress_len)
 {
   struct hostTable_entry *entry;
 
@@ -3084,8 +3084,8 @@ struct hostTimeTable_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long hostTimeIndex;
-  long hostTimeCreationOrder;
+  int32_t hostTimeIndex;
+  int32_t hostTimeCreationOrder;
 
   /* Column values */
   // Link ToHostEnt
@@ -3093,22 +3093,22 @@ struct hostTimeTable_entry
 
   /*    char hostTimeAddress[NNN];
       size_t hostTimeAddress_len;
-      long hostTimeCreationOrder;
-      long hostTimeIndex;
-      u_long hostTimeInPkts;
-      u_long hostTimeOutPkts;
-      u_long hostTimeInOctets;
-      u_long hostTimeOutOctets;
-      u_long hostTimeOutErrors;
-      u_long hostTimeOutBroadcastPkts;
-      u_long hostTimeOutMulticastPkts;
+      int32_t hostTimeCreationOrder;
+      int32_t hostTimeIndex;
+      u_int32_t hostTimeInPkts;
+      u_int32_t hostTimeOutPkts;
+      u_int32_t hostTimeInOctets;
+      u_int32_t hostTimeOutOctets;
+      u_int32_t hostTimeOutErrors;
+      u_int32_t hostTimeOutBroadcastPkts;
+      u_int32_t hostTimeOutMulticastPkts;
   */
   int valid;
 };
 
 /* create a new row in the table */
 struct hostTimeTable_entry *
-hostTimeTable_createEntry(netsnmp_container *container, long hostTimeIndex, long hostTimeCreationOrder)
+hostTimeTable_createEntry(netsnmp_container *container, int32_t hostTimeIndex, int32_t hostTimeCreationOrder)
 {
   struct hostTimeTable_entry *entry;
 
@@ -3259,18 +3259,18 @@ struct hostControl2Table_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long hostControlIndex;
+  int32_t hostControlIndex;
 
   /* Column values */
-  u_long hostControlDroppedFrames;
-  u_long hostControlCreateTime;
+  u_int32_t hostControlDroppedFrames;
+  u_int32_t hostControlCreateTime;
 
   int valid;
 };
 
 /* create a new row in the table */
 struct hostControl2Table_entry *
-hostControl2Table_createEntry(netsnmp_container *container, long hostControlIndex)
+hostControl2Table_createEntry(netsnmp_container *container, int32_t hostControlIndex)
 {
   struct hostControl2Table_entry *entry;
 
@@ -3384,28 +3384,28 @@ struct matrixControlTable_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long matrixControlIndex;
+  int32_t matrixControlIndex;
 
   /* Column values */
   oid matrixControlDataSource[16];
   size_t matrixControlDataSource_len;
   oid old_matrixControlDataSource[16];
   size_t old_matrixControlDataSource_len;
-  long matrixControlTableSize;
-  u_long matrixControlLastDeleteTime;
+  int32_t matrixControlTableSize;
+  u_int32_t matrixControlLastDeleteTime;
   char matrixControlOwner[256];
   size_t matrixControlOwner_len;
   char old_matrixControlOwner[256];
   size_t old_matrixControlOwner_len;
-  long matrixControlStatus;
-  long old_matrixControlStatus;
+  int32_t matrixControlStatus;
+  int32_t old_matrixControlStatus;
 
   int valid;
 };
 
 /* create a new row in the table */
 struct matrixControlTable_entry *
-matrixControlTable_createEntry(netsnmp_container *container, long matrixControlIndex)
+matrixControlTable_createEntry(netsnmp_container *container, int32_t matrixControlIndex)
 {
   struct matrixControlTable_entry *entry;
 
@@ -3738,23 +3738,23 @@ struct matrixSDTable_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long matrixSDIndex;
+  int32_t matrixSDIndex;
   char matrixSDSourceAddress[6];
   size_t matrixSDSourceAddress_len;
   char matrixSDDestAddress[6];
   size_t matrixSDDestAddress_len;
   oid IndexOid[1 + 7 * 2];
   /* Column values */
-  u_long matrixSDPkts;
-  u_long matrixSDOctets;
-  u_long matrixSDErrors;
+  u_int32_t matrixSDPkts;
+  u_int32_t matrixSDOctets;
+  u_int32_t matrixSDErrors;
   // YMI Added
   void *pMtxDS;
 
   int valid;
 };
 
-size_t MakeMtxIndex(long nIndex, char *pMac1, char *pMac2, oid *pOid)
+size_t MakeMtxIndex(int32_t nIndex, char *pMac1, char *pMac2, oid *pOid)
 {
   int i = 0;
   int j;
@@ -3774,7 +3774,7 @@ size_t MakeMtxIndex(long nIndex, char *pMac1, char *pMac2, oid *pOid)
 
 /* create a new row in the table */
 struct matrixSDTable_entry *
-matrixSDTable_createEntry(netsnmp_container *container, long matrixSDIndex, char *matrixSDSourceAddress, size_t matrixSDSourceAddress_len, char *matrixSDDestAddress, size_t matrixSDDestAddress_len)
+matrixSDTable_createEntry(netsnmp_container *container, int32_t matrixSDIndex, char *matrixSDSourceAddress, size_t matrixSDSourceAddress_len, char *matrixSDDestAddress, size_t matrixSDDestAddress_len)
 {
   struct matrixSDTable_entry *entry;
 
@@ -3910,7 +3910,7 @@ struct matrixDSTable_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long matrixDSIndex;
+  int32_t matrixDSIndex;
   char matrixDSDestAddress[6];
   size_t matrixDSDestAddress_len;
   char matrixDSSourceAddress[6];
@@ -3918,9 +3918,9 @@ struct matrixDSTable_entry
   oid IndexOid[1 + 7 * 2];
 
   /* Column values */
-  u_long matrixDSPkts;
-  u_long matrixDSOctets;
-  u_long matrixDSErrors;
+  u_int32_t matrixDSPkts;
+  u_int32_t matrixDSOctets;
+  u_int32_t matrixDSErrors;
 
   void *pMtxSD;
 
@@ -3929,7 +3929,7 @@ struct matrixDSTable_entry
 
 /* create a new row in the table */
 struct matrixDSTable_entry *
-matrixDSTable_createEntry(netsnmp_container *container, long matrixDSIndex, char *matrixDSDestAddress, size_t matrixDSDestAddress_len, char *matrixDSSourceAddress, size_t matrixDSSourceAddress_len)
+matrixDSTable_createEntry(netsnmp_container *container, int32_t matrixDSIndex, char *matrixDSDestAddress, size_t matrixDSDestAddress_len, char *matrixDSSourceAddress, size_t matrixDSSourceAddress_len)
 {
   struct matrixDSTable_entry *entry;
 
@@ -4065,18 +4065,18 @@ struct matrixControl2Table_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long matrixControlIndex;
+  int32_t matrixControlIndex;
 
   /* Column values */
-  u_long matrixControlDroppedFrames;
-  u_long matrixControlCreateTime;
+  u_int32_t matrixControlDroppedFrames;
+  u_int32_t matrixControlCreateTime;
 
   int valid;
 };
 
 /* create a new row in the table */
 struct matrixControl2Table_entry *
-matrixControl2Table_createEntry(netsnmp_container *container, long matrixControlIndex)
+matrixControl2Table_createEntry(netsnmp_container *container, int32_t matrixControlIndex)
 {
   struct matrixControl2Table_entry *entry;
 
@@ -4189,34 +4189,34 @@ struct eventTable_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long eventIndex;
+  int32_t eventIndex;
 
   /* Column values */
   char eventDescription[256];
   size_t eventDescription_len;
   char old_eventDescription[256];
   size_t old_eventDescription_len;
-  long eventType;
-  long old_eventType;
+  int32_t eventType;
+  int32_t old_eventType;
   char eventCommunity[128];
   size_t eventCommunity_len;
   char old_eventCommunity[128];
   size_t old_eventCommunity_len;
-  u_long eventLastTimeSent;
+  u_int32_t eventLastTimeSent;
   char eventOwner[256];
   size_t eventOwner_len;
   char old_eventOwner[256];
   size_t old_eventOwner_len;
-  long eventStatus;
-  long old_eventStatus;
+  int32_t eventStatus;
+  int32_t old_eventStatus;
 
   int valid;
-  long nLogID;
+  int32_t nLogID;
 };
 
 /* create a new row in the table */
 struct eventTable_entry *
-eventTable_createEntry(netsnmp_container *container, long eventIndex)
+eventTable_createEntry(netsnmp_container *container, int32_t eventIndex)
 {
   struct eventTable_entry *entry;
 
@@ -4655,11 +4655,11 @@ struct logTable_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long logEventIndex;
-  long logIndex;
+  int32_t logEventIndex;
+  int32_t logIndex;
 
   /* Column values */
-  u_long logTime;
+  u_int32_t logTime;
   char logDescription[256];
   size_t logDescription_len;
 
@@ -4668,7 +4668,7 @@ struct logTable_entry
 
 /* create a new row in the table */
 struct logTable_entry *
-logTable_createEntry(netsnmp_container *container, long logEventIndex, long logIndex)
+logTable_createEntry(netsnmp_container *container, int32_t logEventIndex, int32_t logIndex)
 {
   struct logTable_entry *entry;
 
@@ -4798,24 +4798,24 @@ struct protocolDirTable_entry
   size_t protocolDirParameters_len;
   oid IndexOid[32 + 1 + 1 + 8];
   /* Column values */
-  long protocolDirLocalIndex;
+  int32_t protocolDirLocalIndex;
   char protocolDirDescr[64];
   size_t protocolDirDescr_len;
   char old_protocolDirDescr[64];
   size_t old_protocolDirDescr_len;
   char protocolDirType[1];
   size_t protocolDirType_len;
-  long protocolDirAddressMapConfig;
-  long old_protocolDirAddressMapConfig;
-  long protocolDirHostConfig;
-  long old_protocolDirHostConfig;
-  long protocolDirMatrixConfig;
-  long old_protocolDirMatrixConfig;
+  int32_t protocolDirAddressMapConfig;
+  int32_t old_protocolDirAddressMapConfig;
+  int32_t protocolDirHostConfig;
+  int32_t old_protocolDirHostConfig;
+  int32_t protocolDirMatrixConfig;
+  int32_t old_protocolDirMatrixConfig;
   char protocolDirOwner[32];
   size_t protocolDirOwner_len;
   char old_protocolDirOwner[32];
   size_t old_protocolDirOwner_len;
-  long protocolDirStatus;
+  int32_t protocolDirStatus;
 
   int valid;
 };
@@ -4838,7 +4838,7 @@ size_t MakeProtDirIndex(int nIDLen, char *pID, int nParamLen, char *pParam, oid 
   return ((size_t)i);
 }
 
-int SetProtID(long nType, char *pID)
+int SetProtID(int32_t nType, char *pID)
 {
   int i;
   for (i = 24; i >= 0; i -= 8)
@@ -4848,7 +4848,7 @@ int SetProtID(long nType, char *pID)
   return (4);
 }
 
-int MakeProtID(long nEType, long nIPProt, long nPort, char *szProtID)
+int MakeProtID(int32_t nEType, int32_t nIPProt, int32_t nPort, char *szProtID)
 {
   int i = 0;
   int nRet = 0;
@@ -5263,27 +5263,27 @@ struct protocolDistControlTable_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long protocolDistControlIndex;
+  int32_t protocolDistControlIndex;
 
   /* Column values */
   oid protocolDistControlDataSource[16];
   size_t protocolDistControlDataSource_len;
   oid old_protocolDistControlDataSource[16];
   size_t old_protocolDistControlDataSource_len;
-  u_long protocolDistControlDroppedFrames;
-  u_long protocolDistControlCreateTime;
+  u_int32_t protocolDistControlDroppedFrames;
+  u_int32_t protocolDistControlCreateTime;
   char protocolDistControlOwner[256];
   size_t protocolDistControlOwner_len;
   char old_protocolDistControlOwner[256];
   size_t old_protocolDistControlOwner_len;
-  long protocolDistControlStatus;
+  int32_t protocolDistControlStatus;
 
   int valid;
 };
 
 /* create a new row in the table */
 struct protocolDistControlTable_entry *
-protocolDistControlTable_createEntry(netsnmp_container *container, long protocolDistControlIndex)
+protocolDistControlTable_createEntry(netsnmp_container *container, int32_t protocolDistControlIndex)
 {
   struct protocolDistControlTable_entry *entry;
 
@@ -5635,19 +5635,19 @@ struct protocolDistStatsTable_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long protocolDistControlIndex;
-  long protocolDirLocalIndex;
+  int32_t protocolDistControlIndex;
+  int32_t protocolDirLocalIndex;
 
   /* Column values */
-  u_long protocolDistStatsPkts;
-  u_long protocolDistStatsOctets;
+  u_int32_t protocolDistStatsPkts;
+  u_int32_t protocolDistStatsOctets;
 
   int valid;
 };
 
 /* create a new row in the table */
 struct protocolDistStatsTable_entry *
-protocolDistStatsTable_createEntry(netsnmp_container *container, long protocolDistControlIndex, long protocolDirLocalIndex)
+protocolDistStatsTable_createEntry(netsnmp_container *container, int32_t protocolDistControlIndex, int32_t protocolDirLocalIndex)
 {
   struct protocolDistStatsTable_entry *entry;
 
@@ -5763,26 +5763,26 @@ struct addressMapControlTable_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long addressMapControlIndex;
+  int32_t addressMapControlIndex;
 
   /* Column values */
   oid addressMapControlDataSource[16];
   size_t addressMapControlDataSource_len;
   oid old_addressMapControlDataSource[16];
   size_t old_addressMapControlDataSource_len;
-  u_long addressMapControlDroppedFrames;
+  u_int32_t addressMapControlDroppedFrames;
   char addressMapControlOwner[256];
   size_t addressMapControlOwner_len;
   char old_addressMapControlOwner[256];
   size_t old_addressMapControlOwner_len;
-  long addressMapControlStatus;
+  int32_t addressMapControlStatus;
 
   int valid;
 };
 
 /* create a new row in the table */
 struct addressMapControlTable_entry *
-addressMapControlTable_createEntry(netsnmp_container *container, long addressMapControlIndex)
+addressMapControlTable_createEntry(netsnmp_container *container, int32_t addressMapControlIndex)
 {
   struct addressMapControlTable_entry *entry;
 
@@ -6166,7 +6166,7 @@ void initialize_table_addressMapTable(void)
   /* Initialise the contents of the table here */
 }
 
-size_t MakeAddrMapIndex(u_long nTM, long nProtDirLI, long nNetAddrLen, char *pNetAddr, long nDSLen, oid *pDSOid, oid *pOid)
+size_t MakeAddrMapIndex(u_int32_t nTM, int32_t nProtDirLI, int32_t nNetAddrLen, char *pNetAddr, int32_t nDSLen, oid *pDSOid, oid *pOid)
 {
   int i;
   int j;
@@ -6192,8 +6192,8 @@ struct addressMapTable_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  u_long addressMapTimeMark;
-  long protocolDirLocalIndex;
+  u_int32_t addressMapTimeMark;
+  int32_t protocolDirLocalIndex;
   char addressMapNetworkAddress[16];
   size_t addressMapNetworkAddress_len;
   oid addressMapSource[16];
@@ -6203,17 +6203,17 @@ struct addressMapTable_entry
   /* Column values */
   char addressMapPhysicalAddress[6];
   size_t addressMapPhysicalAddress_len;
-  u_long addressMapLastChange;
+  u_int32_t addressMapLastChange;
 
   int valid;
-  u_long nLastTM;
-  u_long nNewTM;
+  u_int32_t nLastTM;
+  u_int32_t nNewTM;
   void *pAddrMap;
 };
 
 /* create a new row in the table */
 struct addressMapTable_entry *
-addressMapTable_createEntry(netsnmp_container *container, u_long addressMapTimeMark, long protocolDirLocalIndex, char *addressMapNetworkAddress, size_t addressMapNetworkAddress_len, oid *addressMapSource, size_t addressMapSource_len)
+addressMapTable_createEntry(netsnmp_container *container, u_int32_t addressMapTimeMark, int32_t protocolDirLocalIndex, char *addressMapNetworkAddress, size_t addressMapNetworkAddress_len, oid *addressMapSource, size_t addressMapSource_len)
 {
   struct addressMapTable_entry *entry;
 
@@ -6310,7 +6310,7 @@ struct addressMapTable_entry *FindAddrMapEntry(struct variable *vp,
   struct addressMapTable_entry *p;
   netsnmp_index oid_index;
   oid IndexOid[MAX_OID_LEN];
-  unsigned long nReqTM;
+  u_int32_t nReqTM;
   int i, rtest;
   for (i = 0, rtest = 0;
        i < (int)vp->namelen && i < (int)(*length) && !rtest; i++)
@@ -6456,7 +6456,7 @@ var_addressMapTable(struct variable *vp,
     *var_len = table_entry->addressMapPhysicalAddress_len;
     return (u_char *)table_entry->addressMapPhysicalAddress;
   case ADDRESSMAPLASTCHANGE:
-    *var_len = sizeof(long);
+    *var_len = sizeof(int32_t);
     return (u_char *)&table_entry->addressMapLastChange;
   default:
     ERROR_MSG("");
@@ -6498,35 +6498,35 @@ struct hlHostControlTable_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long hlHostControlIndex;
+  int32_t hlHostControlIndex;
 
   /* Column values */
   oid hlHostControlDataSource[16];
   size_t hlHostControlDataSource_len;
   oid old_hlHostControlDataSource[16];
   size_t old_hlHostControlDataSource_len;
-  u_long hlHostControlNlDroppedFrames;
-  u_long hlHostControlNlInserts;
-  u_long hlHostControlNlDeletes;
-  long hlHostControlNlMaxDesiredEntries;
-  long old_hlHostControlNlMaxDesiredEntries;
-  u_long hlHostControlAlDroppedFrames;
-  u_long hlHostControlAlInserts;
-  u_long hlHostControlAlDeletes;
-  long hlHostControlAlMaxDesiredEntries;
-  long old_hlHostControlAlMaxDesiredEntries;
+  u_int32_t hlHostControlNlDroppedFrames;
+  u_int32_t hlHostControlNlInserts;
+  u_int32_t hlHostControlNlDeletes;
+  int32_t hlHostControlNlMaxDesiredEntries;
+  int32_t old_hlHostControlNlMaxDesiredEntries;
+  u_int32_t hlHostControlAlDroppedFrames;
+  u_int32_t hlHostControlAlInserts;
+  u_int32_t hlHostControlAlDeletes;
+  int32_t hlHostControlAlMaxDesiredEntries;
+  int32_t old_hlHostControlAlMaxDesiredEntries;
   char hlHostControlOwner[256];
   size_t hlHostControlOwner_len;
   char old_hlHostControlOwner[256];
   size_t old_hlHostControlOwner_len;
-  long hlHostControlStatus;
+  int32_t hlHostControlStatus;
 
   int valid;
 };
 
 /* create a new row in the table */
 struct hlHostControlTable_entry *
-hlHostControlTable_createEntry(netsnmp_container *container, long hlHostControlIndex)
+hlHostControlTable_createEntry(netsnmp_container *container, int32_t hlHostControlIndex)
 {
   struct hlHostControlTable_entry *entry;
 
@@ -6978,7 +6978,7 @@ void initialize_table_nlHostTable(void)
   /* Initialise the contents of the table here */
 }
 
-size_t MakeNlHostIndex(long nCI, u_long nTM, long nPDirLI, long nALen, char *pNetAddr, oid *pOid)
+size_t MakeNlHostIndex(int32_t nCI, u_int32_t nTM, int32_t nPDirLI, int32_t nALen, char *pNetAddr, oid *pOid)
 {
   int i;
   int j;
@@ -6999,31 +6999,31 @@ struct nlHostTable_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long hlHostControlIndex;
-  u_long nlHostTimeMark;
-  long protocolDirLocalIndex;
+  int32_t hlHostControlIndex;
+  u_int32_t nlHostTimeMark;
+  int32_t protocolDirLocalIndex;
   char nlHostAddress[16];
   size_t nlHostAddress_len;
 
   oid IndexOid[22];
 
   /* Column values */
-  u_long nlHostInPkts;
-  u_long nlHostOutPkts;
-  u_long nlHostInOctets;
-  u_long nlHostOutOctets;
-  u_long nlHostOutMacNonUnicastPkts;
-  u_long nlHostCreateTime;
+  u_int32_t nlHostInPkts;
+  u_int32_t nlHostOutPkts;
+  u_int32_t nlHostInOctets;
+  u_int32_t nlHostOutOctets;
+  u_int32_t nlHostOutMacNonUnicastPkts;
+  u_int32_t nlHostCreateTime;
 
   int valid;
-  u_long nLastTM;
-  u_long nNewTM;
+  u_int32_t nLastTM;
+  u_int32_t nNewTM;
   void *pNlHost;
 };
 
 /* create a new row in the table */
 struct nlHostTable_entry *
-nlHostTable_createEntry(netsnmp_container *container, long hlHostControlIndex, u_long nlHostTimeMark, long protocolDirLocalIndex, char *nlHostAddress, size_t nlHostAddress_len)
+nlHostTable_createEntry(netsnmp_container *container, int32_t hlHostControlIndex, u_int32_t nlHostTimeMark, int32_t protocolDirLocalIndex, char *nlHostAddress, size_t nlHostAddress_len)
 {
   struct nlHostTable_entry *entry;
 
@@ -7132,7 +7132,7 @@ struct nlHostTable_entry *FindNlHostEntry(struct variable *vp,
   struct nlHostTable_entry *p;
   netsnmp_index oid_index;
   oid IndexOid[MAX_OID_LEN];
-  unsigned long nReqTM;
+  u_int32_t nReqTM;
   int i, rtest;
   for (i = 0, rtest = 0;
        i < (int)vp->namelen && i < (int)(*length) && !rtest; i++)
@@ -7275,22 +7275,22 @@ var_nlHostTable(struct variable *vp,
   switch (vp->magic)
   {
   case NLHOSTINPKTS:
-    *var_len = sizeof(long);
+    *var_len = sizeof(int32_t);
     return (u_char *)&table_entry->nlHostInPkts;
   case NLHOSTOUTPKTS:
-    *var_len = sizeof(long);
+    *var_len = sizeof(int32_t);
     return (u_char *)&table_entry->nlHostOutPkts;
   case NLHOSTINOCTETS:
-    *var_len = sizeof(long);
+    *var_len = sizeof(int32_t);
     return (u_char *)&table_entry->nlHostInOctets;
   case NLHOSTOUTOCTETS:
-    *var_len = sizeof(long);
+    *var_len = sizeof(int32_t);
     return (u_char *)&table_entry->nlHostOutOctets;
   case NLHOSTOUTMACNONUNICASTPKTS:
-    *var_len = sizeof(long);
+    *var_len = sizeof(int32_t);
     return (u_char *)&table_entry->nlHostOutMacNonUnicastPkts;
   case NLHOSTCREATETIME:
-    *var_len = sizeof(long);
+    *var_len = sizeof(int32_t);
     return (u_char *)&table_entry->nlHostCreateTime;
   default:
     ERROR_MSG("");
@@ -7332,35 +7332,35 @@ struct hlMatrixControlTable_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long hlMatrixControlIndex;
+  int32_t hlMatrixControlIndex;
 
   /* Column values */
   oid hlMatrixControlDataSource[16];
   size_t hlMatrixControlDataSource_len;
   oid old_hlMatrixControlDataSource[16];
   size_t old_hlMatrixControlDataSource_len;
-  u_long hlMatrixControlNlDroppedFrames;
-  u_long hlMatrixControlNlInserts;
-  u_long hlMatrixControlNlDeletes;
-  long hlMatrixControlNlMaxDesiredEntries;
-  long old_hlMatrixControlNlMaxDesiredEntries;
-  u_long hlMatrixControlAlDroppedFrames;
-  u_long hlMatrixControlAlInserts;
-  u_long hlMatrixControlAlDeletes;
-  long hlMatrixControlAlMaxDesiredEntries;
-  long old_hlMatrixControlAlMaxDesiredEntries;
+  u_int32_t hlMatrixControlNlDroppedFrames;
+  u_int32_t hlMatrixControlNlInserts;
+  u_int32_t hlMatrixControlNlDeletes;
+  int32_t hlMatrixControlNlMaxDesiredEntries;
+  int32_t old_hlMatrixControlNlMaxDesiredEntries;
+  u_int32_t hlMatrixControlAlDroppedFrames;
+  u_int32_t hlMatrixControlAlInserts;
+  u_int32_t hlMatrixControlAlDeletes;
+  int32_t hlMatrixControlAlMaxDesiredEntries;
+  int32_t old_hlMatrixControlAlMaxDesiredEntries;
   char hlMatrixControlOwner[256];
   size_t hlMatrixControlOwner_len;
   char old_hlMatrixControlOwner[256];
   size_t old_hlMatrixControlOwner_len;
-  long hlMatrixControlStatus;
+  int32_t hlMatrixControlStatus;
 
   int valid;
 };
 
 /* create a new row in the table */
 struct hlMatrixControlTable_entry *
-hlMatrixControlTable_createEntry(netsnmp_container *container, long hlMatrixControlIndex)
+hlMatrixControlTable_createEntry(netsnmp_container *container, int32_t hlMatrixControlIndex)
 {
   struct hlMatrixControlTable_entry *entry;
 
@@ -7799,7 +7799,7 @@ void initialize_table_nlMatrixSDTable(void)
   /* Initialise the contents of the table here */
 }
 
-size_t MakeNlMtxIndex(long nCI, u_long nTM, long nPDirLI, long nALen, char *pAddr1, char *pAddr2, oid *pOid)
+size_t MakeNlMtxIndex(int32_t nCI, u_int32_t nTM, int32_t nPDirLI, int32_t nALen, char *pAddr1, char *pAddr2, oid *pOid)
 {
   int i;
   int j;
@@ -7826,9 +7826,9 @@ struct nlMatrixSDTable_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long hlMatrixControlIndex;
-  u_long nlMatrixSDTimeMark;
-  long protocolDirLocalIndex;
+  int32_t hlMatrixControlIndex;
+  u_int32_t nlMatrixSDTimeMark;
+  int32_t protocolDirLocalIndex;
   char nlMatrixSDSourceAddress[16];
   size_t nlMatrixSDSourceAddress_len;
   char nlMatrixSDDestAddress[16];
@@ -7836,19 +7836,19 @@ struct nlMatrixSDTable_entry
 
   oid IndexOid[34 + 3];
   /* Column values */
-  u_long nlMatrixSDPkts;
-  u_long nlMatrixSDOctets;
-  u_long nlMatrixSDCreateTime;
+  u_int32_t nlMatrixSDPkts;
+  u_int32_t nlMatrixSDOctets;
+  u_int32_t nlMatrixSDCreateTime;
 
   int valid;
-  u_long nLastTM;
-  u_long nNewTM;
+  u_int32_t nLastTM;
+  u_int32_t nNewTM;
   void *pNlMtxSD;
 };
 
 /* create a new row in the table */
 struct nlMatrixSDTable_entry *
-nlMatrixSDTable_createEntry(netsnmp_container *container, long hlMatrixControlIndex, u_long nlMatrixSDTimeMark, long protocolDirLocalIndex, char *nlMatrixSDSourceAddress, size_t nlMatrixSDSourceAddress_len, char *nlMatrixSDDestAddress, size_t nlMatrixSDDestAddress_len)
+nlMatrixSDTable_createEntry(netsnmp_container *container, int32_t hlMatrixControlIndex, u_int32_t nlMatrixSDTimeMark, int32_t protocolDirLocalIndex, char *nlMatrixSDSourceAddress, size_t nlMatrixSDSourceAddress_len, char *nlMatrixSDDestAddress, size_t nlMatrixSDDestAddress_len)
 {
   struct nlMatrixSDTable_entry *entry;
 
@@ -7947,7 +7947,7 @@ struct nlMatrixSDTable_entry *FindNlMtxSDEntry(struct variable *vp,
   struct nlMatrixSDTable_entry *p;
   netsnmp_index oid_index;
   oid IndexOid[MAX_OID_LEN];
-  unsigned long nReqTM;
+  u_int32_t nReqTM;
   int i, rtest;
   for (i = 0, rtest = 0;
        i < (int)vp->namelen && i < (int)(*length) && !rtest; i++)
@@ -8090,13 +8090,13 @@ var_nlMatrixSDTable(struct variable *vp,
   switch (vp->magic)
   {
   case NLMATRIXSDPKTS:
-    *var_len = sizeof(long);
+    *var_len = sizeof(int32_t);
     return (u_char *)&table_entry->nlMatrixSDPkts;
   case NLMATRIXSDOCTETS:
-    *var_len = sizeof(long);
+    *var_len = sizeof(int32_t);
     return (u_char *)&table_entry->nlMatrixSDOctets;
   case NLMATRIXSDCREATETIME:
-    *var_len = sizeof(long);
+    *var_len = sizeof(int32_t);
     return (u_char *)&table_entry->nlMatrixSDCreateTime;
   default:
     ERROR_MSG("");
@@ -8176,9 +8176,9 @@ struct nlMatrixDSTable_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long hlMatrixControlIndex;
-  u_long nlMatrixDSTimeMark;
-  long protocolDirLocalIndex;
+  int32_t hlMatrixControlIndex;
+  u_int32_t nlMatrixDSTimeMark;
+  int32_t protocolDirLocalIndex;
   char nlMatrixDSDestAddress[16];
   size_t nlMatrixDSDestAddress_len;
   char nlMatrixDSSourceAddress[16];
@@ -8187,19 +8187,19 @@ struct nlMatrixDSTable_entry
   oid IndexOid[34 + 3];
 
   /* Column values */
-  u_long nlMatrixDSPkts;
-  u_long nlMatrixDSOctets;
-  u_long nlMatrixDSCreateTime;
+  u_int32_t nlMatrixDSPkts;
+  u_int32_t nlMatrixDSOctets;
+  u_int32_t nlMatrixDSCreateTime;
 
   int valid;
-  u_long nLastTM;
-  u_long nNewTM;
+  u_int32_t nLastTM;
+  u_int32_t nNewTM;
   void *pNlMtxDS;
 };
 
 /* create a new row in the table */
 struct nlMatrixDSTable_entry *
-nlMatrixDSTable_createEntry(netsnmp_container *container, long hlMatrixControlIndex, u_long nlMatrixDSTimeMark, long protocolDirLocalIndex, char *nlMatrixDSDestAddress, size_t nlMatrixDSDestAddress_len, char *nlMatrixDSSourceAddress, size_t nlMatrixDSSourceAddress_len)
+nlMatrixDSTable_createEntry(netsnmp_container *container, int32_t hlMatrixControlIndex, u_int32_t nlMatrixDSTimeMark, int32_t protocolDirLocalIndex, char *nlMatrixDSDestAddress, size_t nlMatrixDSDestAddress_len, char *nlMatrixDSSourceAddress, size_t nlMatrixDSSourceAddress_len)
 {
   struct nlMatrixDSTable_entry *entry;
 
@@ -8298,7 +8298,7 @@ struct nlMatrixDSTable_entry *FindNlMtxDSEntry(struct variable *vp,
   struct nlMatrixDSTable_entry *p;
   netsnmp_index oid_index;
   oid IndexOid[MAX_OID_LEN];
-  unsigned long nReqTM;
+  u_int32_t nReqTM;
   int i, rtest;
   for (i = 0, rtest = 0;
        i < (int)vp->namelen && i < (int)(*length) && !rtest; i++)
@@ -8441,13 +8441,13 @@ var_nlMatrixDSTable(struct variable *vp,
   switch (vp->magic)
   {
   case NLMATRIXDSPKTS:
-    *var_len = sizeof(long);
+    *var_len = sizeof(int32_t);
     return (u_char *)&table_entry->nlMatrixDSPkts;
   case NLMATRIXDSOCTETS:
-    *var_len = sizeof(long);
+    *var_len = sizeof(int32_t);
     return (u_char *)&table_entry->nlMatrixDSOctets;
   case NLMATRIXDSCREATETIME:
-    *var_len = sizeof(long);
+    *var_len = sizeof(int32_t);
     return (u_char *)&table_entry->nlMatrixDSCreateTime;
   default:
     ERROR_MSG("");
@@ -8526,7 +8526,7 @@ void initialize_table_alHostTable(void)
   /* Initialise the contents of the table here */
 }
 
-size_t MakeAlHostIndex(long nCI, u_long nTM, long nPDirNet, long nAddrLen, char *pHAddr, long nPDirAp, oid *pOid)
+size_t MakeAlHostIndex(int32_t nCI, u_int32_t nTM, int32_t nPDirNet, int32_t nAddrLen, char *pHAddr, int32_t nPDirAp, oid *pOid)
 {
   int i;
   int j;
@@ -8548,31 +8548,31 @@ struct alHostTable_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long hlHostControlIndex;
-  u_long alHostTimeMark;
-  long protocolDirLocalIndexNl;
+  int32_t hlHostControlIndex;
+  u_int32_t alHostTimeMark;
+  int32_t protocolDirLocalIndexNl;
   char nlHostAddress[16];
   size_t nlHostAddress_len;
-  long protocolDirLocalIndexAl;
+  int32_t protocolDirLocalIndexAl;
 
   oid IndexOid[22];
 
   /* Column values */
-  u_long alHostInPkts;
-  u_long alHostOutPkts;
-  u_long alHostInOctets;
-  u_long alHostOutOctets;
-  u_long alHostCreateTime;
+  u_int32_t alHostInPkts;
+  u_int32_t alHostOutPkts;
+  u_int32_t alHostInOctets;
+  u_int32_t alHostOutOctets;
+  u_int32_t alHostCreateTime;
 
   int valid;
-  u_long nLastTM;
-  u_long nNewTM;
+  u_int32_t nLastTM;
+  u_int32_t nNewTM;
   void *pAlHost;
 };
 
 /* create a new row in the table */
 struct alHostTable_entry *
-alHostTable_createEntry(netsnmp_container *container, long hlHostControlIndex, u_long alHostTimeMark, long protocolDirLocalIndexNl, char *nlHostAddress, size_t nlHostAddress_len, long protocolDirLocalIndexAl)
+alHostTable_createEntry(netsnmp_container *container, int32_t hlHostControlIndex, u_int32_t alHostTimeMark, int32_t protocolDirLocalIndexNl, char *nlHostAddress, size_t nlHostAddress_len, int32_t protocolDirLocalIndexAl)
 {
   struct alHostTable_entry *entry;
 
@@ -8678,7 +8678,7 @@ struct alHostTable_entry *FindAlHostEntry(struct variable *vp,
   struct alHostTable_entry *p;
   netsnmp_index oid_index;
   oid IndexOid[MAX_OID_LEN];
-  unsigned long nReqTM;
+  u_int32_t nReqTM;
   int i, rtest;
   for (i = 0, rtest = 0;
        i < (int)vp->namelen && i < (int)(*length) && !rtest; i++)
@@ -8823,19 +8823,19 @@ var_alHostTable(struct variable *vp,
   switch (vp->magic)
   {
   case ALHOSTINPKTS:
-    *var_len = sizeof(long);
+    *var_len = sizeof(int32_t);
     return (u_char *)&table_entry->alHostInPkts;
   case ALHOSTOUTPKTS:
-    *var_len = sizeof(long);
+    *var_len = sizeof(int32_t);
     return (u_char *)&table_entry->alHostOutPkts;
   case ALHOSTINOCTETS:
-    *var_len = sizeof(long);
+    *var_len = sizeof(int32_t);
     return (u_char *)&table_entry->alHostInOctets;
   case ALHOSTOUTOCTETS:
-    *var_len = sizeof(long);
+    *var_len = sizeof(int32_t);
     return (u_char *)&table_entry->alHostOutOctets;
   case ALHOSTCREATETIME:
-    *var_len = sizeof(long);
+    *var_len = sizeof(int32_t);
     return (u_char *)&table_entry->alHostCreateTime;
   default:
     ERROR_MSG("");
@@ -8911,7 +8911,7 @@ void initialize_table_alMatrixSDTable(void)
   /* Initialise the contents of the table here */
 }
 
-size_t MakeAlMtxIndex(long nCI, u_long nTM, long nPDirNet, long nAddrLen, char *pNAddr1, char *pNAddr2, long nPDirAp, oid *pOid)
+size_t MakeAlMtxIndex(int32_t nCI, u_int32_t nTM, int32_t nPDirNet, int32_t nAddrLen, char *pNAddr1, char *pNAddr2, int32_t nPDirAp, oid *pOid)
 {
   int i;
   int j;
@@ -8938,30 +8938,30 @@ struct alMatrixSDTable_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long hlMatrixControlIndex;
-  u_long alMatrixSDTimeMark;
-  long protocolDirLocalIndexNl;
+  int32_t hlMatrixControlIndex;
+  u_int32_t alMatrixSDTimeMark;
+  int32_t protocolDirLocalIndexNl;
   char nlMatrixSDSourceAddress[16];
   size_t nlMatrixSDSourceAddress_len;
   char nlMatrixSDDestAddress[16];
   size_t nlMatrixSDDestAddress_len;
-  long protocolDirLocalIndexAl;
+  int32_t protocolDirLocalIndexAl;
   oid IndexOid[40];
 
   /* Column values */
-  u_long alMatrixSDPkts;
-  u_long alMatrixSDOctets;
-  u_long alMatrixSDCreateTime;
+  u_int32_t alMatrixSDPkts;
+  u_int32_t alMatrixSDOctets;
+  u_int32_t alMatrixSDCreateTime;
 
   int valid;
-  u_long nLastTM;
-  u_long nNewTM;
+  u_int32_t nLastTM;
+  u_int32_t nNewTM;
   void *pAlMtxSD;
 };
 
 /* create a new row in the table */
 struct alMatrixSDTable_entry *
-alMatrixSDTable_createEntry(netsnmp_container *container, long hlMatrixControlIndex, u_long alMatrixSDTimeMark, long protocolDirLocalIndexNl, char *nlMatrixSDSourceAddress, size_t nlMatrixSDSourceAddress_len, char *nlMatrixSDDestAddress, size_t nlMatrixSDDestAddress_len, long protocolDirLocalIndexAl)
+alMatrixSDTable_createEntry(netsnmp_container *container, int32_t hlMatrixControlIndex, u_int32_t alMatrixSDTimeMark, int32_t protocolDirLocalIndexNl, char *nlMatrixSDSourceAddress, size_t nlMatrixSDSourceAddress_len, char *nlMatrixSDDestAddress, size_t nlMatrixSDDestAddress_len, int32_t protocolDirLocalIndexAl)
 {
   struct alMatrixSDTable_entry *entry;
 
@@ -9062,7 +9062,7 @@ struct alMatrixSDTable_entry *FindAlMtxSDEntry(struct variable *vp,
   struct alMatrixSDTable_entry *p;
   netsnmp_index oid_index;
   oid IndexOid[MAX_OID_LEN];
-  unsigned long nReqTM;
+  u_int32_t nReqTM;
   int i, rtest;
   for (i = 0, rtest = 0;
        i < (int)vp->namelen && i < (int)(*length) && !rtest; i++)
@@ -9206,13 +9206,13 @@ var_alMatrixSDTable(struct variable *vp,
   switch (vp->magic)
   {
   case ALMATRIXSDPKTS:
-    *var_len = sizeof(long);
+    *var_len = sizeof(int32_t);
     return (u_char *)&table_entry->alMatrixSDPkts;
   case ALMATRIXSDOCTETS:
-    *var_len = sizeof(long);
+    *var_len = sizeof(int32_t);
     return (u_char *)&table_entry->alMatrixSDOctets;
   case ALMATRIXSDCREATETIME:
-    *var_len = sizeof(long);
+    *var_len = sizeof(int32_t);
     return (u_char *)&table_entry->alMatrixSDCreateTime;
   default:
     ERROR_MSG("");
@@ -9295,32 +9295,32 @@ struct alMatrixDSTable_entry
   netsnmp_index oid_index;
 
   /* Index values */
-  long hlMatrixControlIndex;
-  u_long alMatrixDSTimeMark;
-  long protocolDirLocalIndexNl;
+  int32_t hlMatrixControlIndex;
+  u_int32_t alMatrixDSTimeMark;
+  int32_t protocolDirLocalIndexNl;
   char nlMatrixDSDestAddress[16];
   size_t nlMatrixDSDestAddress_len;
   char nlMatrixDSSourceAddress[16];
   size_t nlMatrixDSSourceAddress_len;
-  long protocolDirLocalIndexAl;
+  int32_t protocolDirLocalIndexAl;
 
   oid IndexOid[40];
 
   /* Column values */
-  u_long alMatrixDSPkts;
-  u_long alMatrixDSOctets;
-  u_long alMatrixDSCreateTime;
+  u_int32_t alMatrixDSPkts;
+  u_int32_t alMatrixDSOctets;
+  u_int32_t alMatrixDSCreateTime;
 
   int valid;
 
-  u_long nLastTM;
-  u_long nNewTM;
+  u_int32_t nLastTM;
+  u_int32_t nNewTM;
   void *pAlMtxDS;
 };
 
 /* create a new row in the table */
 struct alMatrixDSTable_entry *
-alMatrixDSTable_createEntry(netsnmp_container *container, long hlMatrixControlIndex, u_long alMatrixDSTimeMark, long protocolDirLocalIndexNl, char *nlMatrixDSDestAddress, size_t nlMatrixDSDestAddress_len, char *nlMatrixDSSourceAddress, size_t nlMatrixDSSourceAddress_len, long protocolDirLocalIndexAl)
+alMatrixDSTable_createEntry(netsnmp_container *container, int32_t hlMatrixControlIndex, u_int32_t alMatrixDSTimeMark, int32_t protocolDirLocalIndexNl, char *nlMatrixDSDestAddress, size_t nlMatrixDSDestAddress_len, char *nlMatrixDSSourceAddress, size_t nlMatrixDSSourceAddress_len, int32_t protocolDirLocalIndexAl)
 {
   struct alMatrixDSTable_entry *entry;
 
@@ -9420,7 +9420,7 @@ struct alMatrixDSTable_entry *FindAlMtxDSEntry(struct variable *vp,
   struct alMatrixDSTable_entry *p;
   netsnmp_index oid_index;
   oid IndexOid[MAX_OID_LEN];
-  unsigned long nReqTM;
+  u_int32_t nReqTM;
   int i, rtest;
   for (i = 0, rtest = 0;
        i < (int)vp->namelen && i < (int)(*length) && !rtest; i++)
@@ -9563,13 +9563,13 @@ var_alMatrixDSTable(struct variable *vp,
   switch (vp->magic)
   {
   case ALMATRIXDSPKTS:
-    *var_len = sizeof(long);
+    *var_len = sizeof(int32_t);
     return (u_char *)&table_entry->alMatrixDSPkts;
   case ALMATRIXDSOCTETS:
-    *var_len = sizeof(long);
+    *var_len = sizeof(int32_t);
     return (u_char *)&table_entry->alMatrixDSOctets;
   case ALMATRIXDSCREATETIME:
-    *var_len = sizeof(long);
+    *var_len = sizeof(int32_t);
     return (u_char *)&table_entry->alMatrixDSCreateTime;
   default:
     ERROR_MSG("");
@@ -9986,16 +9986,16 @@ void InitHlMtxContEnt(netsnmp_container *pC)
   return;
 }
 
-long AddProtID(long nEType, long nIPProt, long nPort, char *pDescr, char *pOwner)
+int32_t AddProtID(int32_t nEType, int32_t nIPProt, int32_t nPort, char *pDescr, char *pOwner)
 {
   char szID[32];
   char szParam[8];
   struct protocolDirTable_entry *p;
-  int nIDLen;
-  long nTmp = GetProtDirLI(nEType, nIPProt, nPort);
+  int32_t nIDLen;
+  int32_t nTmp = GetProtDirLI(nEType, nIPProt, nPort);
   if (nTmp)
   {
-    printf("Dup AddProtID = %s - %ld -%ld : %s\n", pDescr, nIPProt, nPort, pOwner);
+    printf("Dup AddProtID = %s - %d -%d : %s\n", pDescr, nIPProt, nPort, pOwner);
     return (nTmp);
   }
   memset(szParam, 0, sizeof(szParam));
@@ -10057,8 +10057,8 @@ int LoadProtDirFromFile(char *szFile, char *szOwner)
   char szLine[2048];
   char szName[64];
   char szPort[64];
-  long nPort;
-  long nIPProt;
+  int32_t nPort;
+  int32_t nIPProt;
   char *p;
   fp = fopen(szFile, "r");
   if (fp == NULL)
@@ -10098,13 +10098,11 @@ int LoadProtDirFromFile(char *szFile, char *szOwner)
 void LoadProtDir(void)
 {
   LoadSystemProtDir();
-  if (LoadProtDirFromFile("/etc/rmonpdir.txt", "Config"))
-    return;
   LoadProtDirFromFile("/etc/services", "Services");
   return;
 }
 
-long GetProtDirLI(long nEType, long nIPProt, long nPort)
+int32_t GetProtDirLI(int32_t nEType, int32_t nIPProt, int32_t nPort)
 {
   char szID[32];
   char szParam[8];
@@ -10164,7 +10162,7 @@ int SendRmonTrap(int nMode, struct alarmTable_entry *p)
   i = OID_LENGTH(alarmIndex_oid);
   alarmIndex_oid[i - 1] = p->alarmIndex;
   snmp_varlist_add_variable(&var_list, alarmIndex_oid, i,
-                            ASN_INTEGER, (char *)&p->alarmIndex, sizeof(long));
+                            ASN_INTEGER, (char *)&p->alarmIndex, sizeof(int32_t));
 
   i = OID_LENGTH(alarmVariable_oid);
   alarmVariable_oid[i - 1] = p->alarmIndex;
@@ -10176,20 +10174,20 @@ int SendRmonTrap(int nMode, struct alarmTable_entry *p)
   alarmSampleType_oid[i - 1] = p->alarmIndex;
   snmp_varlist_add_variable(&var_list,
                             alarmSampleType_oid, OID_LENGTH(alarmSampleType_oid),
-                            ASN_INTEGER, (char *)&p->alarmSampleType, sizeof(long));
+                            ASN_INTEGER, (char *)&p->alarmSampleType, sizeof(int32_t));
 
   i = OID_LENGTH(alarmValue_oid);
   alarmValue_oid[i - 1] = p->alarmIndex;
   snmp_varlist_add_variable(&var_list,
                             alarmValue_oid, OID_LENGTH(alarmValue_oid),
-                            ASN_INTEGER, (char *)&p->alarmValue, sizeof(long));
+                            ASN_INTEGER, (char *)&p->alarmValue, sizeof(int32_t));
   if (nMode == 0)
   {
     i = OID_LENGTH(alarmFallingThreshold_oid);
     alarmFallingThreshold_oid[i - 1] = p->alarmIndex;
     snmp_varlist_add_variable(&var_list,
                               alarmFallingThreshold_oid, OID_LENGTH(alarmFallingThreshold_oid),
-                              ASN_INTEGER, (char *)&p->alarmFallingThreshold, sizeof(long));
+                              ASN_INTEGER, (char *)&p->alarmFallingThreshold, sizeof(int32_t));
   }
   else
   {
@@ -10197,7 +10195,7 @@ int SendRmonTrap(int nMode, struct alarmTable_entry *p)
     alarmRisingThreshold_oid[i - 1] = p->alarmIndex;
     snmp_varlist_add_variable(&var_list,
                               alarmRisingThreshold_oid, OID_LENGTH(alarmRisingThreshold_oid),
-                              ASN_INTEGER, (char *)&p->alarmRisingThreshold, sizeof(long));
+                              ASN_INTEGER, (char *)&p->alarmRisingThreshold, sizeof(int32_t));
   }
   send_v2trap(var_list);
   snmp_free_varbind(var_list);
@@ -10341,7 +10339,7 @@ void UpdateMtx(struct tw_eth *pEth, int nLen)
   return;
 }
 
-void UpdateProtDist(long nPLI, int nLen)
+void UpdateProtDist(int32_t nPLI, int nLen)
 {
   netsnmp_index oid_index;
   struct protocolDistStatsTable_entry *p;
@@ -10446,7 +10444,7 @@ void UpdateRmonEth(struct tw_eth *pEth, int nLen)
   }
 }
 
-void UpdateAddrMap(char *szMac, unsigned long nIP)
+void UpdateAddrMap(char *szMac, u_int32_t nIP)
 {
   struct addressMapTable_entry *p;
   netsnmp_index oid_index;
@@ -10488,7 +10486,7 @@ void UpdateRmonIP(struct tw_eth *pEth, struct tw_ip *pIP, int nLen)
   return;
 }
 
-void UpdateNlHost(int nDir, int bMCas, u_long nIP, int nLen)
+void UpdateNlHost(int nDir, int bMCas, u_int32_t nIP, int nLen)
 {
   struct nlHostTable_entry *p;
   netsnmp_index oid_index;
@@ -10528,7 +10526,7 @@ void UpdateNlHost(int nDir, int bMCas, u_long nIP, int nLen)
   return;
 }
 
-void UpdateAlHost(int nDir, long nPLI, u_long nIP, int nLen)
+void UpdateAlHost(int nDir, int32_t nPLI, u_int32_t nIP, int nLen)
 {
   struct alHostTable_entry *p;
   netsnmp_index oid_index;
@@ -10617,7 +10615,7 @@ void UpdateNlMtx(struct tw_flow *pFlow, int nLen)
   return;
 }
 
-void UpdateAlMtx(long nPLI, struct tw_flow *pFlow, int nLen)
+void UpdateAlMtx(int32_t nPLI, struct tw_flow *pFlow, int nLen)
 {
   struct alMatrixSDTable_entry *pSD;
   struct alMatrixDSTable_entry *pDS;
@@ -10671,8 +10669,8 @@ void UpdateAlMtx(long nPLI, struct tw_flow *pFlow, int nLen)
 
 void UpdateRmonFlow(struct tw_flow *pFlow, int nLen)
 {
-  long nPLIS;
-  long nPLID;
+  int32_t nPLIS;
+  int32_t nPLID;
   pFlow->sport = ntohs(pFlow->sport);
   pFlow->dport = ntohs(pFlow->dport);
   if (pFlow->ip_p == 6)
@@ -11216,7 +11214,7 @@ void DoEvent(int nMode, struct alarmTable_entry *pAlarm)
 {
   struct eventTable_entry *p;
   netsnmp_index oid_index;
-  long nIndex;
+  int32_t nIndex;
   if (nMode == 1)
   {
     nIndex = pAlarm->alarmRisingEventIndex;
@@ -11246,7 +11244,7 @@ void DoEvent(int nMode, struct alarmTable_entry *pAlarm)
   }
 }
 
-unsigned long GetAlarmObjVal(int nID)
+u_int32_t GetAlarmObjVal(int nID)
 {
   switch (nID)
   {
@@ -11294,8 +11292,8 @@ void CheckAlarmEntry(void *p1, void *p2)
 {
   time_t nNow = (time_t)p2;
   struct alarmTable_entry *p = (struct alarmTable_entry *)p1;
-  unsigned long nNewVal;
-  long nCmpVal;
+  u_int32_t nNewVal;
+  int32_t nCmpVal;
   int nNewStat = 0;
   if (p1 == NULL)
     return;
@@ -11435,7 +11433,7 @@ void SaveEventEntry(void *p1, void *p2)
   struct eventTable_entry *p = (struct eventTable_entry *)p1;
   if (fp == NULL || p1 == NULL)
     return;
-  fprintf(fp, "EVENT %ld %ld  \t%s\t%s\t%s\n", p->eventIndex, p->eventType, p->eventCommunity, p->eventOwner, p->eventDescription);
+  fprintf(fp, "EVENT %d %d  \t%s\t%s\t%s\n", p->eventIndex, p->eventType, p->eventCommunity, p->eventOwner, p->eventDescription);
   return;
 }
 
@@ -11443,8 +11441,8 @@ void AddEventEntry(char *s)
 {
   struct eventTable_entry *p;
   char szKey[256];
-  long nIndex;
-  long nType;
+  int32_t nIndex;
+  int32_t nType;
   char *pCom;
   char *pOwner;
   char *pDescr;
@@ -11485,7 +11483,7 @@ void AddEventEntry(char *s)
       }
     }
   }
-  if (sscanf(s, "%s %ld %ld", szKey, &nIndex, &nType) < 3)
+  if (sscanf(s, "%s %d %d", szKey, &nIndex, &nType) < 3)
     return;
   p = eventTable_createEntry(pEventContainer, nIndex);
   if (p == NULL)
@@ -11510,7 +11508,7 @@ void SaveAlarmEntry(void *p1, void *p2)
     return;
   if (p->nAlarmObjID < 1)
     return;
-  fprintf(fp, "ALARM %ld %ld %d %ld %ld %ld %ld %ld %ld\t%s\n", p->alarmIndex, p->alarmInterval, p->nAlarmObjID, p->alarmSampleType,
+  fprintf(fp, "ALARM %d %d %d %d %d %d %d %d %d\t%s\n", p->alarmIndex, p->alarmInterval, p->nAlarmObjID, p->alarmSampleType,
           p->alarmStartupAlarm, p->alarmRisingThreshold, p->alarmFallingThreshold,
           p->alarmRisingEventIndex, p->alarmFallingEventIndex, p->alarmOwner);
   return;
@@ -11521,15 +11519,15 @@ void AddAlarmEntry(char *s)
   struct alarmTable_entry *p;
   static oid etherStatsTable_oid[] = {1, 3, 6, 1, 2, 1, 16, 1, 1, 1, 0, 1};
   size_t etherStatsTable_oid_len = OID_LENGTH(etherStatsTable_oid);
-  long nIndex;
-  long nInt;
-  long nObjID;
-  long nType;
-  long nSA;
-  long nRT;
-  long nFT;
-  long nRE;
-  long nFE;
+  int32_t nIndex;
+  int32_t nInt;
+  int32_t nObjID;
+  int32_t nType;
+  int32_t nSA;
+  int32_t nRT;
+  int32_t nFT;
+  int32_t nRE;
+  int32_t nFE;
   char szKey[256];
   char *szOwner;
   char *pTmp;
@@ -11541,7 +11539,7 @@ void AddAlarmEntry(char *s)
   {
     szOwner = "";
   }
-  if (sscanf(s, "%s %ld %ld %ld %ld %ld %ld %ld %ld %ld", szKey, &nIndex, &nInt, &nObjID, &nType, &nSA, &nRT, &nFT, &nRE, &nFE) < 10)
+  if (sscanf(s, "%s %d %d %d %d %d %d %d %d %d", szKey, &nIndex, &nInt, &nObjID, &nType, &nSA, &nRT, &nFT, &nRE, &nFE) < 10)
     return;
   p = alarmTable_createEntry(pAlarmContainer, nIndex);
   if (p == NULL)
@@ -11572,14 +11570,14 @@ void SaveTwRmonConf(void)
   fp = fopen("/etc/twrmond.conf", "w");
   if (fp == NULL)
     return;
-  fprintf(fp, "MAX_ETHER_HIST %ld\n", pEthHistCntEnt->historyControlBucketsGranted);
-  fprintf(fp, "ETHER_HIST_INT %ld\n", pEthHistCntEnt->historyControlInterval);
+  fprintf(fp, "MAX_ETHER_HIST %d\n", pEthHistCntEnt->historyControlBucketsGranted);
+  fprintf(fp, "ETHER_HIST_INT %d\n", pEthHistCntEnt->historyControlInterval);
 
-  fprintf(fp, "MAX_NLHOST %ld\n", pHlHostCntEnt->hlHostControlNlMaxDesiredEntries);
-  fprintf(fp, "MAX_ALHOST %ld\n", pHlHostCntEnt->hlHostControlAlMaxDesiredEntries);
-  fprintf(fp, "MAX_NLMTX %ld\n", pHlMtxCntEnt->hlMatrixControlNlMaxDesiredEntries);
-  fprintf(fp, "MAX_ALMTX %ld\n", pHlMtxCntEnt->hlMatrixControlAlMaxDesiredEntries);
-  fprintf(fp, "MAX_ADDMAP %ld\n", nAddrMapMaxDE);
+  fprintf(fp, "MAX_NLHOST %d\n", pHlHostCntEnt->hlHostControlNlMaxDesiredEntries);
+  fprintf(fp, "MAX_ALHOST %d\n", pHlHostCntEnt->hlHostControlAlMaxDesiredEntries);
+  fprintf(fp, "MAX_NLMTX %d\n", pHlMtxCntEnt->hlMatrixControlNlMaxDesiredEntries);
+  fprintf(fp, "MAX_ALMTX %d\n", pHlMtxCntEnt->hlMatrixControlAlMaxDesiredEntries);
+  fprintf(fp, "MAX_ADDMAP %d\n", nAddrMapMaxDE);
   CONTAINER_FOR_EACH(pEventContainer, SaveEventEntry, (void *)fp);
   CONTAINER_FOR_EACH(pAlarmContainer, SaveAlarmEntry, (void *)fp);
   fclose(fp);
@@ -11591,13 +11589,13 @@ void LoadTwRmonConf(void)
   FILE *fp;
   char szLine[1024];
   char szKey[256];
-  unsigned long nTmp;
+  u_int32_t nTmp;
   fp = fopen("/etc/twrmond.conf", "r");
   if (fp == NULL)
     return;
   while (fgets(szLine, sizeof(szLine), fp))
   {
-    if (sscanf(szLine, "%s %lu", szKey, &nTmp) != 2)
+    if (sscanf(szLine, "%s %u", szKey, &nTmp) != 2)
       continue;
     if (szKey[0] == '#')
       continue;
