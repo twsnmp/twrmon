@@ -10918,7 +10918,6 @@ void CheckMaxTableSize(void)
   }
 
   // netsnmp_container               *pProtDistContainer=NULL;
-  //�@����́A�����K�v�Ȃ��B
 
   // netsnmp_container               *pAddrMapContainer =NULL;
   nSize = CONTAINER_SIZE(pAddrMapMib);
@@ -10952,7 +10951,6 @@ void CheckMaxTableSize(void)
       }
       nlHostTable_removeEntry(pNlHostMib, pNH);
       nDel--;
-      //�폜���̃J�E���g�t�o
       pHlHostCntEnt->hlHostControlNlDeletes++;
     }
   }
@@ -11025,7 +11023,6 @@ void CheckMaxTableSize(void)
       }
       alMatrixSDTable_removeEntry(pAlMtxSDMib, pAM);
       nDel--;
-      //�폜���̃J�E���g�t�o
       pHlMtxCntEnt->hlMatrixControlAlDeletes++;
     }
   }
@@ -11033,7 +11030,6 @@ void CheckMaxTableSize(void)
   // netsnmp_container               *pAlMtxDSContainer = NULL;
 }
 
-// �ȉ��́ATimeMark�̂��߂ɒ���I�Ɏ��s���鏈���ł��B�T�˂P�O�b���ɌĂ΂��H
 void UpdateAddrMapMib(void *p1, void *p2)
 {
   struct addressMapTable_entry *p;
