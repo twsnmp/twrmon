@@ -368,7 +368,7 @@ int tw_agent_check_and_process()
 {
   int numfds;
   fd_set fdset;
-  struct timeval timeout = {0, 100}, *tvp = &timeout;
+  struct timeval timeout = {0, 10}, *tvp = &timeout;
   int count;
   int fakeblock = 0;
   struct pcap_stat ps;
@@ -397,7 +397,7 @@ int tw_agent_check_and_process()
   return count;
 }
 
-int loopMax = 500;
+int loopMax = 100;
 
 int CheckCapFIFO()
 {
@@ -413,10 +413,10 @@ int CheckCapFIFO()
     CheckPacket(CapFIFO[f].pCap, CapFIFO[f].nPLen);
     FreeCapFIFO();
   }
-  if ((time(0) - nT) > 1)
+  if ((time(0) - nT) > 0)
   {
     printf("Long Process time=%ld nCapFIFOSize=%d\n", time(0) - nT,nCapFIFOSize);
-    if (loopMax > 100) {
+    if (loopMax > 10) {
       loopMax--;
     }
   } else {
@@ -591,7 +591,7 @@ int main(int argc, char **argv)
   while (keep_running)
   {
     CheckCapFIFO();
-    tw_agent_check_and_process(); // Time Out 1Sec
+    tw_agent_check_and_process(); // Time Out 1mSec
   }
   SaveTwRmonConf();
   /* at shutdown time */
