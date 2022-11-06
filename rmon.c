@@ -266,7 +266,7 @@ int handle_addressMapMaxDesiredEntries(netsnmp_mib_handler *handler,
     break;
 
   case MODE_SET_COMMIT:
-    nAddrMapMaxDE = (u_int32_t)requests->requestvb->val.integer;
+    nAddrMapMaxDE = (u_int32_t)*requests->requestvb->val.integer;
     break;
 
   case MODE_SET_UNDO:
@@ -485,7 +485,7 @@ int handle_probeResetControl(netsnmp_mib_handler *handler,
     break;
 
   case MODE_SET_COMMIT:
-    nProbeReset = (int32_t)requests->requestvb->val.integer;
+    nProbeReset = (int32_t)*requests->requestvb->val.integer;
     ResetRmonTable();
     break;
 
