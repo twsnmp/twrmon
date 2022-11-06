@@ -217,7 +217,7 @@ int InitPcap(char *pDev)
 }
 
 // Scan Level 0:Data Link(Ether) 1:Network(IP)  2:Application
-int scanLevel = 0;
+int scanLevel = 2;
 
 /*
  */
@@ -580,7 +580,7 @@ int main(int argc, char **argv)
   signal(SIGINT, stop_server);
 
   LoadTwRmonConf();
-  snmp_log(LOG_INFO, "twrmond is up and running.\n");
+  snmp_log(LOG_INFO, "twrmond is up and running.scan level=%d\n",scanLevel);
 
   pthread_create(&PcapThreadTid, NULL, PcapThread, (void *)NULL);
 
