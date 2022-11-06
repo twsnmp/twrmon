@@ -368,7 +368,7 @@ int tw_agent_check_and_process()
 {
   int numfds;
   fd_set fdset;
-  struct timeval timeout = {0, 100}, *tvp = &timeout;
+  struct timeval timeout = {0, 10}, *tvp = &timeout;
   int count;
   int fakeblock = 0;
   struct pcap_stat ps;
@@ -379,9 +379,9 @@ int tw_agent_check_and_process()
   count = select(numfds, &fdset, 0, 0, tvp);
   if (count > 0)
   {
-    // CtlTableSort(1);
+    CtlTableSort(1);
     snmp_read(&fdset);
-    // CtlTableSort(0);
+    CtlTableSort(0);
   }
   else
   {
@@ -415,7 +415,7 @@ int CheckCapFIFO()
   }
   if ((time(0) - nT) > 0)
   {
-    printf("Long Process time=%ld nCapFIFOSize=%d\n", time(0) - nT,nCapFIFOSize);
+    printf("Long Process time=%ld nCapFIFOSize=%d loopMax=%d\n", time(0) - nT,nCapFIFOSize,loopMax);
     if (loopMax > 10) {
       loopMax--;
     }
@@ -587,7 +587,7 @@ int main(int argc, char **argv)
   pthread_create(&PcapThreadTid, NULL, PcapThread, (void *)NULL);
 
   /* your main loop here... */
-  // CtlTableSort(0);
+  CtlTableSort(0);
   while (keep_running)
   {
     CheckCapFIFO();
