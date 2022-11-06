@@ -708,19 +708,16 @@ static void GetDefGw(void)
 {
   FILE *fp;
   char szLine[1024];
-  char szTmp[64];
-  char szDefGW[64];
+  char szTmp[256];
+  char szDefGW[256];
   int c;
   nDefGW = 0;
   fp = popen("route -n", "r");
   if (fp == NULL) return;
   while (fgets(szLine, sizeof(szLine), fp))
   {
-    char *p = strstr(szLine, "0.0.0.0");
-    if (p != szLine )continue;
-    p += strlen("0.0.0.0");
-    c = sscanf(p, "%s %s", szTmp, szDefGW);
-    if (c != 2) continue;
+    c = sscanf(szLine, "%s %s", szTmp, szDefGW);
+    if (c != 2 || strcmp(szTmp,"0.0.0.0") != 0 ) continue;
     nDefGW = inet_addr(szDefGW);
     break;
   }
