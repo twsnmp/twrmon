@@ -120,9 +120,10 @@ void *PcapThread(void *pDummy)
 
 static void usage(void)
 {
-  printf("usage: twrmond [-i <Monitor IF>] [-D<tokens>] [-f] [-L] [-M] [-H] [-v] [-T <TimemarkMode>] [LISTENING ADDRESSES]\n"
+  printf("usage: twrmond [-i <Monitor IF>] [-D<tokens>] [-f] [-L] [-M] [-H] [-v] [-s <Scan Level>] [-T <TimemarkMode>] [LISTENING ADDRESSES]\n"
          "\t-f      Do not fork() from the calling shell.\n"
          "\t-v      Show version\n"
+         "\t-s <Scan Level>  0:Data Link(Ether) 1:Network(IP) 2:Application\n"
          "\t-DTOKEN[,TOKEN,...]\n"
          "\t\tTurn on debugging output for the given TOKEN(s).\n"
          "\t\tWithout any tokens specified, it defaults to printing\n"
