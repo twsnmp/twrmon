@@ -2948,7 +2948,7 @@ static size_t MakeHostIndex(char *hostAddress, oid *pOid)
   pOid[i++] = 6; // Length
   for (j = 0; j < 6; j++)
   {
-    pOid[i++] = (long)hostAddress[j] & 0x00ff;
+    pOid[i++] = (oid)hostAddress[j] & 0x00ff;
   }
   return ((size_t)i);
 }
@@ -3789,12 +3789,12 @@ size_t MakeMtxIndex(int32_t nIndex, char *pMac1, char *pMac2, oid *pOid)
   pOid[i++] = 6;
   for (j = 0; j < 6; j++)
   {
-    pOid[i++] = (long)pMac1[j] & 0x00ff;
+    pOid[i++] = (oid)pMac1[j] & 0x00ff;
   }
   pOid[i++] = 6;
   for (j = 0; j < 6; j++)
   {
-    pOid[i++] = (long)pMac2[j] & 0x00ff;
+    pOid[i++] = (oid)pMac2[j] & 0x00ff;
   }
   return ((size_t)i);
 }
@@ -4862,12 +4862,12 @@ size_t MakeProtDirIndex(int nIDLen, char *pID, int nParamLen, char *pParam, oid 
   pOid[i++] = nIDLen;
   for (j = 0; j < nIDLen; j++)
   {
-    pOid[i++] = (long)pID[j] & 0x00ff;
+    pOid[i++] = (oid)pID[j] & 0x00ff;
   }
   pOid[i++] = nParamLen;
   for (j = 0; j < nParamLen; j++)
   {
-    pOid[i++] = (long)pParam[j] & 0x00ff;
+    pOid[i++] = (oid)pParam[j] & 0x00ff;
   }
   return ((size_t)i);
 }
@@ -6217,7 +6217,7 @@ size_t MakeAddrMapIndex(u_int32_t nTM, int32_t nProtDirLI, int32_t nNetAddrLen, 
   pOid[i++] = nNetAddrLen;
   for (j = 0; j < nNetAddrLen; j++)
   {
-    pOid[i++] = (long)pNetAddr[j] & 0x00ff;
+    pOid[i++] = (oid)pNetAddr[j] & 0x00ff;
   }
   pOid[i++] = nDSLen;
   for (j = 0; j < nDSLen; j++)
@@ -6372,7 +6372,7 @@ struct addressMapTable_entry *FindAddrMapEntry(struct variable *vp,
   {
     if (4 + 4 + IfDataSource_oid_len != (*length - vp->namelen))
       return (NULL);
-    nReqTM = (unsigned long)name[vp->namelen];
+    nReqTM = (u_int32_t)name[vp->namelen];
     name[vp->namelen] = 0;
     oid_index.len = (*length - vp->namelen);
     oid_index.oids = &name[vp->namelen];
@@ -6384,11 +6384,11 @@ struct addressMapTable_entry *FindAddrMapEntry(struct variable *vp,
   }
   if ((*length - vp->namelen) > 0)
   {
-    nReqTM = (unsigned long)name[vp->namelen];
+    nReqTM = (u_int32_t)name[vp->namelen];
   }
   else
   {
-    nReqTM = (unsigned long)0;
+    nReqTM = 0;
   }
   memset(IndexOid, 0, sizeof(IndexOid));
   for (i = 0; i < (int)(*length - vp->namelen); i++)
@@ -7032,7 +7032,7 @@ size_t MakeNlHostIndex(int32_t nCI, u_int32_t nTM, int32_t nPDirLI, int32_t nALe
   pOid[i++] = nALen;
   for (j = 0; j < nALen; j++)
   {
-    pOid[i++] = (long)pNetAddr[j] & 0x00ff;
+    pOid[i++] = (oid)pNetAddr[j] & 0x00ff;
   }
   return ((size_t)i);
 }
@@ -7196,7 +7196,7 @@ struct nlHostTable_entry *FindNlHostEntry(struct variable *vp,
   {
     if (4 + 4 != (*length - vp->namelen))
       return (NULL);
-    nReqTM = (unsigned long)name[vp->namelen + 1];
+    nReqTM = (u_int32_t)name[vp->namelen + 1];
     name[vp->namelen + 1] = 0;
     oid_index.len = (*length - vp->namelen);
     oid_index.oids = &name[vp->namelen];
@@ -7208,11 +7208,11 @@ struct nlHostTable_entry *FindNlHostEntry(struct variable *vp,
   }
   if ((*length - vp->namelen) > 1)
   {
-    nReqTM = (unsigned long)name[vp->namelen + 1];
+    nReqTM = (u_int32_t)name[vp->namelen + 1];
   }
   else
   {
-    nReqTM = (unsigned long)0;
+    nReqTM = 0;
   }
   memset(IndexOid, 0, sizeof(IndexOid));
   for (i = 0; i < (int)(*length - vp->namelen); i++)
@@ -7855,12 +7855,12 @@ size_t MakeNlMtxIndex(int32_t nCI, u_int32_t nTM, int32_t nPDirLI, int32_t nALen
   pOid[i++] = nALen;
   for (j = 0; j < nALen; j++)
   {
-    pOid[i++] = (long)pAddr1[j] & 0x00ff;
+    pOid[i++] = (oid)pAddr1[j] & 0x00ff;
   }
   pOid[i++] = nALen;
   for (j = 0; j < nALen; j++)
   {
-    pOid[i++] = (long)pAddr2[j] & 0x00ff;
+    pOid[i++] = (oid)pAddr2[j] & 0x00ff;
   }
   return ((size_t)i);
 }
@@ -8013,7 +8013,7 @@ struct nlMatrixSDTable_entry *FindNlMtxSDEntry(struct variable *vp,
   {
     if (5 + 8 != (*length - vp->namelen))
       return (NULL);
-    nReqTM = (unsigned long)name[vp->namelen + 1];
+    nReqTM = (u_int32_t)name[vp->namelen + 1];
     name[vp->namelen + 1] = 0;
     oid_index.len = (*length - vp->namelen);
     oid_index.oids = &name[vp->namelen];
@@ -8025,11 +8025,11 @@ struct nlMatrixSDTable_entry *FindNlMtxSDEntry(struct variable *vp,
   }
   if ((*length - vp->namelen) > 1)
   {
-    nReqTM = (unsigned long)name[vp->namelen + 1];
+    nReqTM = (u_int32_t)name[vp->namelen + 1];
   }
   else
   {
-    nReqTM = (unsigned long)0;
+    nReqTM = 0;
   }
   memset(IndexOid, 0, sizeof(IndexOid));
   for (i = 0; i < (int)(*length - vp->namelen); i++)
@@ -8364,7 +8364,7 @@ struct nlMatrixDSTable_entry *FindNlMtxDSEntry(struct variable *vp,
   {
     if (5 + 8 != (*length - vp->namelen))
       return (NULL);
-    nReqTM = (unsigned long)name[vp->namelen + 1];
+    nReqTM = (u_int32_t)name[vp->namelen + 1];
     name[vp->namelen + 1] = 0;
     oid_index.len = (*length - vp->namelen);
     oid_index.oids = &name[vp->namelen];
@@ -8376,11 +8376,11 @@ struct nlMatrixDSTable_entry *FindNlMtxDSEntry(struct variable *vp,
   }
   if ((*length - vp->namelen) > 1)
   {
-    nReqTM = (unsigned long)name[vp->namelen + 1];
+    nReqTM = (u_int32_t)name[vp->namelen + 1];
   }
   else
   {
-    nReqTM = (unsigned long)0;
+    nReqTM = 0;
   }
   memset(IndexOid, 0, sizeof(IndexOid));
   for (i = 0; i < (int)(*length - vp->namelen); i++)
@@ -8582,7 +8582,7 @@ size_t MakeAlHostIndex(int32_t nCI, u_int32_t nTM, int32_t nPDirNet, int32_t nAd
   pOid[i++] = nAddrLen;
   for (j = 0; j < nAddrLen; j++)
   {
-    pOid[i++] = (long)pHAddr[j] & 0x00ff;
+    pOid[i++] = (oid)pHAddr[j] & 0x00ff;
   }
   pOid[i++] = nPDirAp;
   return ((size_t)i);
@@ -8742,10 +8742,9 @@ struct alHostTable_entry *FindAlHostEntry(struct variable *vp,
   }
   if (exact)
   {
-    // GET�̏ꍇ
     if (5 + 4 != (*length - vp->namelen))
       return (NULL);
-    nReqTM = (unsigned long)name[vp->namelen + 1];
+    nReqTM = (u_int32_t)name[vp->namelen + 1];
     name[vp->namelen + 1] = 0;
     oid_index.len = (*length - vp->namelen);
     oid_index.oids = &name[vp->namelen];
@@ -8755,14 +8754,13 @@ struct alHostTable_entry *FindAlHostEntry(struct variable *vp,
     name[vp->namelen + 1] = nReqTM;
     return (p);
   }
-  // GET NEXT�̏ꍇ
   if ((*length - vp->namelen) > 1)
   {
-    nReqTM = (unsigned long)name[vp->namelen + 1];
+    nReqTM = (u_int32_t)name[vp->namelen + 1];
   }
   else
   {
-    nReqTM = (unsigned long)0;
+    nReqTM = 0;
   }
   memset(IndexOid, 0, sizeof(IndexOid));
   for (i = 0; i < (int)(*length - vp->namelen); i++)
@@ -8967,12 +8965,12 @@ size_t MakeAlMtxIndex(int32_t nCI, u_int32_t nTM, int32_t nPDirNet, int32_t nAdd
   pOid[i++] = nAddrLen;
   for (j = 0; j < nAddrLen; j++)
   {
-    pOid[i++] = (long)pNAddr1[j] & 0x00ff;
+    pOid[i++] = (oid)pNAddr1[j] & 0x00ff;
   }
   pOid[i++] = nAddrLen;
   for (j = 0; j < nAddrLen; j++)
   {
-    pOid[i++] = (long)pNAddr2[j] & 0x00ff;
+    pOid[i++] = (oid)pNAddr2[j] & 0x00ff;
   }
   pOid[i++] = nPDirAp;
   return ((size_t)i);
@@ -9128,7 +9126,7 @@ struct alMatrixSDTable_entry *FindAlMtxSDEntry(struct variable *vp,
   {
     if (6 + 8 != (*length - vp->namelen))
       return (NULL);
-    nReqTM = (unsigned long)name[vp->namelen + 1];
+    nReqTM = (u_int32_t)name[vp->namelen + 1];
     name[vp->namelen + 1] = 0;
     oid_index.len = (*length - vp->namelen);
     oid_index.oids = &name[vp->namelen];
@@ -9138,14 +9136,13 @@ struct alMatrixSDTable_entry *FindAlMtxSDEntry(struct variable *vp,
     name[vp->namelen + 1] = nReqTM;
     return (p);
   }
-  // GET NEXT�̏ꍇ
   if ((*length - vp->namelen) > 1)
   {
-    nReqTM = (unsigned long)name[vp->namelen + 1];
+    nReqTM = (u_int32_t)name[vp->namelen + 1];
   }
   else
   {
-    nReqTM = (unsigned long)0;
+    nReqTM = 0;
   }
   memset(IndexOid, 0, sizeof(IndexOid));
   for (i = 0; i < (int)(*length - vp->namelen); i++)
@@ -9486,7 +9483,7 @@ struct alMatrixDSTable_entry *FindAlMtxDSEntry(struct variable *vp,
   {
     if (6 + 8 != (*length - vp->namelen))
       return (NULL);
-    nReqTM = (unsigned long)name[vp->namelen + 1];
+    nReqTM = (u_int32_t)name[vp->namelen + 1];
     name[vp->namelen + 1] = 0;
     oid_index.len = (*length - vp->namelen);
     oid_index.oids = &name[vp->namelen];
@@ -9498,11 +9495,11 @@ struct alMatrixDSTable_entry *FindAlMtxDSEntry(struct variable *vp,
   }
   if ((*length - vp->namelen) > 1)
   {
-    nReqTM = (unsigned long)name[vp->namelen + 1];
+    nReqTM = (u_int32_t)name[vp->namelen + 1];
   }
   else
   {
-    nReqTM = (unsigned long)0;
+    nReqTM = 0;
   }
   memset(IndexOid, 0, sizeof(IndexOid));
   for (i = 0; i < (int)(*length - vp->namelen); i++)
@@ -11370,7 +11367,7 @@ void CheckAlarmEntry(void *p1, void *p2)
   else
   {
     // ABS
-    nCmpVal = (long)nNewVal;
+    nCmpVal = (int32_t)nNewVal;
     if (nCmpVal >= p->alarmRisingThreshold)
     {
       nNewStat = 1;
