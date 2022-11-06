@@ -397,7 +397,7 @@ int tw_agent_check_and_process()
   return count;
 }
 
-int loopMax = 100;
+int loopMax = 10;
 
 int CheckCapFIFO()
 {
@@ -416,9 +416,7 @@ int CheckCapFIFO()
   if ((time(0) - nT) > 0)
   {
     printf("Long Process time=%ld nCapFIFOSize=%d loopMax=%d\n", time(0) - nT,nCapFIFOSize,loopMax);
-    if (loopMax > 10) {
-      loopMax--;
-    }
+    loopMax = 10;
   } else {
     loopMax++;
   }
