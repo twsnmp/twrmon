@@ -248,7 +248,7 @@ void init_rmonTable(void)
   initialize_table_alMatrixDSTable();
   LoadProtDir();
   /* Register Timer Callback */
-  snmp_alarm_register(1,             /* seconds */
+  snmp_alarm_register(5,             /* seconds */
                       SA_REPEAT,     /* repeat (every 1 seconds). */
                       TimerCallBack, /* our callback */
                       NULL           /* no callback data needed */
@@ -10966,7 +10966,6 @@ void CheckMaxTableSize(void)
       }
       nlMatrixSDTable_removeEntry(pNlMtxSDMib, pNM);
       nDel--;
-      //�폜���̃J�E���g�t�o
       pHlMtxCntEnt->hlMatrixControlNlDeletes++;
     }
   }
@@ -11001,7 +11000,6 @@ void CheckMaxTableSize(void)
       }
       alHostTable_removeEntry(pAlHostMib, pAH);
       nDel--;
-      //�폜���̃J�E���g�t�o
       pHlHostCntEnt->hlHostControlAlDeletes++;
     }
   }
