@@ -3,7 +3,7 @@
 .PHONY: all clean
 
 ### バージョンの定義
-VERSION     := "v1.0.0"
+VERSION     := "v1.0.1"
 COMMIT      := $(shell git rev-parse --short HEAD)
 WD          := $(shell pwd)
 TWRMOND_OBJS=twrmond.o rmon.o rmonTable.o
