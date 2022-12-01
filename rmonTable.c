@@ -98,7 +98,6 @@ int nLastHostCreateTime = 1;
 
 void CheckEthHistTable(void);
 void LoadProtDir(void);
-void CheckAddrMapTime(void);
 void CheckNlHostTime(void);
 void CheckNlMtxTime(void);
 void CheckAlHostTime(void);
@@ -143,7 +142,6 @@ void TimerCallBack(unsigned int clientreg, void *clientarg)
   switch (nTimerCount)
   {
   case 1:
-    CheckAddrMapTime();
     break;
   case 2:
     CheckNlHostTime();
@@ -10486,6 +10484,23 @@ void UpdateRmonEth(struct tw_eth *pEth, int nLen)
   }
 }
 
+void AddValidAddrMap(struct addressMapTable_entry *pAM)
+{
+  struct addressMapTable_entry *p;
+  if (pAM == NULL) return;
+  p = addressMapTable_createEntry(pAddrMapMib, pAM->addressMapLastChange, pAM->protocolDirLocalIndex, pAM->addressMapNetworkAddress, pAM->addressMapNetworkAddress_len, pAM->addressMapSource, pAM->addressMapSource_len);
+  if (p == NULL) return;
+  memcpy(p->addressMapPhysicalAddress, pAM->addressMapPhysicalAddress, 6);
+  p->addressMapPhysicalAddress_len = 6;
+  p->addressMapLastChange = pAM->addressMapLastChange;
+  p->nLastTM = pAM->addressMapLastChange;
+  p->valid = 1;
+  p->pAddrMap = pAM;
+  pAM->pAddrMap = p;
+  pAM->nLastTM = pAM->addressMapLastChange;
+  return;
+}
+
 void UpdateAddrMap(char *szMac, u_int32_t nIP)
 {
   struct addressMapTable_entry *p;
@@ -10504,16 +10519,18 @@ void UpdateAddrMap(char *szMac, u_int32_t nIP)
     p->addressMapLastChange = netsnmp_get_agent_uptime();
     p->nLastTM = 0;
     p->valid = 0;
-    p->pAddrMap = NULL;
+    AddValidAddrMap(p);
     nAddrMapIns++;
   }
   else
   {
-    if (memcmp(p->addressMapPhysicalAddress, szMac, 6) == 0)
-      return;
+    if (memcmp(p->addressMapPhysicalAddress, szMac, 6) == 0) return;
     memcpy(p->addressMapPhysicalAddress, szMac, 6);
+    struct addressMapTable_entry * pValid = (struct addressMapTable_entry *) p->pAddrMap;
+    memcpy(pValid->addressMapPhysicalAddress, szMac, 6);
+    p->addressMapLastChange = netsnmp_get_agent_uptime();
+    pValid->addressMapLastChange = netsnmp_get_agent_uptime();
   }
-  p->nNewTM = p->addressMapLastChange = netsnmp_get_agent_uptime();
 }
 
 void UpdateRmonIP(struct tw_eth *pEth, struct tw_ip *pIP, int nLen)
@@ -11023,38 +11040,6 @@ void CheckMaxTableSize(void)
   }
 
   // netsnmp_container               *pAlMtxDSContainer = NULL;
-}
-
-void UpdateAddrMapMib(void *p1, void *p2)
-{
-  struct addressMapTable_entry *p;
-  struct addressMapTable_entry *pAM = (struct addressMapTable_entry *)p1;
-  if (pAM == NULL)
-    return;
-  if (pAM->nLastTM == pAM->nNewTM)
-    return;
-  if (pAM->pAddrMap)
-  {
-    addressMapTable_removeEntry(pAddrMapMib, pAM->pAddrMap);
-  }
-  p = addressMapTable_createEntry(pAddrMapMib, pAM->nNewTM, pAM->protocolDirLocalIndex, pAM->addressMapNetworkAddress, pAM->addressMapNetworkAddress_len, pAM->addressMapSource, pAM->addressMapSource_len);
-  if (p == NULL)
-    return;
-  memcpy(p->addressMapPhysicalAddress, pAM->addressMapPhysicalAddress, 6);
-  p->addressMapPhysicalAddress_len = 6;
-  p->addressMapLastChange = pAM->addressMapLastChange;
-  p->nLastTM = pAM->nNewTM;
-  p->valid = 1;
-  p->pAddrMap = pAM;
-  pAM->pAddrMap = p;
-  pAM->nLastTM = pAM->nNewTM;
-  return;
-}
-
-void CheckAddrMapTime(void)
-{
-  CONTAINER_FOR_EACH(pAddrMapContainer, UpdateAddrMapMib, NULL);
-  return;
 }
 
 void UpdateNlHostMib(void *p1, void *p2)
