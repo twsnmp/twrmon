@@ -17,7 +17,6 @@ u_int32_t nAddrMapIns = 0;
 u_int32_t nAddrMapDel = 0;
 u_int32_t nAddrMapMaxDE = 8000;
 extern int32_t nProbeReset;
-extern int32_t nTimeMarkMode;
 
 /* Internal Data */
 struct etherStatsTable_entry *pEthStatEnt = NULL;
@@ -87,21 +86,11 @@ netsnmp_container *pAlMtxSDContainer = NULL;
 netsnmp_container *pAlMtxDSContainer = NULL;
 
 netsnmp_container *pAddrMapMib = NULL;
-netsnmp_container *pNlHostMib = NULL;
-netsnmp_container *pNlMtxSDMib = NULL;
-netsnmp_container *pNlMtxDSMib = NULL;
-netsnmp_container *pAlHostMib = NULL;
-netsnmp_container *pAlMtxSDMib = NULL;
-netsnmp_container *pAlMtxDSMib = NULL;
 
 int nLastHostCreateTime = 1;
 
 void CheckEthHistTable(void);
 void LoadProtDir(void);
-void CheckNlHostTime(void);
-void CheckNlMtxTime(void);
-void CheckAlHostTime(void);
-void CheckAlMtxTime(void);
 void CheckMaxTableSize(void);
 void CheckAlarm(void);
 
@@ -123,46 +112,14 @@ void CtlTableSort(int bSort)
   CONTAINER_SET_OPTIONS(pNlMtxDSContainer, opt, rc);
   CONTAINER_SET_OPTIONS(pAlHostContainer, opt, rc);
   CONTAINER_SET_OPTIONS(pAddrMapMib, opt, rc);
-  CONTAINER_SET_OPTIONS(pNlHostMib, opt, rc);
-  CONTAINER_SET_OPTIONS(pNlMtxSDMib, opt, rc);
-  CONTAINER_SET_OPTIONS(pNlMtxDSMib, opt, rc);
-  CONTAINER_SET_OPTIONS(pAlHostMib, opt, rc);
-  CONTAINER_SET_OPTIONS(pAlMtxSDMib, opt, rc);
-  CONTAINER_SET_OPTIONS(pAlMtxDSMib, opt, rc);
   return;
 }
 
 /* Timer Callback  Every 1 Second*/
-int nTimerCount = 0;
-
 void TimerCallBack(unsigned int clientreg, void *clientarg)
 {
   CheckEthHistTable();
   CheckAlarm();
-  switch (nTimerCount)
-  {
-  case 1:
-    break;
-  case 2:
-    CheckNlHostTime();
-    break;
-  case 3:
-    CheckNlMtxTime();
-    break;
-  case 4:
-    CheckAlHostTime();
-    break;
-  case 5:
-    CheckAlMtxTime();
-    break;
-  case 6:
-    CheckMaxTableSize();
-    break;
-  default:
-    nTimerCount = 0;
-    break;
-  }
-  nTimerCount++;
   return;
 }
 
@@ -6177,14 +6134,6 @@ void initialize_table_addressMapTable(void)
   pAddrMapContainer = netsnmp_container_find("table_container");
   pAddrMapMib = netsnmp_container_find("table_container");
 
-  if (nTimeMarkMode >= 2)
-  {
-    /* register ourselves with the agent to handle our mib tree */
-    REGISTER_MIB("addressMapTable", addressMapTable_variables, variable4,
-                 addressMapTable_variables_oid);
-    return;
-  }
-
   reg = netsnmp_create_handler_registration(
       "addressMapTable", addressMapTable_handler,
       addressMapTable_oid, addressMapTable_oid_len,
@@ -6200,7 +6149,7 @@ void initialize_table_addressMapTable(void)
   table_info->min_column = COLUMN_ADDRESSMAPPHYSICALADDRESS;
   table_info->max_column = COLUMN_ADDRESSMAPLASTCHANGE;
 
-  netsnmp_container_table_register(reg, table_info, nTimeMarkMode == 0 ? pAddrMapMib : pAddrMapContainer, 0);
+  netsnmp_container_table_register(reg, table_info, pAddrMapMib, 0);
 
   /* Initialise the contents of the table here */
 }
@@ -6246,7 +6195,6 @@ struct addressMapTable_entry
 
   int valid;
   u_int32_t nLastTM;
-  u_int32_t nNewTM;
   void *pAddrMap;
 };
 
@@ -6419,19 +6367,6 @@ struct addressMapTable_entry *FindAddrMapEntry(struct variable *vp,
     return (p);
   }
   nReqTM++;
-  if (nTimeMarkMode == 3)
-  {
-    p = CONTAINER_FIRST(pAddrMapMib);
-    while (p)
-    {
-      if (p->nLastTM >= nReqTM)
-      {
-        nReqTM = p->nLastTM;
-        break;
-      }
-      p = CONTAINER_NEXT(pAddrMapMib, &p->oid_index);
-    }
-  }
   p = CONTAINER_FIRST(pAddrMapContainer);
   while (p)
   {
@@ -6991,14 +6926,6 @@ void initialize_table_nlHostTable(void)
   netsnmp_table_registration_info *table_info;
 
   pNlHostContainer = netsnmp_container_find("table_container");
-  pNlHostMib = netsnmp_container_find("table_container");
-  if (nTimeMarkMode >= 2)
-  {
-    /* register ourselves with the agent to handle our mib tree */
-    REGISTER_MIB("nlHostTable", nlHostTable_variables, variable4,
-                 nlHostTable_variables_oid);
-    return;
-  }
   reg = netsnmp_create_handler_registration(
       "nlHostTable", nlHostTable_handler,
       nlHostTable_oid, nlHostTable_oid_len,
@@ -7014,7 +6941,7 @@ void initialize_table_nlHostTable(void)
   table_info->min_column = COLUMN_NLHOSTINPKTS;
   table_info->max_column = COLUMN_NLHOSTCREATETIME;
 
-  netsnmp_container_table_register(reg, table_info, nTimeMarkMode == 0 ? pNlHostMib : pNlHostContainer, 0);
+  netsnmp_container_table_register(reg, table_info, pNlHostContainer, 0);
 
   /* Initialise the contents of the table here */
 }
@@ -7058,7 +6985,6 @@ struct nlHostTable_entry
 
   int valid;
   u_int32_t nLastTM;
-  u_int32_t nNewTM;
   void *pNlHost;
 };
 
@@ -7243,19 +7169,6 @@ struct nlHostTable_entry *FindNlHostEntry(struct variable *vp,
     return (p);
   }
   nReqTM++;
-  if (nTimeMarkMode == 3)
-  {
-    p = CONTAINER_FIRST(pNlHostMib);
-    while (p)
-    {
-      if (p->nLastTM >= nReqTM)
-      {
-        nReqTM = p->nLastTM;
-        break;
-      }
-      p = CONTAINER_NEXT(pNlHostMib, &p->oid_index);
-    }
-  }
   p = CONTAINER_FIRST(pNlHostContainer);
   while (p)
   {
@@ -7813,14 +7726,6 @@ void initialize_table_nlMatrixSDTable(void)
   netsnmp_table_registration_info *table_info;
 
   pNlMtxSDContainer = netsnmp_container_find("table_container");
-  pNlMtxSDMib = netsnmp_container_find("table_container");
-  if (nTimeMarkMode >= 2)
-  {
-    /* register ourselves with the agent to handle our mib tree */
-    REGISTER_MIB("nlMatrixSDTable", nlMatrixSDTable_variables, variable4,
-                 nlMatrixSDTable_variables_oid);
-    return;
-  }
   reg = netsnmp_create_handler_registration(
       "nlMatrixSDTable", nlMatrixSDTable_handler,
       nlMatrixSDTable_oid, nlMatrixSDTable_oid_len,
@@ -7837,7 +7742,7 @@ void initialize_table_nlMatrixSDTable(void)
   table_info->min_column = COLUMN_NLMATRIXSDPKTS;
   table_info->max_column = COLUMN_NLMATRIXSDCREATETIME;
 
-  netsnmp_container_table_register(reg, table_info, nTimeMarkMode == 0 ? pNlMtxSDMib : pNlMtxSDContainer, 0);
+  netsnmp_container_table_register(reg, table_info, pNlMtxSDContainer, 0);
 
   /* Initialise the contents of the table here */
 }
@@ -7885,8 +7790,6 @@ struct nlMatrixSDTable_entry
 
   int valid;
   u_int32_t nLastTM;
-  u_int32_t nNewTM;
-  void *pNlMtxSD;
 };
 
 /* create a new row in the table */
@@ -8060,19 +7963,6 @@ struct nlMatrixSDTable_entry *FindNlMtxSDEntry(struct variable *vp,
     return (p);
   }
   nReqTM++;
-  if (nTimeMarkMode == 3)
-  {
-    p = CONTAINER_FIRST(pNlMtxSDMib);
-    while (p)
-    {
-      if (p->nLastTM >= nReqTM)
-      {
-        nReqTM = p->nLastTM;
-        break;
-      }
-      p = CONTAINER_NEXT(pNlMtxSDMib, &p->oid_index);
-    }
-  }
   p = CONTAINER_FIRST(pNlMtxSDContainer);
   while (p)
   {
@@ -8183,14 +8073,6 @@ void initialize_table_nlMatrixDSTable(void)
   netsnmp_table_registration_info *table_info;
 
   pNlMtxDSContainer = netsnmp_container_find("table_container");
-  pNlMtxDSMib = netsnmp_container_find("table_container");
-  if (nTimeMarkMode >= 2)
-  {
-    /* register ourselves with the agent to handle our mib tree */
-    REGISTER_MIB("nlMatrixDSTable", nlMatrixDSTable_variables, variable4,
-                 nlMatrixDSTable_variables_oid);
-    return;
-  }
 
   reg = netsnmp_create_handler_registration(
       "nlMatrixDSTable", nlMatrixDSTable_handler,
@@ -8208,7 +8090,7 @@ void initialize_table_nlMatrixDSTable(void)
   table_info->min_column = COLUMN_NLMATRIXDSPKTS;
   table_info->max_column = COLUMN_NLMATRIXDSCREATETIME;
 
-  netsnmp_container_table_register(reg, table_info, nTimeMarkMode == 0 ? pNlMtxDSMib : pNlMtxDSContainer, 0);
+  netsnmp_container_table_register(reg, table_info, pNlMtxDSContainer, 0);
 
   /* Initialise the contents of the table here */
 }
@@ -8236,8 +8118,6 @@ struct nlMatrixDSTable_entry
 
   int valid;
   u_int32_t nLastTM;
-  u_int32_t nNewTM;
-  void *pNlMtxDS;
 };
 
 /* create a new row in the table */
@@ -8411,19 +8291,6 @@ struct nlMatrixDSTable_entry *FindNlMtxDSEntry(struct variable *vp,
     return (p);
   }
   nReqTM++;
-  if (nTimeMarkMode == 3)
-  {
-    p = CONTAINER_FIRST(pNlMtxDSMib);
-    while (p)
-    {
-      if (p->nLastTM >= nReqTM)
-      {
-        nReqTM = p->nLastTM;
-        break;
-      }
-      p = CONTAINER_NEXT(pNlMtxDSMib, &p->oid_index);
-    }
-  }
   p = CONTAINER_FIRST(pNlMtxDSContainer);
   while (p)
   {
@@ -8539,14 +8406,6 @@ void initialize_table_alHostTable(void)
   netsnmp_table_registration_info *table_info;
 
   pAlHostContainer = netsnmp_container_find("table_container");
-  pAlHostMib = netsnmp_container_find("table_container");
-  if (nTimeMarkMode >= 2)
-  {
-    /* register ourselves with the agent to handle our mib tree */
-    REGISTER_MIB("alHostTable", alHostTable_variables, variable4,
-                 alHostTable_variables_oid);
-    return;
-  }
 
   reg = netsnmp_create_handler_registration(
       "alHostTable", alHostTable_handler,
@@ -8564,7 +8423,7 @@ void initialize_table_alHostTable(void)
   table_info->min_column = COLUMN_ALHOSTINPKTS;
   table_info->max_column = COLUMN_ALHOSTCREATETIME;
 
-  netsnmp_container_table_register(reg, table_info, nTimeMarkMode == 0 ? pAlHostMib : pAlHostContainer, 0);
+  netsnmp_container_table_register(reg, table_info, pAlHostContainer, 0);
 
   /* Initialise the contents of the table here */
 }
@@ -8609,8 +8468,6 @@ struct alHostTable_entry
 
   int valid;
   u_int32_t nLastTM;
-  u_int32_t nNewTM;
-  void *pAlHost;
 };
 
 /* create a new row in the table */
@@ -8791,19 +8648,6 @@ struct alHostTable_entry *FindAlHostEntry(struct variable *vp,
     return (p);
   }
   nReqTM++;
-  if (nTimeMarkMode == 3)
-  {
-    p = CONTAINER_FIRST(pAlHostMib);
-    while (p)
-    {
-      if (p->nLastTM >= nReqTM)
-      {
-        nReqTM = p->nLastTM;
-        break;
-      }
-      p = CONTAINER_NEXT(pAlHostMib, &p->oid_index);
-    }
-  }
   p = CONTAINER_FIRST(pAlHostContainer);
   while (p)
   {
@@ -8921,14 +8765,6 @@ void initialize_table_alMatrixSDTable(void)
   netsnmp_table_registration_info *table_info;
 
   pAlMtxSDContainer = netsnmp_container_find("table_container");
-  pAlMtxSDMib = netsnmp_container_find("table_container");
-
-  if (nTimeMarkMode >= 2)
-  {
-    /* register ourselves with the agent to handle our mib tree */
-    REGISTER_MIB("alMatrixSDTable", alMatrixSDTable_variables, variable4,
-                 alMatrixSDTable_variables_oid);
-  }
 
   reg = netsnmp_create_handler_registration(
       "alMatrixSDTable", alMatrixSDTable_handler,
@@ -8947,7 +8783,7 @@ void initialize_table_alMatrixSDTable(void)
   table_info->min_column = COLUMN_ALMATRIXSDPKTS;
   table_info->max_column = COLUMN_ALMATRIXSDCREATETIME;
 
-  netsnmp_container_table_register(reg, table_info, nTimeMarkMode == 0 ? pAlMtxSDMib : pAlMtxSDContainer, 0);
+  netsnmp_container_table_register(reg, table_info, pAlMtxSDContainer, 0);
 
   /* Initialise the contents of the table here */
 }
@@ -8996,8 +8832,6 @@ struct alMatrixSDTable_entry
 
   int valid;
   u_int32_t nLastTM;
-  u_int32_t nNewTM;
-  void *pAlMtxSD;
 };
 
 /* create a new row in the table */
@@ -9173,19 +9007,6 @@ struct alMatrixSDTable_entry *FindAlMtxSDEntry(struct variable *vp,
     return (p);
   }
   nReqTM++;
-  if (nTimeMarkMode == 3)
-  {
-    p = CONTAINER_FIRST(pAlMtxSDMib);
-    while (p)
-    {
-      if (p->nLastTM >= nReqTM)
-      {
-        nReqTM = p->nLastTM;
-        break;
-      }
-      p = CONTAINER_NEXT(pAlMtxSDMib, &p->oid_index);
-    }
-  }
   p = CONTAINER_FIRST(pAlMtxSDContainer);
   while (p)
   {
@@ -9297,15 +9118,6 @@ void initialize_table_alMatrixDSTable(void)
   netsnmp_table_registration_info *table_info;
 
   pAlMtxDSContainer = netsnmp_container_find("table_container");
-  pAlMtxDSMib = netsnmp_container_find("table_container");
-
-  if (nTimeMarkMode >= 2)
-  {
-    /* register ourselves with the agent to handle our mib tree */
-    REGISTER_MIB("alMatrixDSTable", alMatrixDSTable_variables, variable4,
-                 alMatrixDSTable_variables_oid);
-    return;
-  }
 
   reg = netsnmp_create_handler_registration(
       "alMatrixDSTable", alMatrixDSTable_handler,
@@ -9324,7 +9136,7 @@ void initialize_table_alMatrixDSTable(void)
   table_info->min_column = COLUMN_ALMATRIXDSPKTS;
   table_info->max_column = COLUMN_ALMATRIXDSCREATETIME;
 
-  netsnmp_container_table_register(reg, table_info, nTimeMarkMode == 0 ? pAlMtxDSMib : pAlMtxDSContainer, 0);
+  netsnmp_container_table_register(reg, table_info, pAlMtxDSContainer, 0);
 
   /* Initialise the contents of the table here */
 }
@@ -9352,10 +9164,7 @@ struct alMatrixDSTable_entry
   u_int32_t alMatrixDSCreateTime;
 
   int valid;
-
   u_int32_t nLastTM;
-  u_int32_t nNewTM;
-  void *pAlMtxDS;
 };
 
 /* create a new row in the table */
@@ -9530,19 +9339,6 @@ struct alMatrixDSTable_entry *FindAlMtxDSEntry(struct variable *vp,
     return (p);
   }
   nReqTM++;
-  if (nTimeMarkMode == 3)
-  {
-    p = CONTAINER_FIRST(pAlMtxDSMib);
-    while (p)
-    {
-      if (p->nLastTM >= nReqTM)
-      {
-        nReqTM = p->nLastTM;
-        break;
-      }
-      p = CONTAINER_NEXT(pAlMtxDSMib, &p->oid_index);
-    }
-  }
   p = CONTAINER_FIRST(pAlMtxDSContainer);
   while (p)
   {
@@ -10509,11 +10305,9 @@ void UpdateAddrMap(char *szMac, u_int32_t nIP)
   oid_index.len = MakeAddrMapIndex(0, nProtDirLIIP, 4, (char *)&nIP, IfDataSource_oid_len, IfDataSource_oid, IndexOid);
   oid_index.oids = IndexOid;
   p = CONTAINER_FIND(pAddrMapContainer, &oid_index);
-  if (p == NULL)
-  {
+  if (p == NULL) {
     p = addressMapTable_createEntry(pAddrMapContainer, 0, nProtDirLIIP, (char *)&nIP, 4, IfDataSource_oid, IfDataSource_oid_len);
-    if (p == NULL)
-      return;
+    if (p == NULL) return;
     memcpy(p->addressMapPhysicalAddress, szMac, 6);
     p->addressMapPhysicalAddress_len = 6;
     p->addressMapLastChange = netsnmp_get_agent_uptime();
@@ -10521,9 +10315,7 @@ void UpdateAddrMap(char *szMac, u_int32_t nIP)
     p->valid = 0;
     AddValidAddrMap(p);
     nAddrMapIns++;
-  }
-  else
-  {
+  } else {
     if (memcmp(p->addressMapPhysicalAddress, szMac, 6) == 0) return;
     memcpy(p->addressMapPhysicalAddress, szMac, 6);
     struct addressMapTable_entry * pValid = (struct addressMapTable_entry *) p->pAddrMap;
@@ -10553,11 +10345,9 @@ void UpdateNlHost(int nDir, int bMCas, u_int32_t nIP, int nLen)
   oid_index.len = MakeNlHostIndex(1, 0, nProtDirLIIP, 4, (char *)&nIP, IndexOid);
   oid_index.oids = IndexOid;
   p = CONTAINER_FIND(pNlHostContainer, &oid_index);
-  if (p == NULL)
-  {
+  if (p == NULL) {
     p = nlHostTable_createEntry(pNlHostContainer, 1, 0, nProtDirLIIP, (char *)&nIP, 4);
-    if (p == NULL)
-      return;
+    if (p == NULL) return;
     p->nlHostInPkts = 0;
     p->nlHostOutPkts = 0;
     p->nlHostInOctets = 0;
@@ -10565,23 +10355,19 @@ void UpdateNlHost(int nDir, int bMCas, u_int32_t nIP, int nLen)
     p->nlHostOutMacNonUnicastPkts = 0;
     p->nlHostCreateTime = netsnmp_get_agent_uptime();
     pHlHostCntEnt->hlHostControlNlInserts++;
-    p->nLastTM = 0;
-    p->pNlHost = NULL;
+    p->valid = 1;
   }
-  if (nDir == 0)
-  {
+  p->nLastTM = netsnmp_get_agent_uptime();
+  if (nDir == 0) {
     p->nlHostInPkts++;
     p->nlHostInOctets += nLen;
-  }
-  else
-  {
+  } else {
     p->nlHostOutPkts++;
     p->nlHostOutOctets += nLen;
-    if (bMCas)
+    if (bMCas) {
       p->nlHostOutMacNonUnicastPkts++;
+    }
   }
-  p->nNewTM = netsnmp_get_agent_uptime();
-  p->valid = 0;
   return;
 }
 
@@ -10593,32 +10379,25 @@ void UpdateAlHost(int nDir, int32_t nPLI, u_int32_t nIP, int nLen)
   oid_index.len = MakeAlHostIndex(1, 0, nProtDirLIIP, 4, (char *)&nIP, nPLI, IndexOid);
   oid_index.oids = IndexOid;
   p = CONTAINER_FIND(pAlHostContainer, &oid_index);
-  if (p == NULL)
-  {
+  if (p == NULL) {
     p = alHostTable_createEntry(pAlHostContainer, 1, 0, nProtDirLIIP, (char *)&nIP, 4, nPLI);
-    if (p == NULL)
-      return;
+    if (p == NULL) return;
     p->alHostInPkts = 0;
     p->alHostOutPkts = 0;
     p->alHostInOctets = 0;
     p->alHostOutOctets = 0;
+    p->valid = 1;
     p->alHostCreateTime = netsnmp_get_agent_uptime();
-    p->pAlHost = NULL;
     pHlHostCntEnt->hlHostControlAlInserts++;
-    p->nLastTM = 0;
   }
-  if (nDir == 0)
-  {
+  p->nLastTM = netsnmp_get_agent_uptime();
+  if (nDir == 0) {
     p->alHostInPkts++;
     p->alHostInOctets += nLen;
-  }
-  else
-  {
+  } else {
     p->alHostOutPkts++;
     p->alHostOutOctets += nLen;
   }
-  p->nNewTM = netsnmp_get_agent_uptime();
-  p->valid = 0;
   return;
 }
 
@@ -10631,46 +10410,35 @@ void UpdateNlMtx(struct tw_flow *pFlow, int nLen)
   oid_index.len = MakeNlMtxIndex(1, 0, nProtDirLIIP, 4, (char *)&pFlow->ip_src, (char *)&pFlow->ip_dst, IndexOid);
   oid_index.oids = IndexOid;
   pSD = CONTAINER_FIND(pNlMtxSDContainer, &oid_index);
-  if (pSD == NULL)
-  {
+  if (pSD == NULL) {
     pSD = nlMatrixSDTable_createEntry(pNlMtxSDContainer, 1, 0, nProtDirLIIP, (char *)&pFlow->ip_src, 4, (char *)&pFlow->ip_dst, 4);
-    if (pSD == NULL)
-      return;
+    if (pSD == NULL) return;
     pSD->nlMatrixSDPkts = 1;
     pSD->nlMatrixSDOctets = nLen;
-    pSD->nlMatrixSDCreateTime = netsnmp_get_agent_uptime();
-    pSD->nLastTM = 0;
-    pSD->valid = 0;
+    pSD->nLastTM = pSD->nlMatrixSDCreateTime = netsnmp_get_agent_uptime();
+    pSD->valid = 1;
     pHlMtxCntEnt->hlMatrixControlNlInserts++;
-    pSD->pNlMtxSD = NULL;
-  }
-  else
-  {
+  } else {
+    pSD->nLastTM = netsnmp_get_agent_uptime();
     pSD->nlMatrixSDPkts++;
     pSD->nlMatrixSDOctets += nLen;
   }
-  pSD->nNewTM = netsnmp_get_agent_uptime();
   oid_index.len = MakeNlMtxIndex(1, 0, nProtDirLIIP, 4, (char *)&pFlow->ip_dst, (char *)&pFlow->ip_src, IndexOid);
   oid_index.oids = IndexOid;
   pDS = CONTAINER_FIND(pNlMtxDSContainer, &oid_index);
-  if (pDS == NULL)
-  {
+  if (pDS == NULL) {
     pDS = nlMatrixDSTable_createEntry(pNlMtxDSContainer, 1, 0, nProtDirLIIP, (char *)&pFlow->ip_dst, 4, (char *)&pFlow->ip_src, 4);
-    if (pDS == NULL)
-      return;
+    if (pDS == NULL) return;
     pDS->nlMatrixDSPkts = 1;
     pDS->nlMatrixDSOctets = nLen;
-    pDS->nlMatrixDSCreateTime = netsnmp_get_agent_uptime();
-    pDS->nLastTM = 0;
-    pDS->valid = 0;
-    pDS->pNlMtxDS = NULL;
-  }
-  else
-  {
+    pDS->nLastTM = pDS->nlMatrixDSCreateTime = netsnmp_get_agent_uptime();
+    pDS->valid = 1;
+  } else {
+    pDS->nLastTM = netsnmp_get_agent_uptime();
     pDS->nlMatrixDSPkts++;
     pDS->nlMatrixDSOctets += nLen;
+    pDS->nLastTM = netsnmp_get_agent_uptime();
   }
-  pDS->nNewTM = netsnmp_get_agent_uptime();
   return;
 }
 
@@ -10683,46 +10451,34 @@ void UpdateAlMtx(int32_t nPLI, struct tw_flow *pFlow, int nLen)
   oid_index.len = MakeAlMtxIndex(1, 0, nProtDirLIIP, 4, (char *)&pFlow->ip_src, (char *)&pFlow->ip_dst, nPLI, IndexOid);
   oid_index.oids = IndexOid;
   pSD = CONTAINER_FIND(pAlMtxSDContainer, &oid_index);
-  if (pSD == NULL)
-  {
+  if (pSD == NULL) {
     pSD = alMatrixSDTable_createEntry(pAlMtxSDContainer, 1, 0, nProtDirLIIP, (char *)&pFlow->ip_src, 4, (char *)&pFlow->ip_dst, 4, nPLI);
-    if (pSD == NULL)
-      return;
+    if (pSD == NULL) return;
     pSD->alMatrixSDPkts = 1;
     pSD->alMatrixSDOctets = nLen;
-    pSD->alMatrixSDCreateTime = netsnmp_get_agent_uptime();
+    pSD->nLastTM = pSD->alMatrixSDCreateTime = netsnmp_get_agent_uptime();
     pHlMtxCntEnt->hlMatrixControlAlInserts++;
-    pSD->nLastTM = 0;
-    pSD->valid = 0;
-    pSD->pAlMtxSD = NULL;
-  }
-  else
-  {
+    pSD->valid = 1;
+  } else {
+    pSD->nLastTM = netsnmp_get_agent_uptime();
     pSD->alMatrixSDPkts++;
     pSD->alMatrixSDOctets += nLen;
   }
-  pSD->nNewTM = netsnmp_get_agent_uptime();
   oid_index.len = MakeAlMtxIndex(1, 0, nProtDirLIIP, 4, (char *)&pFlow->ip_dst, (char *)&pFlow->ip_src, nPLI, IndexOid);
   oid_index.oids = IndexOid;
   pDS = CONTAINER_FIND(pAlMtxDSContainer, &oid_index);
-  if (pDS == NULL)
-  {
+  if (pDS == NULL) {
     pDS = alMatrixDSTable_createEntry(pAlMtxDSContainer, 1, 0, nProtDirLIIP, (char *)&pFlow->ip_dst, 4, (char *)&pFlow->ip_src, 4, nPLI);
-    if (pDS == NULL)
-      return;
+    if (pDS == NULL) return;
     pDS->alMatrixDSPkts = 1;
     pDS->alMatrixDSOctets = nLen;
-    pDS->alMatrixDSCreateTime = netsnmp_get_agent_uptime();
-    pDS->nLastTM = 0;
-    pDS->valid = 0;
-    pDS->pAlMtxDS = NULL;
-  }
-  else
-  {
+    pDS->nLastTM = pDS->alMatrixDSCreateTime = netsnmp_get_agent_uptime();
+    pDS->valid = 1;
+  } else {
+    pDS->nLastTM = netsnmp_get_agent_uptime();
     pDS->alMatrixDSPkts++;
     pDS->alMatrixDSOctets += nLen;
   }
-  pDS->nNewTM = netsnmp_get_agent_uptime();
   return;
 }
 
@@ -10843,15 +10599,58 @@ void MakeList(void *oah, void *p)
 
 int CmpLogTime(const void *p1, const void *p2)
 {
+  if (p1 == NULL || p2 == NULL) return (0);
   struct logTable_entry *pLog1 = (struct logTable_entry *)p1;
   struct logTable_entry *pLog2 = (struct logTable_entry *)p2;
-  if (p1 == NULL || p2 == NULL)
-    return (0);
-  if (pLog1->logTime < pLog2->logTime)
-    return (-1);
-  if (pLog1->logTime > pLog2->logTime)
-    return (1);
-  return (0);
+  return pLog1->logTime < pLog2->logTime ? -1 : pLog1->logTime == pLog2->logTime ? 0 : 1;
+}
+
+int CmpNlHost(const void *p1, const void *p2)
+{
+  if (p1 == NULL || p2 == NULL) return (0);
+  struct nlHostTable_entry *pcmp1 = (struct nlHostTable_entry *)p1;
+  struct nlHostTable_entry *pcmp2 = (struct nlHostTable_entry *)p2;
+  return pcmp1->nLastTM < pcmp2->nLastTM ? -1 : pcmp1->nLastTM == pcmp2->nLastTM ? 0 : 1;
+}
+
+int CmpNlMtxSD(const void *p1, const void *p2)
+{
+  if (p1 == NULL || p2 == NULL) return (0);
+  struct nlMatrixSDTable_entry *pcmp1 = (struct nlMatrixSDTable_entry *)p1;
+  struct nlMatrixSDTable_entry *pcmp2 = (struct nlMatrixSDTable_entry *)p2;
+  return pcmp1->nLastTM < pcmp2->nLastTM ? -1 : pcmp1->nLastTM == pcmp2->nLastTM ? 0 : 1;
+}
+
+int CmpNlMtxDS(const void *p1, const void *p2)
+{
+  if (p1 == NULL || p2 == NULL) return (0);
+  struct nlMatrixDSTable_entry *pcmp1 = (struct nlMatrixDSTable_entry *)p1;
+  struct nlMatrixDSTable_entry *pcmp2 = (struct nlMatrixDSTable_entry *)p2;
+  return pcmp1->nLastTM < pcmp2->nLastTM ? -1 : pcmp1->nLastTM == pcmp2->nLastTM ? 0 : 1;
+}
+
+int CmpAlHost(const void *p1, const void *p2)
+{
+  if (p1 == NULL || p2 == NULL) return (0);
+  struct alHostTable_entry *pcmp1 = (struct alHostTable_entry *)p1;
+  struct alHostTable_entry *pcmp2 = (struct alHostTable_entry *)p2;
+  return pcmp1->nLastTM < pcmp2->nLastTM ? -1 : pcmp1->nLastTM == pcmp2->nLastTM ? 0 : 1;
+}
+
+int CmpAlMtxSD(const void *p1, const void *p2)
+{
+  if (p1 == NULL || p2 == NULL) return (0);
+  struct alMatrixSDTable_entry *pcmp1 = (struct alMatrixSDTable_entry *)p1;
+  struct alMatrixSDTable_entry *pcmp2 = (struct alMatrixSDTable_entry *)p2;
+  return pcmp1->nLastTM < pcmp2->nLastTM ? -1 : pcmp1->nLastTM == pcmp2->nLastTM ? 0 : 1;
+}
+
+int CmpAlMtxDS(const void *p1, const void *p2)
+{
+  if (p1 == NULL || p2 == NULL) return (0);
+  struct alMatrixDSTable_entry *pcmp1 = (struct alMatrixDSTable_entry *)p1;
+  struct alMatrixDSTable_entry *pcmp2 = (struct alMatrixDSTable_entry *)p2;
+  return pcmp1->nLastTM < pcmp2->nLastTM ? -1 : pcmp1->nLastTM == pcmp2->nLastTM ? 0 : 1;
 }
 
 void CheckMaxTableSize(void)
@@ -10859,20 +10658,15 @@ void CheckMaxTableSize(void)
   size_t nSize;
   int i;
   int nDel;
-  // netsnmp_container               *pEthHistContainer = NULL;
   nSize = CONTAINER_SIZE(pEthHistContainer);
-  if (nSize > (size_t)(pEthHistCntEnt->historyControlBucketsGranted))
-  {
+  if (nSize > (size_t)(pEthHistCntEnt->historyControlBucketsGranted)) {
     struct etherHistoryTable_entry *pEH;
     nDel = (int)(nSize - (pEthHistCntEnt->historyControlBucketsGranted * 9) / 10);
-    while (nDel > 0 && (pEH = CONTAINER_FIRST(pEthHistContainer)))
-    {
+    while (nDel > 0 && (pEH = CONTAINER_FIRST(pEthHistContainer))) {
       etherHistoryTable_removeEntry(pEthHistContainer, pEH);
       nDel--;
     }
   }
-
-  // netsnmp_container               *pEthHistHCContainer = NULL;
   nSize = CONTAINER_SIZE(pEthHistHCContainer);
   if (nSize > (size_t)(pEthHistCntEnt->historyControlBucketsGranted))
   {
@@ -10885,19 +10679,15 @@ void CheckMaxTableSize(void)
     }
   }
 
-  // netsnmp_container               *pHostContainer=NULL;
-  // netsnmp_container               *pHostTimeContainer =NULL;
   nSize = CONTAINER_SIZE(pHostTimeContainer);
   if (nSize > (size_t)MAX_HOST)
   {
     nDel = (int)(nSize - (MAX_HOST * 9) / 10);
     struct hostTimeTable_entry *pHT = NULL;
-    while (nDel > 0 && (pHT = CONTAINER_FIRST(pHostTimeContainer)))
-    {
+    while (nDel > 0 && (pHT = CONTAINER_FIRST(pHostTimeContainer))) {
       struct hostTable_entry *pH = pHT->pHostEnt;
       DeleteMtx(pH->hostAddress);
-      if (pH)
-      {
+      if (pH) {
         hostTable_removeEntry(pHostContainer, pH);
       }
       hostTimeTable_removeEntry(pHostTimeContainer, pHT);
@@ -10906,20 +10696,13 @@ void CheckMaxTableSize(void)
     pHostCntEnt->hostControlLastDeleteTime = netsnmp_get_agent_uptime();
   }
   pHostCntEnt->hostControlTableSize = CONTAINER_SIZE(pHostTimeContainer);
-
-  // netsnmp_container               *pMtxSDContainer =NULL;
-  // netsnmp_container               *pMtxDSContainer =NULL;
-
   pMtxCntEnt->matrixControlTableSize = CONTAINER_SIZE(pMtxSDContainer);
 
-  // netsnmp_container               *pLogContainer =NULL;
   nSize = CONTAINER_SIZE(pLogContainer);
-  if (nSize > (size_t)MAX_EVENT_LOG)
-  {
+  if (nSize > (size_t)MAX_EVENT_LOG) {
     nList = 0;
     ppList = (void **)calloc(nSize, sizeof(void *));
-    if (ppList)
-    {
+    if (ppList) {
       CONTAINER_FOR_EACH(pLogContainer, MakeList, NULL);
       qsort(ppList, nList, sizeof(void *), CmpLogTime);
       for (i = 0; i < MAX_EVENT_LOG / 2; i++)
@@ -10930,19 +10713,12 @@ void CheckMaxTableSize(void)
       ppList = NULL;
     }
   }
-
-  // netsnmp_container               *pProtDistContainer=NULL;
-
-  // netsnmp_container               *pAddrMapContainer =NULL;
   nSize = CONTAINER_SIZE(pAddrMapMib);
-  if (nSize > (size_t)nAddrMapMaxDE)
-  {
+  if (nSize > (size_t)nAddrMapMaxDE) {
     nDel = (int)(nSize - (nAddrMapMaxDE * 8) / 10);
     struct addressMapTable_entry *pAM;
-    while (nDel > 0 && (pAM = CONTAINER_FIRST(pAddrMapMib)))
-    {
-      if (pAM->pAddrMap)
-      {
+    while (nDel > 0 && (pAM = CONTAINER_FIRST(pAddrMapMib))) {
+      if (pAM->pAddrMap) {
         addressMapTable_removeEntry(pAddrMapContainer, pAM->pAddrMap);
       }
       addressMapTable_removeEntry(pAddrMapMib, pAM);
@@ -10950,283 +10726,100 @@ void CheckMaxTableSize(void)
       nAddrMapDel++;
     }
   }
-
-  // netsnmp_container               *pNlHostContainer = NULL;
-  nSize = CONTAINER_SIZE(pNlHostMib);
-  if (nSize > (size_t)pHlHostCntEnt->hlHostControlNlMaxDesiredEntries)
-  {
+  nSize = CONTAINER_SIZE(pNlHostContainer);
+  if (nSize > (size_t)pHlHostCntEnt->hlHostControlNlMaxDesiredEntries) {
     nDel = (int)(nSize - (pHlHostCntEnt->hlHostControlNlMaxDesiredEntries * 9) / 10);
-    struct nlHostTable_entry *pNH;
-    while (nDel > 0 && (pNH = CONTAINER_FIRST(pNlHostMib)))
-    {
-      if (pNH->pNlHost)
-      {
-        nlHostTable_removeEntry(pNlHostContainer, pNH->pNlHost);
+    nList = 0;
+    ppList = (void **)calloc(nSize, sizeof(void *));
+    if (ppList) {
+      CONTAINER_FOR_EACH(pNlHostContainer, MakeList, NULL);
+      qsort(ppList, nList, sizeof(void *), CmpNlHost);
+      for (i = 0; i < nDel; i++) {
+        nlHostTable_removeEntry(pNlHostContainer, ppList[i]);
+        pHlHostCntEnt->hlHostControlNlDeletes++;
       }
-      nlHostTable_removeEntry(pNlHostMib, pNH);
-      nDel--;
-      pHlHostCntEnt->hlHostControlNlDeletes++;
+      free(ppList);
+      ppList = NULL;
     }
   }
-
-  // netsnmp_container               *pNlMtxSDContainer=NULL;
-  nSize = CONTAINER_SIZE(pNlMtxSDMib);
-  if (nSize > (size_t)pHlMtxCntEnt->hlMatrixControlNlMaxDesiredEntries)
-  {
+  nSize = CONTAINER_SIZE(pNlMtxSDContainer);
+  if (nSize > (size_t)pHlMtxCntEnt->hlMatrixControlNlMaxDesiredEntries) {
     nDel = (int)(nSize - (pHlMtxCntEnt->hlMatrixControlNlMaxDesiredEntries * 9) / 10);
-    struct nlMatrixSDTable_entry *pNM;
-    while (nDel > 0 && (pNM = CONTAINER_FIRST(pNlMtxSDMib)))
-    {
-      if (pNM->pNlMtxSD)
-      {
-        nlMatrixSDTable_removeEntry(pNlMtxSDContainer, pNM->pNlMtxSD);
+    nList = 0;
+    ppList = (void **)calloc(nSize, sizeof(void *));
+    if (ppList) {
+      CONTAINER_FOR_EACH(pNlMtxSDContainer, MakeList, NULL);
+      qsort(ppList, nList, sizeof(void *), CmpNlMtxSD);
+      for (i = 0; i < nDel; i++) {
+        nlMatrixSDTable_removeEntry(pNlMtxSDContainer, ppList[i]);
+        pHlMtxCntEnt->hlMatrixControlNlDeletes++;
       }
-      nlMatrixSDTable_removeEntry(pNlMtxSDMib, pNM);
-      nDel--;
-      pHlMtxCntEnt->hlMatrixControlNlDeletes++;
+      free(ppList);
+      ppList = NULL;
     }
   }
-
-  // netsnmp_container               *pNlMtxDSContainer =NULL;
-  nSize = CONTAINER_SIZE(pNlMtxDSMib);
-  if (nSize > (size_t)pHlMtxCntEnt->hlMatrixControlNlMaxDesiredEntries)
-  {
+  nSize = CONTAINER_SIZE(pNlMtxDSContainer);
+  if (nSize > (size_t)pHlMtxCntEnt->hlMatrixControlNlMaxDesiredEntries) {
     nDel = (int)(nSize - (pHlMtxCntEnt->hlMatrixControlNlMaxDesiredEntries * 9) / 10);
-    struct nlMatrixDSTable_entry *pNM;
-    while (nDel > 0 && (pNM = CONTAINER_FIRST(pNlMtxDSMib)))
-    {
-      if (pNM->pNlMtxDS)
-      {
-        nlMatrixDSTable_removeEntry(pNlMtxDSContainer, pNM->pNlMtxDS);
+    nList = 0;
+    ppList = (void **)calloc(nSize, sizeof(void *));
+    if (ppList) {
+      CONTAINER_FOR_EACH(pNlMtxDSContainer, MakeList, NULL);
+      qsort(ppList, nList, sizeof(void *), CmpNlMtxDS);
+      for (i = 0; i < nDel; i++) {
+        nlMatrixDSTable_removeEntry(pNlMtxDSContainer, ppList[i]);
       }
-      nlMatrixDSTable_removeEntry(pNlMtxDSMib, pNM);
-      nDel--;
+      free(ppList);
+      ppList = NULL;
     }
   }
-  // netsnmp_container               *pAlHostContainer=NULL;
-  nSize = CONTAINER_SIZE(pAlHostMib);
-  if (nSize > (size_t)pHlHostCntEnt->hlHostControlAlMaxDesiredEntries)
-  {
+  nSize = CONTAINER_SIZE(pAlHostContainer);
+  if (nSize > (size_t)pHlHostCntEnt->hlHostControlAlMaxDesiredEntries) {
     nDel = (int)(nSize - (pHlHostCntEnt->hlHostControlAlMaxDesiredEntries * 9) / 10);
-    struct alHostTable_entry *pAH;
-    while (nDel > 0 && (pAH = CONTAINER_FIRST(pAlHostMib)))
-    {
-      if (pAH->pAlHost)
-      {
-        alHostTable_removeEntry(pAlHostContainer, pAH->pAlHost);
+    nList = 0;
+    ppList = (void **)calloc(nSize, sizeof(void *));
+    if (ppList) {
+      CONTAINER_FOR_EACH(pAlHostContainer, MakeList, NULL);
+      qsort(ppList, nList, sizeof(void *), CmpAlHost);
+      for (i = 0; i < nDel; i++) {
+        alHostTable_removeEntry(pAlHostContainer, ppList[i]);
+        pHlHostCntEnt->hlHostControlAlDeletes++;
       }
-      alHostTable_removeEntry(pAlHostMib, pAH);
-      nDel--;
-      pHlHostCntEnt->hlHostControlAlDeletes++;
+      free(ppList);
+      ppList = NULL;
     }
   }
-
-  // netsnmp_container               *pAlMtxSDContainer =NULL;
-  nSize = CONTAINER_SIZE(pAlMtxSDMib);
-  if (nSize > (size_t)pHlMtxCntEnt->hlMatrixControlAlMaxDesiredEntries)
-  {
+  nSize = CONTAINER_SIZE(pAlMtxSDContainer);
+  if (nSize > (size_t)pHlMtxCntEnt->hlMatrixControlAlMaxDesiredEntries) {
     nDel = (int)(nSize - (pHlMtxCntEnt->hlMatrixControlAlMaxDesiredEntries * 9) / 10);
-    struct alMatrixSDTable_entry *pAM;
-    while (nDel > 0 && (pAM = CONTAINER_FIRST(pAlMtxSDMib)))
-    {
-      if (pAM->pAlMtxSD)
-      {
-        alMatrixSDTable_removeEntry(pAlMtxSDContainer, pAM->pAlMtxSD);
+    nList = 0;
+    ppList = (void **)calloc(nSize, sizeof(void *));
+    if (ppList) {
+      CONTAINER_FOR_EACH(pAlMtxSDContainer, MakeList, NULL);
+      qsort(ppList, nList, sizeof(void *), CmpAlMtxSD);
+      for (i = 0; i < nDel; i++) {
+        alMatrixSDTable_removeEntry(pAlMtxSDContainer, ppList[i]);
+        pHlMtxCntEnt->hlMatrixControlAlDeletes++;
       }
-      alMatrixSDTable_removeEntry(pAlMtxSDMib, pAM);
-      nDel--;
-      pHlMtxCntEnt->hlMatrixControlAlDeletes++;
+      free(ppList);
+      ppList = NULL;
     }
   }
-
-  // netsnmp_container               *pAlMtxDSContainer = NULL;
-}
-
-void UpdateNlHostMib(void *p1, void *p2)
-{
-  struct nlHostTable_entry *p;
-  struct nlHostTable_entry *pNH = (struct nlHostTable_entry *)p1;
-  if (pNH == NULL)
-    return;
-  if (pNH->nLastTM == pNH->nNewTM)
-    return;
-  if (pNH->pNlHost)
-  {
-    nlHostTable_removeEntry(pNlHostMib, pNH->pNlHost);
+  nSize = CONTAINER_SIZE(pAlMtxDSContainer);
+  if (nSize > (size_t)pHlMtxCntEnt->hlMatrixControlAlMaxDesiredEntries) {
+    nDel = (int)(nSize - (pHlMtxCntEnt->hlMatrixControlAlMaxDesiredEntries * 9) / 10);
+    nList = 0;
+    ppList = (void **)calloc(nSize, sizeof(void *));
+    if (ppList) {
+      CONTAINER_FOR_EACH(pAlMtxDSContainer, MakeList, NULL);
+      qsort(ppList, nList, sizeof(void *), CmpAlMtxDS);
+      for (i = 0; i < nDel; i++) {
+        alMatrixSDTable_removeEntry(pAlMtxDSContainer, ppList[i]);
+      }
+      free(ppList);
+      ppList = NULL;
+    }
   }
-  p = nlHostTable_createEntry(pNlHostMib, 1, pNH->nNewTM, pNH->protocolDirLocalIndex, pNH->nlHostAddress, pNH->nlHostAddress_len);
-  if (p == NULL)
-    return;
-  p->nlHostInPkts = pNH->nlHostInPkts;
-  p->nlHostOutPkts = pNH->nlHostOutPkts;
-  p->nlHostInOctets = pNH->nlHostInOctets;
-  p->nlHostOutOctets = pNH->nlHostOutOctets;
-  p->nlHostOutMacNonUnicastPkts = pNH->nlHostOutMacNonUnicastPkts;
-  p->nlHostCreateTime = pNH->nlHostCreateTime;
-  p->nLastTM = pNH->nNewTM;
-  p->valid = 1;
-  p->pNlHost = pNH;
-  pNH->pNlHost = p;
-  pNH->nLastTM = pNH->nNewTM;
-  return;
-}
-
-void CheckNlHostTime(void)
-{
-  CONTAINER_FOR_EACH(pNlHostContainer, UpdateNlHostMib, NULL);
-  return;
-}
-
-void UpdateNlMtxSDMib(void *p1, void *p2)
-{
-  struct nlMatrixSDTable_entry *p;
-  struct nlMatrixSDTable_entry *pNM = (struct nlMatrixSDTable_entry *)p1;
-  if (pNM == NULL)
-    return;
-  if (pNM->nLastTM == pNM->nNewTM)
-    return;
-  if (pNM->pNlMtxSD)
-  {
-    nlMatrixSDTable_removeEntry(pNlMtxSDMib, pNM->pNlMtxSD);
-  }
-  p = nlMatrixSDTable_createEntry(pNlMtxSDMib, 1, pNM->nNewTM, pNM->protocolDirLocalIndex, pNM->nlMatrixSDSourceAddress, pNM->nlMatrixSDSourceAddress_len, pNM->nlMatrixSDDestAddress, pNM->nlMatrixSDDestAddress_len);
-  if (p == NULL)
-    return;
-  p->nlMatrixSDPkts = pNM->nlMatrixSDPkts;
-  p->nlMatrixSDOctets = pNM->nlMatrixSDOctets;
-  p->nlMatrixSDCreateTime = pNM->nlMatrixSDCreateTime;
-  p->nLastTM = pNM->nNewTM;
-  p->valid = 1;
-  p->pNlMtxSD = pNM;
-  pNM->pNlMtxSD = p;
-  pNM->nLastTM = pNM->nNewTM;
-  return;
-}
-
-void UpdateNlMtxDSMib(void *p1, void *p2)
-{
-  struct nlMatrixDSTable_entry *p;
-  struct nlMatrixDSTable_entry *pNM = (struct nlMatrixDSTable_entry *)p1;
-  if (pNM == NULL)
-    return;
-  if (pNM->nLastTM == pNM->nNewTM)
-    return;
-  if (pNM->pNlMtxDS)
-  {
-    nlMatrixDSTable_removeEntry(pNlMtxDSMib, pNM->pNlMtxDS);
-  }
-  p = nlMatrixDSTable_createEntry(pNlMtxDSMib, 1, pNM->nNewTM, pNM->protocolDirLocalIndex, pNM->nlMatrixDSDestAddress, pNM->nlMatrixDSDestAddress_len, pNM->nlMatrixDSSourceAddress, pNM->nlMatrixDSSourceAddress_len);
-  if (p == NULL)
-    return;
-  p->nlMatrixDSPkts = pNM->nlMatrixDSPkts;
-  p->nlMatrixDSOctets = pNM->nlMatrixDSOctets;
-  p->nlMatrixDSCreateTime = pNM->nlMatrixDSCreateTime;
-  p->nLastTM = pNM->nNewTM;
-  p->valid = 1;
-  p->pNlMtxDS = pNM;
-  pNM->pNlMtxDS = p;
-  pNM->nLastTM = pNM->nNewTM;
-  return;
-}
-
-void CheckNlMtxTime(void)
-{
-  CONTAINER_FOR_EACH(pNlMtxSDContainer, UpdateNlMtxSDMib, NULL);
-  CONTAINER_FOR_EACH(pNlMtxDSContainer, UpdateNlMtxDSMib, NULL);
-  return;
-}
-
-void UpdateAlHostMib(void *p1, void *p2)
-{
-  struct alHostTable_entry *p;
-  struct alHostTable_entry *pAH = (struct alHostTable_entry *)p1;
-  if (pAH == NULL)
-    return;
-  if (pAH->nLastTM == pAH->nNewTM)
-    return;
-  if (pAH->pAlHost)
-  {
-    alHostTable_removeEntry(pAlHostMib, pAH->pAlHost);
-  }
-  p = alHostTable_createEntry(pAlHostMib, 1, pAH->nNewTM, pAH->protocolDirLocalIndexNl, pAH->nlHostAddress, pAH->nlHostAddress_len, pAH->protocolDirLocalIndexAl);
-  if (p == NULL)
-    return;
-  p->alHostInPkts = pAH->alHostInPkts;
-  p->alHostOutPkts = pAH->alHostOutPkts;
-  p->alHostInOctets = pAH->alHostInOctets;
-  p->alHostOutOctets = pAH->alHostOutOctets;
-  p->alHostCreateTime = pAH->alHostCreateTime;
-  p->nLastTM = pAH->nNewTM;
-  p->valid = 1;
-  p->pAlHost = pAH;
-  pAH->pAlHost = p;
-  pAH->nLastTM = pAH->nNewTM;
-  return;
-}
-
-void CheckAlHostTime(void)
-{
-  CONTAINER_FOR_EACH(pAlHostContainer, UpdateAlHostMib, NULL);
-  return;
-}
-
-void UpdateAlMtxSDMib(void *p1, void *p2)
-{
-  struct alMatrixSDTable_entry *p;
-  struct alMatrixSDTable_entry *pAM = (struct alMatrixSDTable_entry *)p1;
-  if (pAM == NULL)
-    return;
-  if (pAM->nLastTM == pAM->nNewTM)
-    return;
-  if (pAM->pAlMtxSD)
-  {
-    alMatrixSDTable_removeEntry(pAlMtxSDMib, pAM->pAlMtxSD);
-  }
-  p = alMatrixSDTable_createEntry(pAlMtxSDMib, 1, pAM->nNewTM, pAM->protocolDirLocalIndexNl, pAM->nlMatrixSDSourceAddress, pAM->nlMatrixSDSourceAddress_len, pAM->nlMatrixSDDestAddress, pAM->nlMatrixSDDestAddress_len, pAM->protocolDirLocalIndexAl);
-  if (p == NULL)
-    return;
-  p->alMatrixSDPkts = pAM->alMatrixSDPkts;
-  p->alMatrixSDOctets = pAM->alMatrixSDOctets;
-  p->alMatrixSDCreateTime = pAM->alMatrixSDCreateTime;
-  p->nLastTM = pAM->nNewTM;
-  p->valid = 1;
-  p->pAlMtxSD = pAM;
-  pAM->pAlMtxSD = p;
-  pAM->nLastTM = pAM->nNewTM;
-  return;
-}
-
-void UpdateAlMtxDSMib(void *p1, void *p2)
-{
-  struct alMatrixDSTable_entry *p;
-  struct alMatrixDSTable_entry *pAM = (struct alMatrixDSTable_entry *)p1;
-  if (pAM == NULL)
-    return;
-  if (pAM->nLastTM == pAM->nNewTM)
-    return;
-  if (pAM->pAlMtxDS)
-  {
-    alMatrixDSTable_removeEntry(pAlMtxDSMib, pAM->pAlMtxDS);
-  }
-  p = alMatrixDSTable_createEntry(pAlMtxDSMib, 1, pAM->nNewTM, pAM->protocolDirLocalIndexNl, pAM->nlMatrixDSDestAddress, pAM->nlMatrixDSDestAddress_len, pAM->nlMatrixDSSourceAddress, pAM->nlMatrixDSSourceAddress_len, pAM->protocolDirLocalIndexAl);
-  if (p == NULL)
-    return;
-  p->alMatrixDSPkts = pAM->alMatrixDSPkts;
-  p->alMatrixDSOctets = pAM->alMatrixDSOctets;
-  p->alMatrixDSCreateTime = pAM->alMatrixDSCreateTime;
-  p->nLastTM = pAM->nNewTM;
-  p->valid = 1;
-  p->pAlMtxDS = pAM;
-  pAM->pAlMtxDS = p;
-  pAM->nLastTM = pAM->nNewTM;
-  return;
-}
-
-void CheckAlMtxTime(void)
-{
-  CONTAINER_FOR_EACH(pAlMtxSDContainer, UpdateAlMtxSDMib, NULL);
-  CONTAINER_FOR_EACH(pAlMtxDSContainer, UpdateAlMtxDSMib, NULL);
-  return;
 }
 
 void DoEvent(int nMode, struct alarmTable_entry *pAlarm)
@@ -11234,25 +10827,19 @@ void DoEvent(int nMode, struct alarmTable_entry *pAlarm)
   struct eventTable_entry *p;
   netsnmp_index oid_index;
   oid nIndex;
-  if (nMode == 1)
-  {
+  if (nMode == 1) {
     nIndex = pAlarm->alarmRisingEventIndex;
-  }
-  else
-  {
+  } else {
     nIndex = pAlarm->alarmFallingEventIndex;
   }
   oid_index.len = 1;
   oid_index.oids = &nIndex;
   p = CONTAINER_FIND(pEventContainer, &oid_index);
-  if (p == NULL)
-    return;
-  if (p->eventType > 2)
-  {
+  if (p == NULL) return;
+  if (p->eventType > 2) {
     SendRmonTrap(nMode, pAlarm);
   }
-  if (p->eventType == 2 || p->eventType == 4)
-  {
+  if (p->eventType == 2 || p->eventType == 4) {
     struct logTable_entry *pLog = logTable_createEntry(pLogContainer, p->eventIndex, p->nLogID++);
     if (pLog == NULL)
       return;
@@ -11788,18 +11375,9 @@ void ResetRmonTable(void)
     addressMapTable_removeEntry(pAddrMapContainer, pTmp);
   }
 
-  while (pTmp = CONTAINER_FIRST(pNlHostMib))
-  {
-    nlHostTable_removeEntry(pNlHostMib, pTmp);
-  }
   while (pTmp = CONTAINER_FIRST(pNlHostContainer))
   {
     nlHostTable_removeEntry(pNlHostContainer, pTmp);
-  }
-
-  while (pTmp = CONTAINER_FIRST(pNlMtxSDMib))
-  {
-    nlMatrixSDTable_removeEntry(pNlMtxSDMib, pTmp);
   }
 
   while (pTmp = CONTAINER_FIRST(pNlMtxSDContainer))
@@ -11807,38 +11385,19 @@ void ResetRmonTable(void)
     nlMatrixSDTable_removeEntry(pNlMtxSDContainer, pTmp);
   }
 
-  while (pTmp = CONTAINER_FIRST(pNlMtxDSMib))
-  {
-    nlMatrixDSTable_removeEntry(pNlMtxDSMib, pTmp);
-  }
-
   while (pTmp = CONTAINER_FIRST(pNlMtxDSContainer))
   {
     nlMatrixDSTable_removeEntry(pNlMtxDSContainer, pTmp);
   }
 
-  while (pTmp = CONTAINER_FIRST(pAlHostMib))
-  {
-    alHostTable_removeEntry(pAlHostMib, pTmp);
-  }
   while (pTmp = CONTAINER_FIRST(pAlHostContainer))
   {
     alHostTable_removeEntry(pAlHostContainer, pTmp);
   }
 
-  while (pTmp = CONTAINER_FIRST(pAlMtxSDMib))
-  {
-    alMatrixSDTable_removeEntry(pAlMtxSDMib, pTmp);
-  }
-
   while (pTmp = CONTAINER_FIRST(pAlMtxSDContainer))
   {
     alMatrixSDTable_removeEntry(pAlMtxSDContainer, pTmp);
-  }
-
-  while (pTmp = CONTAINER_FIRST(pAlMtxDSMib))
-  {
-    alMatrixDSTable_removeEntry(pAlMtxDSMib, pTmp);
   }
 
   while (pTmp = CONTAINER_FIRST(pAlMtxDSContainer))

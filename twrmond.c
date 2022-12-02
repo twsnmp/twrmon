@@ -37,8 +37,6 @@ static int keep_running = 1;
 
 static time_t nTimeNow = 0;
 
-int nTimeMarkMode = 0; // 0=  High Speed,1= Zero Only,2 = RFC Mode
-
 RETSIGTYPE
 stop_server(int a)
 {
@@ -465,11 +463,6 @@ int main(int argc, char **argv)
       break;
     case 'i':
       pDev = optarg;
-      break;
-    case 'T':
-      nTimeMarkMode = atoi(optarg);
-      if (nTimeMarkMode < 0 || nTimeMarkMode > 3)
-        nTimeMarkMode = 0;
       break;
     case 's':
       scanLevel = atoi(optarg);
