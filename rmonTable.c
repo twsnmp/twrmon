@@ -115,10 +115,11 @@ void CtlTableSort(int bSort)
   return;
 }
 
-/* Timer Callback  Every 1 Second*/
+/* Timer Callback  Every 5 Second*/
 void TimerCallBack(unsigned int clientreg, void *clientarg)
 {
   CheckEthHistTable();
+  CheckMaxTableSize();
   CheckAlarm();
   return;
 }
@@ -10600,56 +10601,56 @@ void MakeList(void *oah, void *p)
 int CmpLogTime(const void *p1, const void *p2)
 {
   if (p1 == NULL || p2 == NULL) return (0);
-  struct logTable_entry *pLog1 = (struct logTable_entry *)p1;
-  struct logTable_entry *pLog2 = (struct logTable_entry *)p2;
+  struct logTable_entry *pLog1 = *(struct logTable_entry **)p1;
+  struct logTable_entry *pLog2 = *(struct logTable_entry **)p2;
   return pLog1->logTime < pLog2->logTime ? -1 : pLog1->logTime == pLog2->logTime ? 0 : 1;
 }
 
 int CmpNlHost(const void *p1, const void *p2)
 {
   if (p1 == NULL || p2 == NULL) return (0);
-  struct nlHostTable_entry *pcmp1 = (struct nlHostTable_entry *)p1;
-  struct nlHostTable_entry *pcmp2 = (struct nlHostTable_entry *)p2;
+  struct nlHostTable_entry *pcmp1 = *(struct nlHostTable_entry **)p1;
+  struct nlHostTable_entry *pcmp2 = *(struct nlHostTable_entry **)p2;
   return pcmp1->nLastTM < pcmp2->nLastTM ? -1 : pcmp1->nLastTM == pcmp2->nLastTM ? 0 : 1;
 }
 
 int CmpNlMtxSD(const void *p1, const void *p2)
 {
   if (p1 == NULL || p2 == NULL) return (0);
-  struct nlMatrixSDTable_entry *pcmp1 = (struct nlMatrixSDTable_entry *)p1;
-  struct nlMatrixSDTable_entry *pcmp2 = (struct nlMatrixSDTable_entry *)p2;
+  struct nlMatrixSDTable_entry *pcmp1 = *(struct nlMatrixSDTable_entry **)p1;
+  struct nlMatrixSDTable_entry *pcmp2 = *(struct nlMatrixSDTable_entry **)p2;
   return pcmp1->nLastTM < pcmp2->nLastTM ? -1 : pcmp1->nLastTM == pcmp2->nLastTM ? 0 : 1;
 }
 
 int CmpNlMtxDS(const void *p1, const void *p2)
 {
   if (p1 == NULL || p2 == NULL) return (0);
-  struct nlMatrixDSTable_entry *pcmp1 = (struct nlMatrixDSTable_entry *)p1;
-  struct nlMatrixDSTable_entry *pcmp2 = (struct nlMatrixDSTable_entry *)p2;
+  struct nlMatrixDSTable_entry *pcmp1 = *(struct nlMatrixDSTable_entry **)p1;
+  struct nlMatrixDSTable_entry *pcmp2 = *(struct nlMatrixDSTable_entry **)p2;
   return pcmp1->nLastTM < pcmp2->nLastTM ? -1 : pcmp1->nLastTM == pcmp2->nLastTM ? 0 : 1;
 }
 
 int CmpAlHost(const void *p1, const void *p2)
 {
   if (p1 == NULL || p2 == NULL) return (0);
-  struct alHostTable_entry *pcmp1 = (struct alHostTable_entry *)p1;
-  struct alHostTable_entry *pcmp2 = (struct alHostTable_entry *)p2;
+  struct alHostTable_entry *pcmp1 = *(struct alHostTable_entry **)p1;
+  struct alHostTable_entry *pcmp2 = *(struct alHostTable_entry **)p2;
   return pcmp1->nLastTM < pcmp2->nLastTM ? -1 : pcmp1->nLastTM == pcmp2->nLastTM ? 0 : 1;
 }
 
 int CmpAlMtxSD(const void *p1, const void *p2)
 {
   if (p1 == NULL || p2 == NULL) return (0);
-  struct alMatrixSDTable_entry *pcmp1 = (struct alMatrixSDTable_entry *)p1;
-  struct alMatrixSDTable_entry *pcmp2 = (struct alMatrixSDTable_entry *)p2;
+  struct alMatrixSDTable_entry *pcmp1 = *(struct alMatrixSDTable_entry **)p1;
+  struct alMatrixSDTable_entry *pcmp2 = *(struct alMatrixSDTable_entry **)p2;
   return pcmp1->nLastTM < pcmp2->nLastTM ? -1 : pcmp1->nLastTM == pcmp2->nLastTM ? 0 : 1;
 }
 
 int CmpAlMtxDS(const void *p1, const void *p2)
 {
   if (p1 == NULL || p2 == NULL) return (0);
-  struct alMatrixDSTable_entry *pcmp1 = (struct alMatrixDSTable_entry *)p1;
-  struct alMatrixDSTable_entry *pcmp2 = (struct alMatrixDSTable_entry *)p2;
+  struct alMatrixDSTable_entry *pcmp1 = *(struct alMatrixDSTable_entry **)p1;
+  struct alMatrixDSTable_entry *pcmp2 = *(struct alMatrixDSTable_entry **)p2;
   return pcmp1->nLastTM < pcmp2->nLastTM ? -1 : pcmp1->nLastTM == pcmp2->nLastTM ? 0 : 1;
 }
 
@@ -10694,6 +10695,7 @@ void CheckMaxTableSize(void)
       nDel--;
     }
     pHostCntEnt->hostControlLastDeleteTime = netsnmp_get_agent_uptime();
+    pMtxCntEnt->matrixControlLastDeleteTime = netsnmp_get_agent_uptime();
   }
   pHostCntEnt->hostControlTableSize = CONTAINER_SIZE(pHostTimeContainer);
   pMtxCntEnt->matrixControlTableSize = CONTAINER_SIZE(pMtxSDContainer);
